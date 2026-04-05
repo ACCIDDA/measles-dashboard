@@ -227,7 +227,7 @@ export default function NCMap({
           .attr('stroke-width', d => d === activeSchoolRef.current ? 2 / k : 0.8 / k);
         adjSchoolsG.selectAll('circle').attr('r', 3 / k);
         // Rescale location highlight
-        locHighlightG.selectAll('circle[fill="#005fcc"]').attr('r', 5 / k).attr('stroke-width', 1.5 / k);
+        locHighlightG.selectAll('circle[fill="white"]').attr('r', 5 / k).attr('stroke-width', 1.5 / k);
         const strokeEl = document.getElementById('loc-county-stroke');
         if (strokeEl) d3.select(strokeEl).attr('stroke-width', 3 / k + 'px');
       });
@@ -516,7 +516,7 @@ export default function NCMap({
         if (d.id === feature.id) {
           d3.select(this).clone(true).lower()
             .attr('fill', 'none')
-            .attr('stroke', '#005fcc')
+            .attr('stroke', '#222')
             .attr('stroke-width', '3px')
             .attr('opacity', '0.0')
             .attr('id', 'loc-county-stroke')
@@ -530,7 +530,7 @@ export default function NCMap({
     [0, 600, 1200].forEach((delay, i) => {
       const ring = locHighlightG.append('circle')
         .attr('cx', cx).attr('cy', cy).attr('r', 0)
-        .attr('fill', 'none').attr('stroke', '#005fcc')
+        .attr('fill', 'none').attr('stroke', '#222')
         .attr('stroke-width', 2 - i * 0.4).attr('opacity', 0);
       function pulse() {
         ring.attr('r', 0).attr('opacity', 0.7)
@@ -544,7 +544,7 @@ export default function NCMap({
     // Static pin dot
     locHighlightG.append('circle')
       .attr('cx', cx).attr('cy', cy).attr('r', 5)
-      .attr('fill', '#005fcc').attr('stroke', 'white').attr('stroke-width', 1.5);
+      .attr('fill', 'white').attr('stroke', '#222').attr('stroke-width', 1.5);
   }
 
   // Location pill click handler

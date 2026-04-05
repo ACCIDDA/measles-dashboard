@@ -1,4 +1,4 @@
-export const TIER_COLORS = { H: '#0072B2', M: '#E69F00', L: '#D55E00' };
+export const TIER_COLORS = { H: '#0072B2', M: '#E69F00', L: '#882255' };
 export const TIER_LABELS = { H: 'High', M: 'Medium', L: 'Low' };
 export const SHAPES = {
   H: '<circle cx="6" cy="6" r="5"/>',
