@@ -1,6 +1,6 @@
-import React, { useRef, useEffect, useState, useCallback } from 'react';
+import { useRef, useEffect, useState, useCallback } from 'react';
 import * as d3 from 'd3';
-import { TIER_COLORS, TIER_LABELS, SHAPES, covTier, uvTier } from '../../config/index.js';
+import { TIER_COLORS, TIER_LABELS, covTier, uvTier } from '../../config/index.js';
 import MapLegend from './MapLegend.jsx';
 
 const TC = TIER_COLORS;
@@ -175,10 +175,8 @@ export default function NCMap({
     projRef.current = proj;
     pathGenRef.current = pathGen;
 
-    // Stroke helpers
+    // Stroke helper
     function s0(sel) { sel.style('stroke', 'rgba(255,255,255,0.3)').style('stroke-width', '0.7px'); }
-    function sSel(sel) { sel.style('stroke', 'rgba(0,0,0,0.7)').style('stroke-width', '2.5px'); }
-    function sDim(sel) { sel.style('stroke', 'rgba(60,40,20,0.28)').style('stroke-width', '0.6px'); }
 
     // Draw non-NC states as gray land
     if (neighborStates) {
@@ -337,6 +335,7 @@ export default function NCMap({
       svg.on('.zoom', null);
       svg.on('pointerdown', null).on('pointermove', null).on('pointerup', null);
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ncFeatures, countyData, allSchools, neighborStates, stateMesh]);
 
   // ── Geolocation coords arrived — highlight the user's county ──
@@ -350,6 +349,7 @@ export default function NCMap({
       highlightUserCounty(feature, countyPathsRef.current, locHighlightGRef.current, pathGenRef.current);
       if (onGeoCountyDetected) onGeoCountyDetected(name);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userCoords, ncFeatures]);
 
   // ── Update county fill when view changes ──
@@ -496,6 +496,7 @@ export default function NCMap({
     }, 50);
 
     hideTT();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedCounty, ncFeatures, allSchools, countyData, adjacencyMap]);
 
   // ── Highlight user county helper ──

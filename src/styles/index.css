@@ -1,7 +1,7 @@
 :root{
   --bg:#f5f0e8;--surface:#faf7f2;--border:#e2d9cc;--border2:#cfc4b4;
   --text:#1c1917;--muted:#78716c;--faint:#ede8e0;
-  --high:#0072B2;--med:#E69F00;--low:#D55E00;--focus:#005fcc;
+  --high:#0072B2;--med:#E69F00;--low:#882255;--focus:#005fcc;
   --acc:#1B4F72;--acc2:#154360;
   --water:#c5dae8;--land:#e6e0d6;
   --mono:'ui-monospace','SFMono-Regular','Menlo','Consolas',monospace;--sans:-apple-system,BlinkMacSystemFont,'Segoe UI','Helvetica Neue',Arial,sans-serif;

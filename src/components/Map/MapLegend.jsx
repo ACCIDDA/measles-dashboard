@@ -1,5 +1,4 @@
-import React from 'react';
-import { TIER_COLORS, SHAPES, LEGEND } from '../../config/index.js';
+import { TIER_COLORS, LEGEND } from '../../config/index.js';
 
 export default function MapLegend({ currentView }) {
   const lv = LEGEND[currentView] || LEGEND.coverage;

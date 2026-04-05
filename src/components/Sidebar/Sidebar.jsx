@@ -2,7 +2,7 @@ import { covTier } from '../../config/index.js';
 import SchoolList from './SchoolList.jsx';
 import SchoolDetail from './SchoolDetail.jsx';
 
-export default function Sidebar({ county, countyData, schools, selectedSchool, onSchoolSelect, onBack, onCloseSchool, isOpen }) {
+export default function Sidebar({ county, countyData: _countyData, schools, selectedSchool, onSchoolSelect, onBack, onCloseSchool, isOpen }) {
   const avgCoverage = schools.length > 0
     ? schools.reduce((a, s) => a + s.coverage, 0) / schools.length
     : 0;
