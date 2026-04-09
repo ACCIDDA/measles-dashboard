@@ -1,12 +1,6 @@
 import { useState } from 'react';
 import { TIER_COLORS, covTier } from '../../config/index.js';
-
-function TierMarker({ tier }) {
-  const color = TIER_COLORS[tier];
-  if (tier === 'H') return <circle cx="6" cy="6" r="5" fill={color} />;
-  if (tier === 'M') return <rect x="1" y="1" width="10" height="10" rx="1" fill={color} />;
-  return <polygon points="6,1 11,11 1,11" fill={color} />;
-}
+import TierMarker from '../TierMarker.jsx';
 
 export default function SchoolList({ schools, selectedSchool, onSchoolSelect }) {
   const [search, setSearch] = useState('');
