@@ -158,7 +158,7 @@ export function useDashboardData() {
     async function load() {
       try {
         const [dashRes, usRes] = await Promise.all([
-          fetch('/NC/json/dashboard.json'),
+          fetch(`${import.meta.env.BASE_URL}NC/json/dashboard.json`),
           fetch('https://cdn.jsdelivr.net/npm/us-atlas@3/counties-10m.json')
         ]);
 
