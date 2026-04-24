@@ -13,7 +13,7 @@ export default function Header({ currentView, onViewChange, ncFeatures, countyDa
   return (
     <header role="banner">
       <img
-        src="/ACCIDDABlack.png"
+        src={`${import.meta.env.BASE_URL}ACCIDDABlack.png`}
         className="acc-logo-img"
         title="Atlantic Coast Center for Infectious Disease Dynamics and Analytics · UNC Chapel Hill"
         alt="ACCIDDA"
