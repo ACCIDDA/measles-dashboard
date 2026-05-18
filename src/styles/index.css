@@ -219,3 +219,103 @@ label[for="sb-search"]{display:block;font-size:10px;text-transform:uppercase;let
   #tour-help-btn{bottom:12px;right:8px;width:36px;height:36px}
   #tour-tip{width:calc(100vw - 24px);left:12px!important;right:12px}
 }
+
+/* Toast surfaced when a user activates a state without data. Positioned
+   above the map so it does not obstruct the legend. Auto-dismisses; see
+   NoDataToast.jsx. */
+.no-data-toast{
+  position:fixed;
+  top:calc(var(--header-h, 56px) + 16px);
+  left:50%;
+  transform:translateX(-50%);
+  z-index:60;
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  padding:10px 14px;
+  border-radius:8px;
+  background:rgba(31,41,55,.95);
+  color:#fff;
+  font-size:14px;
+  font-weight:500;
+  box-shadow:0 4px 16px rgba(0,0,0,.18);
+  max-width:min(90vw,420px);
+}
+.no-data-toast-close{
+  background:transparent;
+  border:none;
+  color:inherit;
+  font-size:18px;
+  line-height:1;
+  cursor:pointer;
+  padding:0 2px;
+}
+.no-data-toast-close:focus{outline:2px solid #fff;outline-offset:2px}
+
+/* Greyed state styling — applied by national-map renderers (e.g. NationalMap)
+   for states whose manifest entry status !== "ready". Defined here so the
+   visual treatment is consistent regardless of which component renders the
+   national choropleth. */
+.state-path.state-coming-soon{
+  fill:#d1d5db;
+  cursor:not-allowed;
+  opacity:.85;
+}
+.state-path.state-coming-soon:hover{
+  fill:#bcc1c9;
+}
+.state-path.state-ready{
+  cursor:pointer;
+}
+
+/* Lightweight fallback national view used until NationalMap (issue #14)
+   lands. Lists every state from the manifest with ready states clickable
+   and coming_soon states greyed. */
+.national-view{
+  padding:24px clamp(16px,4vw,32px);
+  max-width:1100px;
+  margin:0 auto;
+}
+.national-view-title{
+  font-size:20px;
+  font-weight:600;
+  margin:0 0 4px;
+}
+.national-view-subtitle{
+  color:#4b5563;
+  margin:0 0 16px;
+}
+.national-view-list{
+  list-style:none;
+  padding:0;
+  margin:0;
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
+  gap:8px;
+}
+.national-view-item button.state-path{
+  width:100%;
+  text-align:left;
+  padding:10px 12px;
+  border:1px solid #e5e7eb;
+  border-radius:6px;
+  background:#fff;
+  font-size:14px;
+  font-weight:500;
+  color:#111827;
+  cursor:pointer;
+}
+.national-view-item button.state-path.state-ready{
+  background:#eff6ff;
+  border-color:#bfdbfe;
+  color:#1e3a8a;
+}
+.national-view-item button.state-path.state-ready:hover{
+  background:#dbeafe;
+}
+.national-view-item button.state-path.state-coming-soon{
+  background:#f3f4f6;
+  color:#6b7280;
+  fill:#d1d5db; /* keeps visual parity with SVG paths */
+}
+
