@@ -23,6 +23,9 @@
  * `url` modules.
  *
  * Idempotent: running multiple times produces the same outputs.
+ *
+ * Most helpers are exported so they can be unit-tested directly
+ * (`scripts/build-downloads.test.mjs`).
  */
 
 import fs from 'node:fs';
@@ -31,7 +34,7 @@ import { fileURLToPath } from 'node:url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const REPO_ROOT = path.resolve(__dirname, '..');
+export const REPO_ROOT = path.resolve(__dirname, '..');
 
 // ---------------------------------------------------------------------------
 // State manifest
@@ -39,7 +42,7 @@ const REPO_ROOT = path.resolve(__dirname, '..');
 // Loop-friendly: add additional states here when data lands. Each entry
 // describes where to find that state's dashboard JSON and what slug to use
 // for the output paths.
-const STATES = [
+export const STATES = [
   {
     slug: 'nc',
     name: 'North Carolina',
@@ -55,7 +58,7 @@ const STATES = [
  * Convert a display name into a lowercase, kebab-case slug suitable for use
  * in a URL path segment. Example: "New Hanover" -> "new-hanover".
  */
-function slugify(name) {
+export function slugify(name) {
   return String(name)
     .toLowerCase()
     .normalize('NFKD')
@@ -72,7 +75,7 @@ function slugify(name) {
  * - Values containing a comma, quote, or newline are wrapped in quotes,
  *   with internal quotes doubled.
  */
-function csvCell(value) {
+export function csvCell(value) {
   if (value === null || value === undefined) return '';
   const s = typeof value === 'string' ? value : String(value);
   if (s === '') return '';
@@ -85,7 +88,7 @@ function csvCell(value) {
 /**
  * Serialize a 2D array of [header, ...rows] to CSV text.
  */
-function toCsv(rows) {
+export function toCsv(rows) {
   return rows.map(row => row.map(csvCell).join(',')).join('\n') + '\n';
 }
 
@@ -93,7 +96,7 @@ function toCsv(rows) {
  * Coverage tier classification matching `src/config/index.js`:
  *   >=95 -> High, >=90 -> Medium, else Low.
  */
-function covTierLabel(coverage) {
+export function covTierLabel(coverage) {
   if (coverage == null || Number.isNaN(coverage)) return '';
   if (coverage >= 95) return 'High';
   if (coverage >= 90) return 'Medium';
@@ -105,7 +108,7 @@ function covTierLabel(coverage) {
  * (or other non-numeric) representing missing values. Returns a number or
  * null.
  */
-function parseBreakdownCell(raw) {
+export function parseBreakdownCell(raw) {
   if (raw == null) return null;
   const n = parseFloat(raw);
   return Number.isFinite(n) ? n : null;
@@ -116,7 +119,7 @@ function parseBreakdownCell(raw) {
  * Skips the write if the file already exists with identical bytes (keeps
  * mtimes stable across re-runs).
  */
-function writeFileIfChanged(outPath, content) {
+export function writeFileIfChanged(outPath, content) {
   fs.mkdirSync(path.dirname(outPath), { recursive: true });
   if (fs.existsSync(outPath)) {
     try {
@@ -155,19 +158,19 @@ function writeFileIfChanged(outPath, content) {
  *   - herd_immunity_schools: number of schools in the county estimated
  *     to be above herd immunity threshold (from source `herd_immunity`)
  */
-function buildStateCsv(dashboard) {
-  const header = [
-    'county',
-    'schools',
-    'avg_coverage_pct',
-    'coverage_low_pct',
-    'coverage_high_pct',
-    'undervaccinated_pct',
-    'tier',
-    'herd_immunity_schools',
-  ];
+export const STATE_CSV_HEADER = [
+  'county',
+  'schools',
+  'avg_coverage_pct',
+  'coverage_low_pct',
+  'coverage_high_pct',
+  'undervaccinated_pct',
+  'tier',
+  'herd_immunity_schools',
+];
 
-  const rows = dashboard.counties
+export function buildStateCsv(dashboard) {
+  const rows = (dashboard.counties || [])
     .slice()
     .sort((a, b) => a.name.localeCompare(b.name))
     .map(c => {
@@ -187,7 +190,7 @@ function buildStateCsv(dashboard) {
       ];
     });
 
-  return toCsv([header, ...rows]);
+  return toCsv([STATE_CSV_HEADER, ...rows]);
 }
 
 /**
@@ -211,13 +214,16 @@ function buildStateCsv(dashboard) {
  * Source uses `coverage_grades = ["5_6","6_7","7_8","8_9","9_10","10_11"]`
  * (age bands); index i maps to GRADES[i].
  */
-const GRADE_LABELS = ['K', '1st', '2nd', '3rd', '4th', '5th'];
+export const GRADE_LABELS = ['K', '1st', '2nd', '3rd', '4th', '5th'];
 
-function buildCountyCsv(county) {
-  const header = ['school', 'enrollment', 'coverage_pct', 'tier'];
-  for (const g of GRADE_LABELS) header.push(`estimated_${g}_pct`);
-  for (const g of GRADE_LABELS) header.push(`reported_${g}_pct`);
+export const COUNTY_CSV_HEADER = (() => {
+  const h = ['school', 'enrollment', 'coverage_pct', 'tier'];
+  for (const g of GRADE_LABELS) h.push(`estimated_${g}_pct`);
+  for (const g of GRADE_LABELS) h.push(`reported_${g}_pct`);
+  return h;
+})();
 
+export function buildCountyCsv(county) {
   const schools = (Array.isArray(county.schools) ? county.schools : [])
     .slice()
     .sort((a, b) => a.name.localeCompare(b.name));
@@ -253,17 +259,26 @@ function buildCountyCsv(county) {
     return row;
   });
 
-  return toCsv([header, ...rows]);
+  return toCsv([COUNTY_CSV_HEADER, ...rows]);
 }
 
 // ---------------------------------------------------------------------------
-// Main
+// Orchestration
 // ---------------------------------------------------------------------------
 
-function processState(stateCfg, outDir) {
+/**
+ * Process a single state: read its dashboard JSON and emit one state-level
+ * CSV plus a per-county CSV for each county.
+ *
+ * Pure with respect to its inputs: takes the full `stateCfg` and the output
+ * directory explicitly so tests can drive it against a temp directory.
+ *
+ * @returns {{ stateFiles: number, countyFiles: number, stateChanged: boolean, countyChanged: number, skipped: boolean, stateCsvPath?: string, countyCsvPaths?: string[] }}
+ */
+export function processState(stateCfg, outDir, { logger = console } = {}) {
   if (!fs.existsSync(stateCfg.dashboardJson)) {
-    console.warn(`[build-downloads] skipping ${stateCfg.slug}: missing source ${stateCfg.dashboardJson}`);
-    return { stateFiles: 0, countyFiles: 0, skipped: true };
+    logger.warn(`[build-downloads] skipping ${stateCfg.slug}: missing source ${stateCfg.dashboardJson}`);
+    return { stateFiles: 0, countyFiles: 0, stateChanged: false, countyChanged: 0, skipped: true };
   }
 
   const dashboard = JSON.parse(fs.readFileSync(stateCfg.dashboardJson, 'utf8'));
@@ -277,6 +292,7 @@ function processState(stateCfg, outDir) {
   const countiesDir = path.join(outDir, 'states', stateCfg.slug, 'counties');
   let countyChanged = 0;
   const wantedSlugs = new Set();
+  const countyCsvPaths = [];
   const counties = Array.isArray(dashboard.counties) ? dashboard.counties : [];
   for (const county of counties) {
     const slug = slugify(county.name);
@@ -284,6 +300,7 @@ function processState(stateCfg, outDir) {
     wantedSlugs.add(`${slug}.csv`);
     const countyCsv = buildCountyCsv(county);
     const countyPath = path.join(countiesDir, `${slug}.csv`);
+    countyCsvPaths.push(countyPath);
     if (writeFileIfChanged(countyPath, countyCsv)) countyChanged++;
   }
 
@@ -298,7 +315,7 @@ function processState(stateCfg, outDir) {
     }
   }
 
-  console.log(
+  logger.log(
     `[build-downloads] ${stateCfg.slug}: ${stateChanged ? 'wrote' : 'unchanged'} ` +
     `${path.relative(REPO_ROOT, stateCsvPath)} ` +
     `+ ${counties.length} county CSVs (${countyChanged} updated)`
@@ -307,24 +324,45 @@ function processState(stateCfg, outDir) {
   return {
     stateFiles: 1,
     countyFiles: counties.length,
+    stateChanged,
+    countyChanged,
     skipped: false,
+    stateCsvPath,
+    countyCsvPaths,
   };
 }
 
-function main() {
-  const outDir = path.join(REPO_ROOT, 'public', 'data');
+/**
+ * Run the full build for a list of states into a given output directory.
+ *
+ * Defaults reproduce the production CLI behavior (the configured `STATES`
+ * manifest writing into `public/data`). Tests can override both arguments
+ * to drive the build with synthetic data in a temp directory.
+ */
+export function runBuild({ states = STATES, outDir = path.join(REPO_ROOT, 'public', 'data'), logger = console } = {}) {
   fs.mkdirSync(outDir, { recursive: true });
 
   let totalState = 0;
   let totalCounty = 0;
-  for (const stateCfg of STATES) {
-    const r = processState(stateCfg, outDir);
+  const results = [];
+  for (const stateCfg of states) {
+    const r = processState(stateCfg, outDir, { logger });
+    results.push({ stateCfg, ...r });
     if (!r.skipped) {
       totalState += r.stateFiles;
       totalCounty += r.countyFiles;
     }
   }
-  console.log(`[build-downloads] done. ${totalState} state CSV(s), ${totalCounty} county CSV(s).`);
+  logger.log(`[build-downloads] done. ${totalState} state CSV(s), ${totalCounty} county CSV(s).`);
+  return { totalState, totalCounty, results };
 }
 
-main();
+// ---------------------------------------------------------------------------
+// CLI entry point
+// ---------------------------------------------------------------------------
+// Only runs when invoked directly (e.g. `node scripts/build-downloads.mjs`).
+// When imported by tests this block is skipped.
+const isDirectInvocation = fileURLToPath(import.meta.url) === path.resolve(process.argv[1] || '');
+if (isDirectInvocation) {
+  runBuild();
+}
