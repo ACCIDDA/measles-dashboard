@@ -325,6 +325,27 @@ export default function NCMap({
       countyPaths.attr('d', pathGen);
       if (neighborStates) g.selectAll('.neighbor-county').attr('d', pathGen);
       if (stateMesh) g.select('.neighbor-state-line').attr('d', pathGen);
+
+      if (selectedCountyRef.current) {
+        const feat = ncFeatures.find(f => f.properties.name + ' County' === selectedCountyRef.current);
+        if (feat) {
+          const sidebarW = isMobile() ? 0 : 300;
+          const visW = nW - sidebarW;
+          const visH = isMobile() ? nH * 0.52 : nH;
+          const [[x0, y0], [x1, y1]] = pathGen.bounds(feat);
+          const scale = Math.min(12, 0.75 / Math.max((x1 - x0) / visW, (y1 - y0) / visH));
+          const tx = visW / 2 - scale * (x0 + x1) / 2;
+          const ty = visH / 2 - scale * (y0 + y1) / 2;
+          svg.call(zoomBehavior.transform, d3.zoomIdentity.translate(tx, ty).scale(scale));
+
+          schoolsG.selectAll('circle.school-dot')
+            .attr('cx', s => proj(scatterCoord(s))[0])
+            .attr('cy', s => proj(scatterCoord(s))[1]);
+          adjSchoolsG.selectAll('circle')
+            .attr('cx', s => proj(scatterCoord(s))[0])
+            .attr('cy', s => proj(scatterCoord(s))[1]);
+        }
+      }
     });
     ro.observe(wrap);
 
