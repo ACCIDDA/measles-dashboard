@@ -6,7 +6,7 @@ import Header from './Header.jsx';
 const defaultProps = {
   currentView: 'coverage',
   onViewChange: () => {},
-  ncFeatures: [],
+  stateFeatures: [],
   countyData: {},
   onCountySelect: () => {},
 };

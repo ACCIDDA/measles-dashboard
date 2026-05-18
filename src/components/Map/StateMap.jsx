@@ -111,10 +111,12 @@ function buildSchoolTooltip(container, school) {
   container.appendChild(hint);
 }
 
-export default function NCMap({
+export default function StateMap({
   countyData,
   allSchools,
-  ncFeatures,
+  stateFeatures,
+  stateCode,
+  stateName = 'state',
   selectedCounty,
   selectedSchool,
   onCountySelect,
@@ -157,7 +159,7 @@ export default function NCMap({
 
   // ── Main D3 initialization ──
   useEffect(() => {
-    if (!ncFeatures || !countyData || !allSchools) return;
+    if (!stateFeatures || !countyData || !allSchools) return;
 
     const wrap = wrapRef.current;
     const svg = d3.select(svgRef.current);
@@ -169,8 +171,8 @@ export default function NCMap({
     const W = wrap.clientWidth;
     const H = wrap.clientHeight;
     const pad = isMobile() ? 16 : 40;
-    const ncFC = { type: 'FeatureCollection', features: ncFeatures };
-    const proj = d3.geoMercator().fitExtent([[pad, pad], [W - pad, H - pad]], ncFC);
+    const stateFC = { type: 'FeatureCollection', features: stateFeatures };
+    const proj = d3.geoMercator().fitExtent([[pad, pad], [W - pad, H - pad]], stateFC);
     const pathGen = d3.geoPath().projection(proj);
     projRef.current = proj;
     pathGenRef.current = pathGen;
@@ -178,7 +180,7 @@ export default function NCMap({
     // Stroke helper
     function s0(sel) { sel.style('stroke', 'rgba(255,255,255,0.3)').style('stroke-width', '0.7px'); }
 
-    // Draw non-NC states as gray land
+    // Draw the rest of the country (non-focus states) as gray land
     if (neighborStates) {
       g.append('g').selectAll('.neighbor-county').data(neighborStates).enter().append('path')
         .attr('class', 'neighbor-county').attr('d', pathGen);
@@ -191,9 +193,9 @@ export default function NCMap({
         .attr('class', 'neighbor-state-line').attr('d', pathGen);
     }
 
-    // NC county paths — wrapped in own group so .raise() stays local
+    // State county paths — wrapped in own group so .raise() stays local
     const countyG = g.append('g').attr('id', 'county-g');
-    const countyPaths = countyG.selectAll('.county-path').data(ncFeatures).enter().append('path')
+    const countyPaths = countyG.selectAll('.county-path').data(stateFeatures).enter().append('path')
       .attr('class', 'county-path').attr('d', pathGen)
       .attr('fill', d => countyFill(d.properties.name + ' County', countyData, allSchools, currentViewRef.current))
       .call(s0);
@@ -209,12 +211,12 @@ export default function NCMap({
     const locHighlightG = g.append('g').attr('id', 'loc-highlight-g').style('pointer-events', 'none');
     locHighlightGRef.current = locHighlightG;
 
-    // Zoom behavior — restrict pan to NC bounds so user can't drift to other states
-    const [[ncX0, ncY0], [ncX1, ncY1]] = pathGen.bounds(ncFC);
+    // Zoom behavior — restrict pan to the focus state's bounds so user can't drift away
+    const [[stX0, stY0], [stX1, stY1]] = pathGen.bounds(stateFC);
     const panMargin = 60;
     const zoomBehavior = d3.zoom()
       .scaleExtent([1, 40])
-      .translateExtent([[ncX0 - panMargin, ncY0 - panMargin], [ncX1 + panMargin, ncY1 + panMargin]])
+      .translateExtent([[stX0 - panMargin, stY0 - panMargin], [stX1 + panMargin, stY1 + panMargin]])
       .filter(e => !(e.type === 'click') && currentScaleRef.current > 1.05)
       .on('zoom', e => {
         g.attr('transform', e.transform);
@@ -310,7 +312,7 @@ export default function NCMap({
 
     // Geolocation highlight (from saved county name)
     if (userCountyName) {
-      const feature = ncFeatures.find(f => f.properties.name + ' County' === userCountyName);
+      const feature = stateFeatures.find(f => f.properties.name + ' County' === userCountyName);
       if (feature) {
         highlightUserCounty(feature, countyPaths, locHighlightG, pathGen);
       }
@@ -321,13 +323,13 @@ export default function NCMap({
       const nW = wrap.clientWidth;
       const nH = wrap.clientHeight;
       const nPad = isMobile() ? 16 : 40;
-      proj.fitExtent([[nPad, nPad], [nW - nPad, nH - nPad]], ncFC);
+      proj.fitExtent([[nPad, nPad], [nW - nPad, nH - nPad]], stateFC);
       countyPaths.attr('d', pathGen);
       if (neighborStates) g.selectAll('.neighbor-county').attr('d', pathGen);
       if (stateMesh) g.select('.neighbor-state-line').attr('d', pathGen);
 
       if (selectedCountyRef.current) {
-        const feat = ncFeatures.find(f => f.properties.name + ' County' === selectedCountyRef.current);
+        const feat = stateFeatures.find(f => f.properties.name + ' County' === selectedCountyRef.current);
         if (feat) {
           const sidebarW = isMobile() ? 0 : 300;
           const visW = nW - sidebarW;
@@ -357,13 +359,13 @@ export default function NCMap({
       svg.on('pointerdown', null).on('pointermove', null).on('pointerup', null);
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ncFeatures, countyData, allSchools, neighborStates, stateMesh]);
+  }, [stateFeatures, countyData, allSchools, neighborStates, stateMesh]);
 
   // ── Geolocation coords arrived — highlight the user's county ──
   useEffect(() => {
-    if (!userCoords || !ncFeatures || !countyPathsRef.current || !locHighlightGRef.current || !pathGenRef.current) return;
+    if (!userCoords || !stateFeatures || !countyPathsRef.current || !locHighlightGRef.current || !pathGenRef.current) return;
     const { longitude, latitude } = userCoords;
-    const feature = ncFeatures.find(f => d3.geoContains(f, [longitude, latitude]));
+    const feature = stateFeatures.find(f => d3.geoContains(f, [longitude, latitude]));
     if (feature) {
       const name = feature.properties.name + ' County';
       setDetectedCounty(name);
@@ -371,7 +373,7 @@ export default function NCMap({
       if (onGeoCountyDetected) onGeoCountyDetected(name);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userCoords, ncFeatures]);
+  }, [userCoords, stateFeatures]);
 
   // ── Update county fill when view changes ──
   useEffect(() => {
@@ -442,7 +444,7 @@ export default function NCMap({
     }
 
     // Find the feature for the selected county
-    const feature = ncFeatures.find(f => f.properties.name + ' County' === selectedCounty);
+    const feature = stateFeatures.find(f => f.properties.name + ' County' === selectedCounty);
     if (!feature) return;
 
     zoomedRef.current = true;
@@ -465,7 +467,7 @@ export default function NCMap({
     if (!isMobile() && adjacencyMap) {
       const adjCounties = adjacencyMap[feature.id] || [];
       const adjList = adjCounties.flatMap(id => {
-        const f = ncFeatures.find(ff => ff.id === id);
+        const f = stateFeatures.find(ff => ff.id === id);
         return f ? allSchools.filter(s => s.county === f.properties.name + ' County') : [];
       });
       adjSchoolsG.selectAll('circle').data(adjList).enter().append('circle')
@@ -518,7 +520,7 @@ export default function NCMap({
 
     hideTT();
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedCounty, ncFeatures, allSchools, countyData, adjacencyMap]);
+  }, [selectedCounty, stateFeatures, allSchools, countyData, adjacencyMap]);
 
   // ── Highlight user county helper ──
   function highlightUserCounty(feature, countyPaths, locHighlightG, pathGen) {
@@ -584,7 +586,7 @@ export default function NCMap({
         <span className="load-text">Loading map...</span>
       </div>
 
-      <svg id="map-svg" ref={svgRef} role="application" aria-label="NC county map">
+      <svg id="map-svg" ref={svgRef} role="application" aria-label={`${stateName} county map`}>
         <rect id="ocean-bg" width="100%" height="100%" fill="#c5dae8" />
         <g id="map-g"></g>
       </svg>
@@ -641,7 +643,7 @@ export default function NCMap({
 
       <div id="tooltip" role="tooltip" aria-hidden="true"></div>
 
-      <MapLegend currentView={currentView} />
+      <MapLegend currentView={currentView} stateCode={stateCode} />
     </div>
   );
 }

@@ -1,19 +1,30 @@
 import { useState, useEffect } from 'react';
 import * as topojson from 'topojson-client';
 import { covTier } from '../config/index.js';
+import { getStateConfig, DEFAULT_STATE_CODE } from '../config/states.js';
 
-export function useDashboardData() {
-  const [state, setState] = useState({ countyData: null, allSchools: null, ncFeatures: null, neighborStates: null, stateMesh: null, adjacencyMap: null, loading: true, error: null });
+export function useDashboardData(stateCode = DEFAULT_STATE_CODE) {
+  const [state, setState] = useState({
+    countyData: null,
+    allSchools: null,
+    stateFeatures: null,
+    neighborStates: null,
+    stateMesh: null,
+    adjacencyMap: null,
+    loading: true,
+    error: null,
+  });
 
   useEffect(() => {
     let cancelled = false;
+    const cfg = getStateConfig(stateCode);
 
     async function load() {
       try {
         const [dashRes, usRes, coordsRes] = await Promise.all([
-          fetch(`${import.meta.env.BASE_URL}NC/json/dashboard.json`),
+          fetch(`${import.meta.env.BASE_URL}${cfg.dataDir}/json/dashboard.json`),
           fetch('https://cdn.jsdelivr.net/npm/us-atlas@3/counties-10m.json'),
-          fetch(`${import.meta.env.BASE_URL}NC/json/school_coords.json`)
+          fetch(`${import.meta.env.BASE_URL}${cfg.dataDir}/json/school_coords.json`)
         ]);
 
         if (!dashRes.ok) throw new Error('Failed to load dashboard data');
@@ -23,22 +34,28 @@ export function useDashboardData() {
         const us = await usRes.json();
         const schoolCoordsLookup = coordsRes.ok ? await coordsRes.json() : {};
 
-        const ncFeatures = topojson.feature(us, us.objects.counties).features.filter(f => String(f.id).startsWith('37'));
-        const neighborStates = topojson.feature(us, us.objects.states).features.filter(f => +f.id !== 37);
+        const stateFeatures = topojson
+          .feature(us, us.objects.counties)
+          .features
+          .filter(f => String(f.id).startsWith(cfg.fips));
+        const neighborStates = topojson
+          .feature(us, us.objects.states)
+          .features
+          .filter(f => String(f.id) !== String(+cfg.fips));
         const stateMesh = topojson.mesh(us, us.objects.states, (a, b) => a !== b);
 
         // Build adjacency map from shared county borders
-        const ncIds = new Set(ncFeatures.map(f => f.id));
+        const stateCountyIds = new Set(stateFeatures.map(f => f.id));
         const adjacencyMap = {};
-        ncFeatures.forEach(f => { adjacencyMap[f.id] = []; });
+        stateFeatures.forEach(f => { adjacencyMap[f.id] = []; });
         topojson.neighbors(us.objects.counties.geometries).forEach((neighbors, i) => {
           const geo = us.objects.counties.geometries[i];
           const id = geo.id != null ? String(geo.id) : String(i);
-          if (!ncIds.has(id)) return;
+          if (!stateCountyIds.has(id)) return;
           neighbors.forEach(j => {
             const nGeo = us.objects.counties.geometries[j];
             const nId = nGeo.id != null ? String(nGeo.id) : String(j);
-            if (ncIds.has(nId) && !adjacencyMap[id].includes(nId)) {
+            if (stateCountyIds.has(nId) && !adjacencyMap[id].includes(nId)) {
               adjacencyMap[id].push(nId);
             }
           });
@@ -46,7 +63,7 @@ export function useDashboardData() {
 
         // Build a lookup from county name (without " County") to its GeoJSON feature
         const featureByName = {};
-        ncFeatures.forEach(f => {
+        stateFeatures.forEach(f => {
           featureByName[f.properties.name] = f;
         });
 
@@ -108,7 +125,16 @@ export function useDashboardData() {
         });
 
         if (!cancelled) {
-          setState({ countyData, allSchools, ncFeatures, neighborStates, stateMesh, adjacencyMap, loading: false, error: null });
+          setState({
+            countyData,
+            allSchools,
+            stateFeatures,
+            neighborStates,
+            stateMesh,
+            adjacencyMap,
+            loading: false,
+            error: null,
+          });
         }
       } catch (err) {
         if (!cancelled) {
@@ -119,7 +145,7 @@ export function useDashboardData() {
 
     load();
     return () => { cancelled = true; };
-  }, []);
+  }, [stateCode]);
 
   return state;
 }

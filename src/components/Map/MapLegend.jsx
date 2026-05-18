@@ -1,7 +1,9 @@
 import { TIER_COLORS, LEGEND } from '../../config/index.js';
+import { getStateConfig } from '../../config/states.js';
 
-export default function MapLegend({ currentView }) {
+export default function MapLegend({ currentView, stateCode }) {
   const lv = LEGEND[currentView] || LEGEND.coverage;
+  const stateCfg = getStateConfig(stateCode);
 
   return (
     <div id="map-legend" role="img" aria-label="Map legend">
@@ -25,7 +27,7 @@ export default function MapLegend({ currentView }) {
         <span>{lv.l}</span>
       </div>
       <div className="map-leg-sources">
-        <a href="https://www.dph.ncdhhs.gov/programs/epidemiology/immunization/data/kindergarten-dashboard" target="_blank" rel="noopener noreferrer">NC DHHS</a>
+        <a href={stateCfg.sourceUrl} target="_blank" rel="noopener noreferrer">{stateCfg.sourceLabel}</a>
         {' · '}
         <a href="https://www.cdc.gov/vaccines/data-reporting/index.html" target="_blank" rel="noopener noreferrer">CDC VaxView</a>
         {' · imuGAP'}

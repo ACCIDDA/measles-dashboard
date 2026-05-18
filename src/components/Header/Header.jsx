@@ -1,7 +1,14 @@
 import { useState } from 'react';
 import CountySearch from './CountySearch.jsx';
 
-export default function Header({ currentView, onViewChange, ncFeatures, countyData, onCountySelect }) {
+export default function Header({
+  currentView,
+  onViewChange,
+  stateFeatures,
+  countyData,
+  onCountySelect,
+  stateName = 'NC',
+}) {
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
 
   const handleCountySelect = (feature) => {
@@ -9,6 +16,10 @@ export default function Header({ currentView, onViewChange, ncFeatures, countyDa
     onCountySelect(name);
     setMobileSearchOpen(false);
   };
+
+  const searchPlaceholder = `Search ${stateName} counties…`;
+  const searchAriaLabel = `Search for a ${stateName} county`;
+  const searchRegionLabel = `Find a ${stateName} county`;
 
   return (
     <header role="banner">
@@ -21,26 +32,27 @@ export default function Header({ currentView, onViewChange, ncFeatures, countyDa
       />
 
       <div className="hd-title">
-        <h1>NC Measles (MMR) Coverage</h1>
+        <h1>{stateName} Measles (MMR) Coverage</h1>
         <p>K&ndash;5 schools &middot; Click a county to explore</p>
       </div>
 
       {/* Desktop: always-visible search */}
-      <div className="hd-search-inline" role="search" aria-label="Find an NC county">
+      <div className="hd-search-inline" role="search" aria-label={searchRegionLabel}>
         <CountySearch
-          ncFeatures={ncFeatures}
+          stateFeatures={stateFeatures}
           countyData={countyData}
           onSelect={handleCountySelect}
           inputId="county-search-main"
           dropdownId="main-dropdown"
-          placeholder="Search NC counties…"
+          placeholder={searchPlaceholder}
+          ariaLabel={searchAriaLabel}
         />
       </div>
 
       {/* Mobile: icon -> panel */}
       <button
         id="hd-search-btn"
-        aria-label="Search NC counties"
+        aria-label={`Search ${stateName} counties`}
         aria-expanded={mobileSearchOpen}
         aria-controls="hd-search-expanded"
         onClick={() => setMobileSearchOpen(prev => !prev)}
@@ -52,12 +64,13 @@ export default function Header({ currentView, onViewChange, ncFeatures, countyDa
       </button>
       <div id="hd-search-expanded" className={mobileSearchOpen ? 'show' : ''} role="dialog" aria-label="County search">
         <CountySearch
-          ncFeatures={ncFeatures}
+          stateFeatures={stateFeatures}
           countyData={countyData}
           onSelect={handleCountySelect}
           inputId="county-search-mobile"
           dropdownId="mobile-dropdown"
-          placeholder="Search NC counties…"
+          placeholder={searchPlaceholder}
+          ariaLabel={searchAriaLabel}
           isMobile
         />
       </div>
