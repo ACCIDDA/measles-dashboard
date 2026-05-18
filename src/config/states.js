@@ -43,7 +43,7 @@ export const FIPS_TO_USPS = {
   '39': 'OH', '40': 'OK', '41': 'OR', '42': 'PA', '44': 'RI',
   '45': 'SC', '46': 'SD', '47': 'TN', '48': 'TX', '49': 'UT',
   '50': 'VT', '51': 'VA', '53': 'WA', '54': 'WV', '55': 'WI',
-  '56': 'WY',
+  '56': 'WY', '72': 'PR',
 };
 
 // Normalize a us-atlas state feature id (which may be a number or a

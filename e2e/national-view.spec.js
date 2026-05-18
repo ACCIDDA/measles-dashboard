@@ -1,13 +1,11 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('National view (root path)', () => {
-  test('renders all 50 states + DC as separate paths', async ({ page }) => {
+  test('renders all 50 states + DC + PR as separate paths', async ({ page }) => {
     await page.goto('/');
     await page.waitForSelector('path.state-path', { timeout: 15000 });
     const count = await page.locator('path.state-path').count();
-    // us-atlas exposes the 50 states + DC; tolerate the small handful of
-    // territories that sometimes appear in the topology, but require the
-    // canonical 51.
+    // us-atlas exposes the 50 states + DC; PR is included via the FIPS table.
     expect(count).toBeGreaterThanOrEqual(51);
   });
 

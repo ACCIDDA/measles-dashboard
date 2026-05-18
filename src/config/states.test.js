@@ -57,8 +57,8 @@ describe('getStateConfig', () => {
 });
 
 describe('FIPS_TO_USPS', () => {
-  it('covers 50 states + DC', () => {
-    expect(Object.keys(FIPS_TO_USPS).length).toBe(51);
+  it('covers 50 states + DC + PR', () => {
+    expect(Object.keys(FIPS_TO_USPS).length).toBe(52);
   });
 
   it('maps NC FIPS 37 → "NC"', () => {
@@ -67,6 +67,10 @@ describe('FIPS_TO_USPS', () => {
 
   it('maps DC FIPS 11 → "DC"', () => {
     expect(FIPS_TO_USPS['11']).toBe('DC');
+  });
+
+  it('maps PR FIPS 72 → "PR"', () => {
+    expect(FIPS_TO_USPS['72']).toBe('PR');
   });
 
   it('uses 2-digit zero-padded FIPS strings as keys', () => {
@@ -100,9 +104,12 @@ describe('fipsToUsps', () => {
     expect(fipsToUsps(6)).toBe('ca');
   });
 
-  it('returns null for FIPS codes outside the 50 + DC', () => {
-    expect(fipsToUsps('72')).toBeNull(); // Puerto Rico — not in the map
+  it('returns null for FIPS codes outside the 50 + DC + PR set', () => {
     expect(fipsToUsps('99')).toBeNull();
     expect(fipsToUsps(null)).toBeNull();
+  });
+
+  it('returns "pr" for Puerto Rico FIPS 72', () => {
+    expect(fipsToUsps('72')).toBe('pr');
   });
 });
