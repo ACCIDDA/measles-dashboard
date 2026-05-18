@@ -1,0 +1,25 @@
+school,enrollment,coverage_pct,tier,estimated_K_pct,estimated_1st_pct,estimated_2nd_pct,estimated_3rd_pct,estimated_4th_pct,estimated_5th_pct,reported_K_pct,reported_1st_pct,reported_2nd_pct,reported_3rd_pct,reported_4th_pct,reported_5th_pct
+Aberdeen Elementary School,646,98.2,High,97.0,99.0,94.0,100.0,98.0,100.0,,99.0,94.0,100.0,,100.0
+Calvary Christian School,98,91.5,Medium,91.0,88.0,91.0,92.0,92.0,93.0,,88.0,,,,
+Cameron Elementary,224,98.8,High,98.0,96.0,97.0,100.0,100.0,100.0,,96.0,97.0,100.0,100.0,100.0
+Carthage Elementary,321,98.5,High,98.0,98.0,98.0,100.0,100.0,96.0,,98.0,98.0,100.0,100.0,96.0
+Connect Academy,53,81.2,Low,83.0,75.0,80.0,100.0,,,,75.0,80.0,100.0,,
+Covenant Preparatory School,82,75.3,Low,74.0,66.0,60.0,73.0,77.0,100.0,,66.0,60.0,73.0,,100.0
+Episcopal Day School,202,97.0,High,97.0,87.0,100.0,100.0,96.0,100.0,,87.0,100.0,100.0,96.0,100.0
+Fellowship Christian Academy,146,87.7,Low,87.0,73.0,90.0,96.0,92.0,89.0,,73.0,90.0,96.0,92.0,
+Highfalls Elementary,166,97.2,High,97.0,95.0,93.0,96.0,100.0,100.0,,95.0,93.0,96.0,100.0,100.0
+McDeeds Creek Elementary,638,96.9,High,96.0,97.0,98.0,92.0,97.0,100.0,,97.0,98.0,92.0,,100.0
+Moore Montessori Community School,291,90.1,Medium,87.0,86.0,87.0,92.0,88.0,100.0,,86.0,,92.0,,100.0
+O'Neal School,199,95.8,High,96.0,100.0,89.0,94.0,100.0,92.0,,100.0,89.0,94.0,100.0,92.0
+Pinehurst Elementary,558,98.5,High,98.0,100.0,98.0,96.0,98.0,100.0,,100.0,98.0,96.0,,100.0
+Robbins Elementary,369,99.3,High,99.0,98.0,100.0,100.0,100.0,98.0,,98.0,100.0,100.0,100.0,98.0
+Sandhills Classical Christian School,263,85.5,Low,86.0,80.0,94.0,76.0,88.0,89.0,,80.0,94.0,76.0,,
+Sandhills Farm Life Elementary,363,97.3,High,97.0,95.0,100.0,94.0,98.0,100.0,,95.0,100.0,94.0,,100.0
+Southern Pines Elementary School,482,97.6,High,97.0,98.0,96.0,94.0,100.0,,,98.0,96.0,94.0,100.0,
+St. John Paul II Catholic School,120,83.5,Low,86.0,100.0,83.0,57.0,83.0,100.0,,100.0,83.0,57.0,83.0,100.0
+STARS Charter,268,97.5,High,97.0,98.0,96.0,,,,,98.0,96.0,,,
+The Academy of Moore County,565,97.2,High,97.0,95.0,97.0,96.0,96.0,100.0,,95.0,97.0,96.0,96.0,100.0
+Vass-Lakeview Elementary,421,96.9,High,97.0,94.0,95.0,94.0,100.0,100.0,,94.0,95.0,94.0,100.0,100.0
+West End Elementary,336,96.8,High,97.0,97.0,90.0,98.0,97.0,100.0,,97.0,90.0,98.0,,100.0
+West Pine Elementary,399,96.6,High,96.0,95.0,90.0,100.0,96.0,100.0,,95.0,90.0,100.0,96.0,100.0
+Westmoore Elementary,149,99.0,High,98.0,96.0,100.0,100.0,100.0,100.0,,96.0,100.0,100.0,100.0,100.0

@@ -1,0 +1,14 @@
+school,enrollment,coverage_pct,tier,estimated_K_pct,estimated_1st_pct,estimated_2nd_pct,estimated_3rd_pct,estimated_4th_pct,estimated_5th_pct,reported_K_pct,reported_1st_pct,reported_2nd_pct,reported_3rd_pct,reported_4th_pct,reported_5th_pct
+Academy of Unique Learners,6,97.2,High,,100.0,,,,,,100.0,,,,
+Clement Elementary,292,97.8,High,97.0,96.0,100.0,95.0,98.0,100.0,,96.0,100.0,95.0,,100.0
+Hargrove Elementary,309,95.9,High,95.0,100.0,96.0,96.0,95.0,93.0,,100.0,96.0,96.0,,93.0
+Harrells Christian Academy,220,95.7,High,96.0,92.0,94.0,92.0,100.0,100.0,,92.0,94.0,92.0,100.0,100.0
+Hobbton Elementary,411,98.3,High,96.0,100.0,100.0,98.0,97.0,96.0,,100.0,100.0,98.0,,96.0
+Langdon C Kerr Elementary,1381,98.4,High,96.0,99.0,98.0,98.0,98.0,99.0,,99.0,98.0,98.0,98.0,99.0
+Midway Elementary,475,94.9,Medium,95.0,91.0,95.0,91.0,100.0,96.0,,91.0,95.0,91.0,100.0,96.0
+New Life Uplifted School,4,97.1,High,,100.0,,100.0,,,,100.0,,100.0,,
+Plain View Elementary,353,96.1,High,95.0,93.0,96.0,100.0,100.0,92.0,,93.0,96.0,100.0,100.0,92.0
+Roseboro Elementary,361,94.1,Medium,94.0,92.0,98.0,95.0,92.0,90.0,,92.0,98.0,95.0,92.0,90.0
+Salemburg Elementary,449,94.1,Medium,93.0,97.0,94.0,98.0,86.0,94.0,,97.0,94.0,98.0,86.0,
+The Point Christian Academy,34,99.7,High,,100.0,100.0,100.0,100.0,100.0,,100.0,100.0,100.0,100.0,100.0
+Union Elementary,811,95.7,High,94.0,95.0,95.0,95.0,98.0,95.0,,95.0,95.0,95.0,98.0,95.0

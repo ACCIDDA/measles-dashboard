@@ -1,0 +1,5 @@
+school,enrollment,coverage_pct,tier,estimated_K_pct,estimated_1st_pct,estimated_2nd_pct,estimated_3rd_pct,estimated_4th_pct,estimated_5th_pct,reported_K_pct,reported_1st_pct,reported_2nd_pct,reported_3rd_pct,reported_4th_pct,reported_5th_pct
+East End Elementary,285,95.8,High,95.0,93.0,98.0,88.0,97.0,100.0,,93.0,98.0,88.0,97.0,100.0
+Jamesville Elementary,186,98.0,High,97.0,100.0,100.0,93.0,97.0,100.0,,100.0,100.0,93.0,,100.0
+Rodgers Elementary,190,96.9,High,97.0,100.0,100.0,97.0,94.0,94.0,,100.0,100.0,,94.0,94.0
+Williamston Primary,624,95.1,High,95.0,99.0,95.0,87.0,98.0,96.0,,99.0,95.0,87.0,98.0,96.0

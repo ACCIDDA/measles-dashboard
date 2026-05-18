@@ -1,0 +1,94 @@
+school,enrollment,coverage_pct,tier,estimated_K_pct,estimated_1st_pct,estimated_2nd_pct,estimated_3rd_pct,estimated_4th_pct,estimated_5th_pct,reported_K_pct,reported_1st_pct,reported_2nd_pct,reported_3rd_pct,reported_4th_pct,reported_5th_pct
+Alamance Elementary,416,93.7,Medium,94.0,98.0,96.0,94.0,95.0,83.0,,98.0,96.0,,,83.0
+Allen Jay Elementary,455,95.5,High,95.0,95.0,93.0,95.0,96.0,97.0,,95.0,93.0,,,97.0
+Beacon Academy,20,93.8,Medium,,,100.0,100.0,,,,,100.0,100.0,,
+Bessemer Elementary,449,74.7,Low,77.0,28.0,96.0,78.0,80.0,88.0,,28.0,96.0,,,88.0
+Bluford Elementary,251,86.0,Low,87.0,80.0,89.0,88.0,89.0,78.0,,80.0,89.0,,,78.0
+Brightwood Elementary,435,94.1,Medium,93.0,94.0,96.0,94.0,94.0,91.0,,94.0,96.0,,,91.0
+Brooks Global Elementary,334,98.6,High,98.0,100.0,98.0,98.0,98.0,98.0,,100.0,98.0,,,98.0
+Caldwell Academy,198,99.3,High,97.0,100.0,100.0,100.0,98.0,100.0,,100.0,100.0,100.0,,100.0
+Canterbury School,173,98.4,High,97.0,100.0,96.0,100.0,95.0,100.0,,100.0,96.0,100.0,95.0,100.0
+Ceasar Cone Elementary,415,92.0,Medium,92.0,86.0,85.0,93.0,93.0,100.0,,86.0,85.0,,,100.0
+Clara J Peck Elementary,362,98.4,High,97.0,100.0,100.0,97.0,97.0,97.0,,100.0,100.0,,,97.0
+Claxton Elementary,487,95.6,High,95.0,96.0,89.0,96.0,96.0,97.0,,96.0,89.0,,,97.0
+Colfax Elementary,562,98.6,High,98.0,98.0,98.0,98.0,98.0,97.0,,98.0,98.0,,,97.0
+Cornerstone Charter Academy,602,97.6,High,97.0,95.0,97.0,99.0,99.0,98.0,,95.0,97.0,99.0,99.0,
+Cyrus P Frazier Elementary,281,90.4,Medium,92.0,91.0,92.0,92.0,93.0,77.0,,91.0,92.0,,,77.0
+David D Jones Elementary,697,96.2,High,96.0,92.0,95.0,96.0,96.0,99.0,,92.0,95.0,,,99.0
+Edwin A Alderman Elementary,342,96.7,High,97.0,100.0,96.0,97.0,97.0,90.0,,100.0,96.0,,,90.0
+Erwin Montessori,209,95.5,High,95.0,100.0,89.0,95.0,96.0,96.0,,100.0,89.0,,,96.0
+Fairview Elementary,401,97.8,High,97.0,96.0,97.0,98.0,98.0,98.0,,96.0,97.0,,,98.0
+Faith Christian Academy,76,97.3,High,96.0,92.0,100.0,100.0,97.0,,,92.0,100.0,100.0,,
+Florence Elementary,561,98.4,High,98.0,98.0,97.0,98.0,98.0,98.0,,98.0,97.0,,,98.0
+Gate City Charter Academy,587,92.8,Medium,92.0,95.0,94.0,92.0,93.0,87.0,,95.0,94.0,,,87.0
+Gateway Education Center,17,97.5,High,,100.0,100.0,,,,,100.0,100.0,,,
+General Greene Elementary,388,97.3,High,97.0,97.0,100.0,97.0,98.0,94.0,,97.0,100.0,,,94.0
+Gibsonville Elementary,492,97.4,High,97.0,98.0,95.0,97.0,97.0,98.0,,98.0,95.0,,,98.0
+Gillespie Park Elementary,185,95.4,High,94.0,93.0,94.0,95.0,95.0,100.0,,93.0,94.0,,,100.0
+Greensboro Academy,517,99.2,High,99.0,98.0,100.0,98.0,98.0,100.0,,98.0,100.0,98.0,98.0,100.0
+Greensboro Day School,295,97.7,High,97.0,95.0,98.0,97.0,100.0,100.0,,95.0,98.0,97.0,100.0,100.0
+Greensboro Islamic Academy,95,95.9,High,95.0,95.0,95.0,95.0,100.0,96.0,,95.0,,,100.0,
+Greensboro Montessori School,154,91.6,Medium,92.0,100.0,92.0,88.0,90.0,86.0,,100.0,92.0,88.0,90.0,86.0
+Guilford eLearning University Prep,36,81.4,Low,84.0,72.0,85.0,,,,,72.0,85.0,,,
+Guilford Elementary,547,93.3,Medium,92.0,89.0,92.0,92.0,93.0,100.0,,89.0,92.0,,,100.0
+Guilford Preparatory Academy,380,97.7,High,97.0,100.0,100.0,100.0,97.0,88.0,,100.0,100.0,100.0,,88.0
+Harvest Academy,42,49.9,Low,57.0,42.0,,,,,,42.0,,,,
+Haynes Inman Education Center,38,94.8,Medium,,100.0,,100.0,,100.0,,100.0,,100.0,,100.0
+Herbin Metz Education Center,40,90.3,Medium,,,,,,100.0,,,,,,100.0
+High Point Christian Academy,326,89.3,Low,90.0,88.0,83.0,88.0,95.0,93.0,,88.0,83.0,88.0,95.0,93.0
+Hope Academy,43,94.2,Medium,,100.0,92.0,92.0,,,,100.0,92.0,92.0,,
+Hunter Elementary,432,98.1,High,98.0,95.0,98.0,98.0,98.0,100.0,,95.0,,,,100.0
+Ibn Sina Islamic Academy,24,97.7,High,95.0,100.0,,,,,,100.0,,,,
+Immaculate Heart of Mary Cath Sch,134,96.8,High,97.0,91.0,97.0,94.0,100.0,100.0,,91.0,,94.0,100.0,100.0
+Irving Park Elementary,475,94.2,Medium,95.0,88.0,90.0,95.0,95.0,100.0,,88.0,90.0,,,100.0
+James Y Joyner Elementary,225,94.4,Medium,93.0,95.0,90.0,94.0,94.0,100.0,,95.0,90.0,,,100.0
+Jamestown Elementary,420,95.8,High,95.0,95.0,95.0,95.0,95.0,98.0,,95.0,95.0,,,98.0
+Jefferson Elementary,603,96.2,High,96.0,93.0,96.0,96.0,96.0,97.0,,93.0,96.0,,,97.0
+John Van Lindley Elementary,420,94.0,Medium,93.0,90.0,93.0,93.0,94.0,100.0,,90.0,,,,100.0
+Johnson Street Global Studies,237,96.9,High,96.0,94.0,97.0,97.0,97.0,97.0,,94.0,97.0,,,97.0
+Julius I Foust Elementary,510,97.2,High,97.0,94.0,97.0,97.0,97.0,100.0,,94.0,,,,100.0
+Madison Elementary,157,94.7,Medium,95.0,96.0,90.0,93.0,96.0,100.0,,96.0,90.0,93.0,,100.0
+McLeansville Elementary,300,94.0,Medium,95.0,88.0,91.0,95.0,95.0,100.0,,88.0,91.0,,,100.0
+Melanin Village Prep,16,62.2,Low,,,,,,,,,,,,
+Millis Road Elementary,387,96.1,High,96.0,97.0,95.0,96.0,96.0,94.0,,97.0,95.0,,,94.0
+Monticello-Brown Summit Elem,261,98.3,High,98.0,100.0,98.0,98.0,98.0,97.0,,100.0,98.0,,,97.0
+Montlieu Academy of Technology,533,92.6,Medium,93.0,80.0,98.0,93.0,94.0,98.0,,80.0,98.0,,,98.0
+Morehead Elementary,483,87.3,Low,90.0,95.0,96.0,90.0,91.0,57.0,,95.0,96.0,,,57.0
+New Garden Friends School,94,98.5,High,97.0,100.0,94.0,100.0,100.0,100.0,,100.0,94.0,100.0,100.0,100.0
+Next Generation Academy,314,86.0,Low,86.0,100.0,69.0,78.0,88.0,100.0,,100.0,69.0,78.0,,100.0
+Northern Guilford Elementary,493,98.0,High,96.0,97.0,100.0,96.0,97.0,100.0,,97.0,100.0,,,100.0
+Northwood Elementary,463,97.0,High,97.0,96.0,95.0,97.0,97.0,98.0,,96.0,95.0,,,98.0
+Oak Hill Elementary,357,98.0,High,96.0,100.0,98.0,96.0,96.0,100.0,,100.0,98.0,,,100.0
+Oak Ridge Elementary,565,98.1,High,98.0,95.0,97.0,98.0,98.0,100.0,,95.0,97.0,,,100.0
+Oak View Elementary,449,96.0,High,96.0,90.0,96.0,97.0,97.0,100.0,,90.0,96.0,,,100.0
+Our Lady of Grace Catholic School,143,97.3,High,96.0,96.0,90.0,100.0,100.0,100.0,,96.0,90.0,100.0,100.0,100.0
+Parkview Village Elementary,325,96.8,High,96.0,89.0,100.0,97.0,97.0,97.0,,89.0,100.0,,,
+Phoenix Academy Inc,807,99.1,High,98.0,97.0,98.0,100.0,100.0,100.0,,97.0,98.0,100.0,100.0,100.0
+Pilot Elementary,455,95.4,High,95.0,94.0,92.0,96.0,96.0,98.0,,94.0,92.0,,,98.0
+Pleasant Garden Elementary,352,94.4,Medium,95.0,87.0,92.0,95.0,96.0,100.0,,87.0,92.0,,,100.0
+Rankin Elementary,562,92.1,Medium,93.0,98.0,89.0,93.0,94.0,83.0,,98.0,89.0,,,83.0
+Reedy Fork Elementary,481,87.8,Low,89.0,93.0,92.0,89.0,90.0,63.0,,93.0,92.0,,,63.0
+Revolution Academy,520,94.1,Medium,93.0,89.0,92.0,95.0,94.0,100.0,,89.0,92.0,95.0,,100.0
+Ronald E. McNair Elementary,391,92.5,Medium,94.0,90.0,81.0,94.0,95.0,100.0,,90.0,81.0,,,100.0
+Sedalia Elementary,473,85.0,Low,88.0,98.0,51.0,89.0,89.0,98.0,,98.0,51.0,,,98.0
+Shadybrook Elementary,279,96.4,High,96.0,94.0,95.0,96.0,96.0,100.0,,94.0,95.0,,,100.0
+Shining Light Academy,97,92.7,Medium,93.0,95.0,93.0,88.0,94.0,,,95.0,,88.0,,
+Southern Elementary,199,98.7,High,98.0,96.0,100.0,98.0,98.0,100.0,,96.0,100.0,,,100.0
+Southwest  Elementary,703,96.4,High,96.0,90.0,97.0,97.0,97.0,100.0,,90.0,97.0,97.0,,100.0
+St. Pius X Catholic School,206,98.8,High,98.0,96.0,97.0,100.0,100.0,100.0,,96.0,97.0,100.0,100.0,100.0
+Sternberger Elementary,418,97.0,High,97.0,95.0,98.0,97.0,97.0,96.0,,95.0,98.0,,,96.0
+Stokesdale Elementary,433,97.2,High,97.0,98.0,92.0,97.0,97.0,100.0,,98.0,92.0,,,100.0
+Summerfield Charter Academy,528,95.2,High,95.0,96.0,96.0,95.0,88.0,98.0,,96.0,96.0,95.0,88.0,98.0
+Summerfield Elementary,431,95.7,High,96.0,93.0,95.0,96.0,96.0,96.0,,93.0,95.0,,,96.0
+Summit Creek Academy,495,90.9,Medium,90.0,100.0,77.0,91.0,95.0,,,100.0,77.0,,95.0,
+The College Preparatory and Leadership Academy of High Point,426,94.2,Medium,94.0,98.0,94.0,80.0,100.0,96.0,,98.0,94.0,80.0,100.0,96.0
+The Experiential School of Greensboro,141,91.7,Medium,90.0,92.0,71.0,96.0,92.0,100.0,,92.0,71.0,96.0,,100.0
+Tri-City Christian Academy,63,91.8,Medium,,100.0,83.0,93.0,93.0,90.0,,100.0,83.0,,,90.0
+Triad Math and Science Academy,615,90.4,Medium,91.0,94.0,89.0,74.0,95.0,98.0,,94.0,89.0,74.0,95.0,98.0
+Triangle Lake Montessori Elem,405,96.1,High,96.0,98.0,92.0,97.0,97.0,93.0,,98.0,92.0,,,93.0
+Union Hill Elementary,397,94.9,Medium,96.0,97.0,100.0,96.0,96.0,82.0,,97.0,100.0,,,82.0
+Vandalia Christian School,180,97.9,High,97.0,96.0,95.0,100.0,100.0,100.0,,96.0,95.0,100.0,100.0,100.0
+Vandalia Elementary,188,95.3,High,94.0,96.0,95.0,94.0,95.0,95.0,,96.0,95.0,,,95.0
+Waldo C Falkener Sr Elementary,494,76.4,Low,78.0,95.0,80.0,79.0,80.0,39.0,,95.0,80.0,,,39.0
+Washington Elementary,261,87.5,Low,91.0,94.0,89.0,91.0,92.0,69.0,,94.0,89.0,,,69.0
+Wesleyan Christian Academy,576,90.8,Medium,90.0,97.0,89.0,93.0,95.0,78.0,,97.0,89.0,93.0,95.0,78.0

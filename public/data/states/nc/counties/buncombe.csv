@@ -1,0 +1,49 @@
+school,enrollment,coverage_pct,tier,estimated_K_pct,estimated_1st_pct,estimated_2nd_pct,estimated_3rd_pct,estimated_4th_pct,estimated_5th_pct,reported_K_pct,reported_1st_pct,reported_2nd_pct,reported_3rd_pct,reported_4th_pct,reported_5th_pct
+ArtSpace Charter School,212,78.4,Low,76.0,66.0,88.0,88.0,85.0,65.0,,66.0,88.0,88.0,85.0,65.0
+Asheville Christian Academy,260,82.5,Low,83.0,60.0,85.0,88.0,82.0,96.0,,60.0,85.0,88.0,82.0,96.0
+Asheville Montessori  School,74,82.9,Low,81.0,83.0,81.0,82.0,83.0,84.0,,83.0,81.0,,,
+Asheville PEAK Academy,110,86.1,Low,86.0,86.0,78.0,96.0,,,,86.0,78.0,96.0,,
+Asheville Waldorf School,52,52.0,Low,55.0,50.0,50.0,,,,,50.0,50.0,,,
+Asheville-Pisgah Christian School,97,42.7,Low,46.0,43.0,52.0,31.0,25.0,50.0,,43.0,52.0,31.0,25.0,50.0
+Avery's Creek Elementary,644,96.1,High,95.0,97.0,94.0,96.0,96.0,95.0,,97.0,94.0,96.0,,95.0
+Barnardsville Elementary,140,94.4,Medium,92.0,95.0,95.0,94.0,88.0,100.0,,95.0,95.0,94.0,88.0,100.0
+Bell Elementary,217,94.8,Medium,94.0,94.0,97.0,90.0,92.0,100.0,,94.0,97.0,90.0,92.0,100.0
+Black Mountain Primary,472,94.9,Medium,92.0,93.0,93.0,94.0,97.0,97.0,,93.0,93.0,94.0,97.0,97.0
+Buncombe County Schools Virtual Academy,26,73.1,Low,,100.0,,,,,,100.0,,,,
+Candler Elementary,478,93.7,Medium,94.0,89.0,89.0,96.0,92.0,100.0,,89.0,89.0,96.0,92.0,100.0
+CANTERBURY CLASSICAL SCHOOL,83,70.0,Low,72.0,76.0,72.0,66.0,75.0,57.0,,76.0,,66.0,,57.0
+Carolina Day School,192,95.3,High,93.0,100.0,91.0,96.0,100.0,88.0,,100.0,91.0,96.0,100.0,88.0
+Claxton Elementary,386,95.4,High,94.0,92.0,97.0,98.0,95.0,95.0,,92.0,97.0,98.0,,95.0
+Emma Elementary,316,97.1,High,95.0,97.0,96.0,95.0,96.0,100.0,,97.0,96.0,95.0,,100.0
+Emmanuel Lutheran School,106,99.3,High,98.0,100.0,100.0,100.0,98.0,98.0,,100.0,100.0,100.0,,
+Estes Elementary,815,92.7,Medium,92.0,83.0,94.0,93.0,98.0,93.0,,83.0,94.0,93.0,98.0,93.0
+Evergreen Community Charter,264,86.5,Low,80.0,79.0,90.0,95.0,72.0,100.0,,79.0,90.0,95.0,72.0,100.0
+Fairview Elementary,560,95.3,High,93.0,92.0,93.0,95.0,97.0,100.0,,92.0,93.0,95.0,97.0,100.0
+Francine Delany New School,61,86.3,Low,88.0,90.0,80.0,,,,,90.0,80.0,,,
+Glen Arden Elementary,584,95.2,High,94.0,97.0,98.0,95.0,89.0,97.0,,97.0,98.0,95.0,89.0,97.0
+Hall Fletcher Elementary,297,98.0,High,95.0,98.0,100.0,98.0,98.0,100.0,,98.0,100.0,98.0,98.0,100.0
+Haw Creek Elementary,372,93.5,Medium,93.0,96.0,87.0,94.0,92.0,96.0,,96.0,87.0,94.0,92.0,96.0
+Hominy Valley Elementary,493,95.9,High,96.0,96.0,95.0,92.0,95.0,98.0,,96.0,95.0,92.0,95.0,98.0
+Invest Collegiate (Buncombe),631,95.1,High,94.0,91.0,95.0,95.0,96.0,98.0,,91.0,95.0,95.0,96.0,98.0
+Ira B Jones Elementary,314,93.6,Medium,94.0,92.0,94.0,95.0,94.0,91.0,,92.0,,95.0,94.0,91.0
+Isaac Dickson Elementary,372,90.9,Medium,91.0,92.0,94.0,98.0,95.0,75.0,,92.0,94.0,98.0,95.0,75.0
+Johnston Elementary,226,95.6,High,95.0,94.0,96.0,95.0,100.0,92.0,,94.0,96.0,95.0,100.0,92.0
+Leicester Elementary,517,91.5,Medium,92.0,95.0,92.0,93.0,95.0,79.0,,95.0,92.0,,95.0,79.0
+Mountain City Public Montessori,63,75.5,Low,79.0,90.0,57.0,,,,,90.0,57.0,,,
+North Buncombe Elementary,699,96.2,High,94.0,97.0,92.0,98.0,97.0,97.0,,97.0,92.0,98.0,97.0,97.0
+Oakley Elementary,506,95.5,High,95.0,98.0,94.0,94.0,95.0,94.0,,98.0,94.0,94.0,95.0,94.0
+Odyssey Community School,73,68.8,Low,,,70.0,69.0,57.0,72.0,,,70.0,69.0,57.0,72.0
+Pisgah Elementary,184,96.0,High,96.0,90.0,93.0,100.0,100.0,96.0,,90.0,93.0,100.0,100.0,96.0
+Rainbow Community School,108,81.9,Low,76.0,82.0,85.0,77.0,88.0,80.0,,82.0,85.0,77.0,88.0,
+Reynolds Mountain Christian Academy,134,87.3,Low,88.0,72.0,92.0,94.0,78.0,100.0,,72.0,92.0,94.0,78.0,100.0
+Sand Hill-Venable Elem,627,92.0,Medium,93.0,89.0,86.0,90.0,96.0,95.0,,89.0,86.0,90.0,96.0,95.0
+Swannanoa Valley Montessori School,44,91.2,Medium,,100.0,100.0,,,,,100.0,100.0,,,
+Temple Baptist School,121,51.9,Low,55.0,25.0,23.0,55.0,63.0,80.0,,25.0,23.0,55.0,63.0,80.0
+The Learning Community School,53,91.6,Medium,,,100.0,92.0,,,,,100.0,92.0,,
+The New Classical Academy,49,87.4,Low,,100.0,,,,,,100.0,,,,
+Trinity of Fairview Academy,61,74.6,Low,77.0,70.0,76.0,,,,,70.0,76.0,,,
+Vance Elementary,239,94.6,Medium,93.0,96.0,95.0,98.0,95.0,88.0,,96.0,95.0,98.0,95.0,88.0
+Weaverville Primary,629,93.1,Medium,91.0,95.0,93.0,93.0,94.0,88.0,,95.0,93.0,93.0,94.0,88.0
+West Buncombe Elementary,666,88.8,Low,88.0,80.0,89.0,88.0,90.0,96.0,,80.0,89.0,88.0,90.0,96.0
+Williams Elementary,414,95.6,High,94.0,98.0,94.0,95.0,94.0,96.0,,98.0,94.0,95.0,94.0,96.0
+Woodfin Elementary,106,93.3,Medium,92.0,92.0,93.0,86.0,100.0,95.0,,92.0,93.0,86.0,100.0,95.0

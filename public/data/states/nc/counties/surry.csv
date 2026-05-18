@@ -1,0 +1,19 @@
+school,enrollment,coverage_pct,tier,estimated_K_pct,estimated_1st_pct,estimated_2nd_pct,estimated_3rd_pct,estimated_4th_pct,estimated_5th_pct,reported_K_pct,reported_1st_pct,reported_2nd_pct,reported_3rd_pct,reported_4th_pct,reported_5th_pct
+Bruce H Tharrington Elem,783,98.9,High,99.0,98.0,99.0,99.0,99.0,98.0,,98.0,99.0,99.0,,98.0
+Cedar Ridge Elementary,309,97.6,High,97.0,94.0,97.0,100.0,98.0,98.0,,94.0,97.0,100.0,98.0,98.0
+Copeland Elementary,259,98.5,High,98.0,97.0,97.0,97.0,100.0,100.0,,97.0,97.0,97.0,100.0,100.0
+Dobson Elementary,320,98.5,High,98.0,92.0,100.0,100.0,100.0,100.0,,92.0,100.0,100.0,100.0,100.0
+Elkin Elementary,513,97.8,High,97.0,98.0,93.0,100.0,97.0,100.0,,98.0,93.0,100.0,,100.0
+Flat Rock Elementary,191,98.0,High,98.0,97.0,93.0,100.0,100.0,100.0,,97.0,93.0,100.0,100.0,100.0
+Franklin Elementary,419,97.1,High,96.0,93.0,98.0,98.0,97.0,97.0,,93.0,98.0,98.0,97.0,97.0
+Millennium Charter Academy,369,95.6,High,96.0,94.0,91.0,98.0,92.0,100.0,,94.0,91.0,98.0,92.0,100.0
+Mountain Park Elementary,182,97.3,High,95.0,97.0,96.0,100.0,96.0,100.0,,97.0,96.0,100.0,96.0,100.0
+Pilot Mountain Elementary,317,98.1,High,98.0,100.0,94.0,98.0,98.0,100.0,,100.0,94.0,98.0,98.0,100.0
+Rockford Elementary,301,99.5,High,99.0,100.0,100.0,100.0,98.0,100.0,,100.0,100.0,100.0,98.0,100.0
+Salem Christian Academy,102,83.4,Low,86.0,61.0,86.0,87.0,88.0,100.0,,61.0,,,,100.0
+Shoals Elementary,228,97.9,High,98.0,97.0,95.0,100.0,96.0,100.0,,97.0,95.0,100.0,96.0,100.0
+Surry Online Magnet School,8,85.9,Low,,100.0,100.0,,,,,100.0,100.0,,,
+Westfield Elementary,189,96.7,High,97.0,89.0,100.0,100.0,100.0,95.0,,89.0,100.0,100.0,100.0,95.0
+White Plains Christian School,20,93.3,Medium,,100.0,100.0,,,100.0,,100.0,100.0,,,100.0
+White Plains Elementary,308,96.8,High,97.0,90.0,100.0,96.0,98.0,100.0,,90.0,100.0,96.0,98.0,100.0
+Yadkin Valley Community School,33,92.8,Medium,,,,,,,,,,,,

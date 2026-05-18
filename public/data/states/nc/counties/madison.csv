@@ -1,0 +1,5 @@
+school,enrollment,coverage_pct,tier,estimated_K_pct,estimated_1st_pct,estimated_2nd_pct,estimated_3rd_pct,estimated_4th_pct,estimated_5th_pct,reported_K_pct,reported_1st_pct,reported_2nd_pct,reported_3rd_pct,reported_4th_pct,reported_5th_pct
+Brush Creek Elementary,330,94.7,Medium,95.0,92.0,93.0,96.0,96.0,94.0,,92.0,93.0,96.0,96.0,94.0
+Hot Springs Elementary,135,88.0,Low,88.0,84.0,91.0,82.0,84.0,95.0,,84.0,91.0,82.0,84.0,95.0
+Mars Hill Elementary,433,96.0,High,94.0,96.0,93.0,94.0,98.0,97.0,,96.0,93.0,94.0,98.0,97.0
+Woodson Branch Nature School,66,46.0,Low,47.0,33.0,50.0,49.0,,,,33.0,50.0,,,

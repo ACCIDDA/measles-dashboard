@@ -1,0 +1,18 @@
+school,enrollment,coverage_pct,tier,estimated_K_pct,estimated_1st_pct,estimated_2nd_pct,estimated_3rd_pct,estimated_4th_pct,estimated_5th_pct,reported_K_pct,reported_1st_pct,reported_2nd_pct,reported_3rd_pct,reported_4th_pct,reported_5th_pct
+Belville Elementary,779,96.4,High,95.0,98.0,93.0,96.0,95.0,99.0,,98.0,93.0,96.0,95.0,99.0
+Bolivia Elementary,458,95.3,High,94.0,91.0,96.0,97.0,94.0,98.0,,91.0,96.0,97.0,94.0,98.0
+Charter Day School,698,96.0,High,96.0,94.0,93.0,94.0,97.0,100.0,,94.0,93.0,94.0,97.0,100.0
+Jessie Mae Monroe Elementary,344,96.7,High,96.0,95.0,97.0,96.0,96.0,98.0,,95.0,97.0,96.0,,98.0
+Lincoln Elementary,695,97.3,High,96.0,95.0,99.0,96.0,97.0,99.0,,95.0,99.0,96.0,97.0,99.0
+South Brunswick Charter School,513,97.9,High,97.0,100.0,98.0,95.0,95.0,100.0,,100.0,98.0,95.0,95.0,100.0
+Southeastern Christian Academy,198,87.8,Low,89.0,86.0,95.0,78.0,83.0,95.0,,86.0,95.0,78.0,83.0,95.0
+Southport Christian School,92,61.8,Low,,,75.0,64.0,66.0,50.0,,,75.0,,,50.0
+Southport Elementary,371,94.5,Medium,94.0,87.0,94.0,96.0,93.0,100.0,,87.0,94.0,96.0,93.0,100.0
+Supply Elementary,523,97.8,High,97.0,96.0,98.0,95.0,100.0,98.0,,96.0,98.0,95.0,100.0,98.0
+The Academy of Coastal Carolina,83,87.3,Low,89.0,85.0,66.0,86.0,90.0,100.0,,85.0,66.0,86.0,90.0,100.0
+Town Creek Elementary,700,95.7,High,95.0,96.0,94.0,93.0,96.0,98.0,,96.0,94.0,93.0,96.0,98.0
+Union Elementary,629,89.1,Low,90.0,98.0,96.0,97.0,92.0,54.0,,98.0,96.0,97.0,,54.0
+Virginia Williamson Elem,490,96.4,High,96.0,95.0,95.0,95.0,96.0,100.0,,95.0,95.0,95.0,96.0,100.0
+Waccamaw,250,95.7,High,95.0,97.0,98.0,97.0,86.0,100.0,,97.0,98.0,97.0,86.0,100.0
+West Christian Academy,17,97.6,High,,100.0,100.0,100.0,,,,100.0,100.0,100.0,,
+Wild Forest Academy,12,84.4,Low,,,,,,,,,,,,

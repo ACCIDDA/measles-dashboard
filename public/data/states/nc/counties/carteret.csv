@@ -1,0 +1,17 @@
+school,enrollment,coverage_pct,tier,estimated_K_pct,estimated_1st_pct,estimated_2nd_pct,estimated_3rd_pct,estimated_4th_pct,estimated_5th_pct,reported_K_pct,reported_1st_pct,reported_2nd_pct,reported_3rd_pct,reported_4th_pct,reported_5th_pct
+Atlantic Elementary,76,96.6,High,96.0,93.0,100.0,92.0,100.0,100.0,,93.0,100.0,92.0,100.0,100.0
+Beaufort Elementary,306,98.8,High,98.0,100.0,98.0,98.0,100.0,98.0,,100.0,98.0,98.0,100.0,98.0
+Bogue Sound Elementary,357,99.3,High,98.0,97.0,100.0,100.0,99.0,100.0,,97.0,100.0,100.0,,100.0
+Chosen Generation Christ. Acad,11,87.3,Low,,,100.0,,,,,,100.0,,,
+Down East Middle and Smyrna Elementary,79,99.7,High,98.0,100.0,100.0,100.0,100.0,100.0,,100.0,100.0,100.0,100.0,100.0
+First Presbyterian School,10,97.7,High,,100.0,,,,,,100.0,,,,
+Gramercy Christian School,154,91.8,Medium,92.0,93.0,95.0,84.0,92.0,93.0,,93.0,95.0,84.0,92.0,
+Harkers Island Elementary,95,97.5,High,97.0,92.0,100.0,95.0,100.0,100.0,,92.0,100.0,95.0,100.0,100.0
+Heritage Christian Academy,16,99.0,High,,100.0,100.0,100.0,100.0,,,100.0,100.0,100.0,100.0,
+Morehead City Primary,728,96.7,High,97.0,97.0,95.0,91.0,99.0,100.0,,97.0,95.0,91.0,99.0,100.0
+Nature School at Camp Albemarle,88,91.2,Medium,91.0,76.0,94.0,100.0,100.0,,,76.0,94.0,100.0,100.0,
+Newport Christian Academy,25,98.0,High,,100.0,,,,100.0,,100.0,,,,100.0
+Newport Elementary,594,98.6,High,98.0,98.0,98.0,98.0,98.0,99.0,,98.0,98.0,98.0,98.0,99.0
+St. Egbert Catholic School,94,92.6,Medium,94.0,100.0,73.0,100.0,94.0,100.0,,100.0,73.0,100.0,94.0,100.0
+Tiller School,207,90.9,Medium,93.0,78.0,94.0,97.0,91.0,92.0,,78.0,94.0,97.0,91.0,92.0
+White Oak Elementary,643,96.9,High,95.0,96.0,95.0,98.0,97.0,97.0,,96.0,95.0,98.0,97.0,97.0

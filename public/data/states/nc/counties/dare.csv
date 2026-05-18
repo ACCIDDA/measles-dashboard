@@ -1,0 +1,8 @@
+school,enrollment,coverage_pct,tier,estimated_K_pct,estimated_1st_pct,estimated_2nd_pct,estimated_3rd_pct,estimated_4th_pct,estimated_5th_pct,reported_K_pct,reported_1st_pct,reported_2nd_pct,reported_3rd_pct,reported_4th_pct,reported_5th_pct
+Beacon Christian Academy,42,77.2,Low,,,100.0,91.0,63.0,,,,100.0,91.0,63.0,
+Cape Hatteras Elementary School,258,96.2,High,95.0,100.0,97.0,90.0,93.0,100.0,,100.0,97.0,90.0,93.0,100.0
+First Flight Elementary School,265,98.5,High,98.0,100.0,94.0,98.0,100.0,100.0,,100.0,94.0,98.0,100.0,100.0
+Kitty Hawk Elementary School,414,96.8,High,96.0,97.0,98.0,93.0,95.0,100.0,,97.0,98.0,93.0,95.0,100.0
+Manteo Elementary School,530,97.7,High,97.0,96.0,96.0,96.0,99.0,100.0,,96.0,96.0,96.0,99.0,100.0
+Nags Head Elementary School,422,94.2,Medium,94.0,96.0,98.0,96.0,93.0,87.0,,96.0,98.0,96.0,93.0,87.0
+Wanchese Christian Christian,38,88.8,Low,,,100.0,,,100.0,,,100.0,,,100.0

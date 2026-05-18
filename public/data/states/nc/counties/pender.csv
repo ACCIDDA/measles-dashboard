@@ -1,0 +1,11 @@
+school,enrollment,coverage_pct,tier,estimated_K_pct,estimated_1st_pct,estimated_2nd_pct,estimated_3rd_pct,estimated_4th_pct,estimated_5th_pct,reported_K_pct,reported_1st_pct,reported_2nd_pct,reported_3rd_pct,reported_4th_pct,reported_5th_pct
+Burgaw Elementary,493,96.0,High,94.0,90.0,97.0,99.0,95.0,98.0,,90.0,97.0,99.0,95.0,98.0
+Cape Fear Elementary,493,98.2,High,97.0,97.0,92.0,100.0,100.0,100.0,,97.0,92.0,100.0,100.0,100.0
+Malpass Corner Elementary,409,94.7,Medium,94.0,100.0,89.0,90.0,96.0,96.0,,100.0,89.0,90.0,96.0,96.0
+North Topsail Elementary,455,93.3,Medium,92.0,86.0,93.0,95.0,94.0,96.0,,86.0,93.0,95.0,94.0,96.0
+Penderlea Christian Academy,59,89.1,Low,,100.0,,66.0,92.0,100.0,,100.0,,66.0,,100.0
+Penderlea Elementary,268,97.8,High,97.0,97.0,93.0,97.0,100.0,100.0,,97.0,93.0,97.0,100.0,100.0
+Rocky Point Elementary,337,96.9,High,97.0,92.0,98.0,100.0,100.0,94.0,,92.0,98.0,100.0,100.0,94.0
+South Topsail Elementary,469,95.3,High,94.0,93.0,94.0,93.0,96.0,100.0,,93.0,94.0,93.0,96.0,100.0
+Surf City Elementary School,704,91.3,Medium,90.0,93.0,89.0,87.0,90.0,98.0,,93.0,89.0,87.0,90.0,98.0
+Topsail Elementary,603,95.9,High,95.0,93.0,96.0,91.0,97.0,100.0,,93.0,96.0,91.0,97.0,100.0

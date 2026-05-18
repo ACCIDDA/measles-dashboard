@@ -1,0 +1,32 @@
+school,enrollment,coverage_pct,tier,estimated_K_pct,estimated_1st_pct,estimated_2nd_pct,estimated_3rd_pct,estimated_4th_pct,estimated_5th_pct,reported_K_pct,reported_1st_pct,reported_2nd_pct,reported_3rd_pct,reported_4th_pct,reported_5th_pct
+American Leadership Academy - Johnston,583,92.8,Medium,92.0,95.0,91.0,90.0,,,,95.0,91.0,90.0,,
+Benson Elementary,709,94.7,Medium,94.0,92.0,95.0,90.0,97.0,98.0,,92.0,95.0,90.0,97.0,98.0
+Cleveland Elementary,774,98.3,High,98.0,98.0,96.0,97.0,99.0,100.0,,98.0,96.0,97.0,99.0,100.0
+Cooper Elementary,486,93.3,Medium,93.0,86.0,89.0,96.0,91.0,100.0,,86.0,89.0,96.0,91.0,100.0
+Corinth-Holders Elementary,540,97.4,High,97.0,95.0,97.0,96.0,97.0,100.0,,95.0,97.0,96.0,97.0,100.0
+Dixon Road Elementary,625,98.1,High,97.0,98.0,97.0,99.0,97.0,98.0,,98.0,97.0,99.0,97.0,98.0
+East Clayton Elementary,522,96.7,High,96.0,93.0,97.0,97.0,96.0,100.0,,93.0,97.0,97.0,96.0,100.0
+Four Oaks Elementary,1029,94.9,Medium,95.0,96.0,92.0,88.0,97.0,99.0,,96.0,92.0,88.0,97.0,99.0
+Glendale-Kenly Elementary,422,96.8,High,95.0,95.0,100.0,98.0,97.0,94.0,,95.0,100.0,98.0,97.0,94.0
+JCPS Virtual Academy,79,98.4,High,,100.0,,100.0,100.0,,,100.0,,100.0,100.0,
+Johnston Charter Academy,498,98.4,High,97.0,97.0,98.0,97.0,100.0,100.0,,97.0,98.0,,100.0,100.0
+Life Spring Academy,131,85.8,Low,86.0,88.0,95.0,81.0,79.0,89.0,,88.0,95.0,81.0,79.0,
+McGee's Crossroads Elem,855,97.6,High,97.0,96.0,96.0,97.0,98.0,100.0,,96.0,96.0,97.0,98.0,100.0
+Meadow School,401,94.8,Medium,96.0,81.0,96.0,98.0,100.0,97.0,,81.0,96.0,98.0,100.0,97.0
+Micro Elementary,356,96.3,High,94.0,100.0,98.0,98.0,95.0,91.0,,100.0,98.0,98.0,95.0,91.0
+Neuse Charter School,466,97.9,High,97.0,96.0,97.0,96.0,100.0,100.0,,96.0,97.0,96.0,100.0,100.0
+Pine Level Elementary,294,99.4,High,98.0,100.0,100.0,100.0,100.0,98.0,,100.0,100.0,100.0,100.0,98.0
+Polenta Elementary,905,95.3,High,95.0,95.0,94.0,88.0,100.0,99.0,,95.0,94.0,88.0,100.0,99.0
+Powhatan Elementary,560,95.7,High,95.0,96.0,95.0,91.0,97.0,97.0,,96.0,95.0,91.0,97.0,97.0
+Princeton Elementary,668,98.2,High,98.0,99.0,96.0,96.0,99.0,100.0,,99.0,96.0,96.0,99.0,100.0
+River Dell Elementary,830,95.2,High,95.0,93.0,94.0,94.0,95.0,96.0,,93.0,94.0,94.0,95.0,96.0
+Riverwood Elementary,708,97.8,High,97.0,97.0,97.0,98.0,98.0,98.0,,97.0,97.0,98.0,98.0,98.0
+Selma Elm,748,96.7,High,96.0,98.0,92.0,99.0,96.0,96.0,,98.0,92.0,99.0,96.0,96.0
+South Smithfield Elementary,448,93.7,Medium,94.0,78.0,98.0,94.0,97.0,98.0,,78.0,98.0,94.0,97.0,98.0
+Southside Christ. School  Inc.,200,94.8,Medium,94.0,94.0,93.0,96.0,95.0,94.0,,94.0,93.0,96.0,,94.0
+Star Christian Academy,24,99.2,High,,100.0,100.0,100.0,100.0,,,100.0,100.0,100.0,100.0,
+Thanksgiving Elementary,637,96.5,High,96.0,95.0,96.0,95.0,98.0,,,95.0,96.0,95.0,98.0,
+West Clayton Elementary,735,96.9,High,97.0,95.0,97.0,98.0,96.0,96.0,,95.0,97.0,98.0,96.0,96.0
+West Smithfield Elementary,443,89.4,Low,91.0,71.0,91.0,94.0,92.0,100.0,,71.0,91.0,94.0,92.0,100.0
+West View Elementary,870,97.4,High,95.0,98.0,96.0,98.0,98.0,97.0,,98.0,96.0,98.0,98.0,97.0
+Wilson's Mills Elementary,462,97.9,High,97.0,100.0,98.0,91.0,100.0,100.0,,100.0,98.0,91.0,100.0,100.0

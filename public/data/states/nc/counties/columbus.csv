@@ -1,0 +1,10 @@
+school,enrollment,coverage_pct,tier,estimated_K_pct,estimated_1st_pct,estimated_2nd_pct,estimated_3rd_pct,estimated_4th_pct,estimated_5th_pct,reported_K_pct,reported_1st_pct,reported_2nd_pct,reported_3rd_pct,reported_4th_pct,reported_5th_pct
+Acme Delco Elementary,251,98.4,High,98.0,97.0,100.0,95.0,100.0,100.0,,97.0,100.0,95.0,100.0,100.0
+Chadbourn Elementary,244,91.8,Medium,93.0,80.0,86.0,88.0,100.0,100.0,,80.0,86.0,88.0,100.0,100.0
+Columbus Charter School,553,97.8,High,98.0,96.0,98.0,97.0,95.0,100.0,,96.0,98.0,97.0,95.0,100.0
+Hallsboro-Artesia Elementary,280,97.0,High,97.0,94.0,95.0,97.0,100.0,98.0,,94.0,95.0,97.0,100.0,98.0
+Old Dock Elementary,268,98.8,High,98.0,100.0,97.0,100.0,98.0,97.0,,100.0,97.0,100.0,,97.0
+Tabor City Elementary,356,93.0,Medium,89.0,97.0,94.0,80.0,100.0,96.0,,97.0,94.0,80.0,100.0,96.0
+West Columbus School,252,93.6,Medium,93.0,98.0,91.0,92.0,,,,98.0,91.0,92.0,,
+Whiteville Primary,856,94.4,Medium,94.0,95.0,88.0,90.0,97.0,99.0,,95.0,88.0,90.0,97.0,99.0
+Williams Township,424,97.3,High,97.0,98.0,95.0,100.0,98.0,94.0,,98.0,95.0,100.0,98.0,94.0

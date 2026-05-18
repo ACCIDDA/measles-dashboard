@@ -1,0 +1,7 @@
+school,enrollment,coverage_pct,tier,estimated_K_pct,estimated_1st_pct,estimated_2nd_pct,estimated_3rd_pct,estimated_4th_pct,estimated_5th_pct,reported_K_pct,reported_1st_pct,reported_2nd_pct,reported_3rd_pct,reported_4th_pct,reported_5th_pct
+Christ the Cornerstone Academy,152,95.9,High,95.0,87.0,95.0,95.0,100.0,100.0,,87.0,95.0,,100.0,100.0
+Laurel Hill Elementary,616,98.1,High,98.0,100.0,95.0,100.0,98.0,97.0,,100.0,95.0,100.0,,97.0
+Scotland Christian Academy,146,99.3,High,98.0,100.0,100.0,98.0,100.0,98.0,,100.0,100.0,,100.0,
+South Johnson Elementary School,562,97.2,High,96.0,98.0,96.0,97.0,97.0,95.0,,98.0,96.0,,97.0,95.0
+Sycamore Lane Primary School,703,87.5,Low,87.0,91.0,82.0,90.0,88.0,83.0,,91.0,82.0,90.0,,83.0
+Wagram Elementary,464,92.7,Medium,94.0,64.0,100.0,98.0,98.0,100.0,,64.0,100.0,98.0,98.0,100.0

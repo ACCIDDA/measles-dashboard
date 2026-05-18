@@ -1,0 +1,12 @@
+school,enrollment,coverage_pct,tier,estimated_K_pct,estimated_1st_pct,estimated_2nd_pct,estimated_3rd_pct,estimated_4th_pct,estimated_5th_pct,reported_K_pct,reported_1st_pct,reported_2nd_pct,reported_3rd_pct,reported_4th_pct,reported_5th_pct
+Calvary Christian School,180,96.7,High,96.0,100.0,96.0,96.0,93.0,97.0,,100.0,96.0,96.0,93.0,
+Germanton Elementary,154,99.0,High,98.0,100.0,95.0,100.0,100.0,100.0,,100.0,95.0,100.0,100.0,100.0
+King Elementary,354,98.6,High,98.0,100.0,95.0,98.0,100.0,100.0,,100.0,95.0,98.0,100.0,100.0
+Living Word Christian Academy,42,83.6,Low,,,100.0,,,,,,100.0,,,
+London Elementary,185,96.8,High,97.0,100.0,88.0,93.0,100.0,100.0,,100.0,88.0,93.0,100.0,100.0
+Mount Olive Elementary,291,98.3,High,98.0,97.0,97.0,98.0,98.0,100.0,,97.0,97.0,98.0,98.0,100.0
+Nancy Reynolds Elementary,147,98.3,High,98.0,100.0,95.0,96.0,100.0,100.0,,100.0,95.0,96.0,100.0,100.0
+Pinnacle Elementary,141,95.5,High,95.0,88.0,90.0,100.0,100.0,100.0,,88.0,90.0,100.0,100.0,100.0
+Poplar Springs Elementary,435,97.3,High,96.0,96.0,96.0,98.0,96.0,100.0,,96.0,96.0,98.0,96.0,100.0
+Sandy Ridge  Elementary,159,96.9,High,97.0,97.0,96.0,100.0,95.0,94.0,,97.0,96.0,100.0,95.0,94.0
+Walnut Cove Elementary,217,98.8,High,98.0,97.0,97.0,100.0,100.0,100.0,,97.0,97.0,100.0,100.0,100.0

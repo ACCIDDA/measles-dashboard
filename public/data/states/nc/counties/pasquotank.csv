@@ -1,0 +1,12 @@
+school,enrollment,coverage_pct,tier,estimated_K_pct,estimated_1st_pct,estimated_2nd_pct,estimated_3rd_pct,estimated_4th_pct,estimated_5th_pct,reported_K_pct,reported_1st_pct,reported_2nd_pct,reported_3rd_pct,reported_4th_pct,reported_5th_pct
+Albemarle School,149,96.5,High,96.0,90.0,100.0,100.0,96.0,97.0,,90.0,100.0,100.0,,
+Central Elementary,412,96.5,High,96.0,96.0,94.0,96.0,96.0,100.0,,96.0,94.0,96.0,,100.0
+Covenant Classical Academy,27,24.4,Low,,0.0,,,,,,0.0,,,,
+Grace Montessori Academy  Incorporated,48,79.6,Low,,,,,,,,,,,,
+J C Sawyer Elementary,375,95.8,High,96.0,93.0,98.0,96.0,96.0,93.0,,93.0,98.0,96.0,,93.0
+New Life Academy,169,95.0,High,95.0,92.0,91.0,100.0,95.0,96.0,,92.0,91.0,100.0,,
+Northside Elementary,434,98.6,High,98.0,100.0,94.0,100.0,98.0,100.0,,100.0,94.0,100.0,,100.0
+P W Moore Elementary,374,96.7,High,97.0,92.0,96.0,96.0,97.0,98.0,,92.0,96.0,96.0,,98.0
+Sheep-Harney Elementary,332,94.7,Medium,95.0,97.0,91.0,93.0,96.0,94.0,,97.0,91.0,93.0,,94.0
+Victory Christian School,115,86.7,Low,85.0,90.0,68.0,86.0,85.0,100.0,,90.0,68.0,,85.0,100.0
+Weeksville Elementary,249,98.7,High,98.0,97.0,100.0,97.0,98.0,100.0,,97.0,100.0,97.0,,100.0

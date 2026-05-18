@@ -1,0 +1,11 @@
+school,enrollment,coverage_pct,tier,estimated_K_pct,estimated_1st_pct,estimated_2nd_pct,estimated_3rd_pct,estimated_4th_pct,estimated_5th_pct,reported_K_pct,reported_1st_pct,reported_2nd_pct,reported_3rd_pct,reported_4th_pct,reported_5th_pct
+Bunn Elementary,539,97.1,High,96.0,97.0,96.0,96.0,97.0,98.0,,97.0,96.0,96.0,97.0,98.0
+Commission Leadership Academy,157,69.7,Low,70.0,71.0,55.0,68.0,81.0,,,71.0,55.0,68.0,81.0,
+Edward Best Elementary,472,96.7,High,96.0,97.0,97.0,96.0,97.0,96.0,,97.0,97.0,96.0,,96.0
+Franklinton Elementary,418,93.7,Medium,89.0,97.0,90.0,94.0,95.0,95.0,,97.0,90.0,94.0,95.0,95.0
+Laurel Mill Elementary,275,95.6,High,96.0,96.0,93.0,93.0,95.0,97.0,,96.0,93.0,93.0,95.0,97.0
+Long Mill Elementary,397,93.8,Medium,93.0,97.0,90.0,92.0,89.0,100.0,,97.0,90.0,92.0,89.0,100.0
+Louisburg Elementary,356,97.6,High,97.0,96.0,95.0,95.0,98.0,100.0,,96.0,95.0,95.0,98.0,100.0
+Royal Elementary,329,97.1,High,96.0,96.0,94.0,95.0,100.0,100.0,,96.0,94.0,95.0,100.0,100.0
+Wake Preparatory Academy,641,95.5,High,95.0,95.0,96.0,94.0,,,,95.0,96.0,94.0,,
+Youngsville Elementary,358,94.6,Medium,95.0,92.0,91.0,98.0,95.0,94.0,,92.0,91.0,98.0,,94.0

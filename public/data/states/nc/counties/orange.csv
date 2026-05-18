@@ -1,0 +1,22 @@
+school,enrollment,coverage_pct,tier,estimated_K_pct,estimated_1st_pct,estimated_2nd_pct,estimated_3rd_pct,estimated_4th_pct,estimated_5th_pct,reported_K_pct,reported_1st_pct,reported_2nd_pct,reported_3rd_pct,reported_4th_pct,reported_5th_pct
+Carolina Friends School,141,94.7,Medium,93.0,95.0,96.0,96.0,93.0,,,95.0,96.0,96.0,93.0,
+Carrboro Elementary,438,98.0,High,96.0,100.0,100.0,96.0,96.0,100.0,,100.0,100.0,96.0,,100.0
+Central Elementary,277,96.3,High,95.0,100.0,93.0,100.0,98.0,91.0,,100.0,93.0,100.0,98.0,91.0
+Efland Cheeks Elementary,468,94.9,Medium,95.0,97.0,96.0,94.0,90.0,96.0,,97.0,96.0,94.0,90.0,
+Emerson Waldorf School,174,75.7,Low,73.0,62.0,76.0,71.0,83.0,81.0,,62.0,76.0,71.0,83.0,81.0
+Eno River Academy,234,97.6,High,97.0,94.0,95.0,100.0,98.0,100.0,,94.0,95.0,100.0,,100.0
+Ephesus Elementary,328,97.8,High,97.0,98.0,97.0,97.0,97.0,98.0,,98.0,97.0,,,
+FPG Elementary,529,99.3,High,98.0,100.0,100.0,98.0,98.0,100.0,,100.0,100.0,,98.0,100.0
+Glenwood Elementary,377,98.3,High,97.0,100.0,100.0,93.0,100.0,100.0,,100.0,100.0,93.0,100.0,100.0
+Grady Brown Elementary,369,97.6,High,97.0,100.0,97.0,95.0,100.0,95.0,,100.0,,95.0,100.0,95.0
+Hillsborough Elementary,434,98.0,High,98.0,98.0,98.0,97.0,97.0,98.0,,98.0,98.0,97.0,97.0,
+Montessori Day School,47,98.0,High,,100.0,100.0,,100.0,100.0,,100.0,100.0,,100.0,100.0
+Morris Grove Elementary,327,98.4,High,98.0,100.0,95.0,96.0,100.0,100.0,,100.0,95.0,96.0,100.0,100.0
+New Hope Elementary,477,97.0,High,96.0,94.0,93.0,97.0,98.0,100.0,,94.0,93.0,97.0,98.0,100.0
+Pathways Elementary,295,96.0,High,95.0,98.0,100.0,95.0,95.0,92.0,,98.0,100.0,95.0,95.0,92.0
+Pinewoods Montessori,103,94.4,Medium,92.0,93.0,100.0,94.0,93.0,94.0,,93.0,100.0,94.0,,
+River Park Elementary,220,98.4,High,98.0,100.0,97.0,,,,,100.0,97.0,,,
+Scroggs Elementary,296,99.1,High,98.0,100.0,100.0,98.0,98.0,98.0,,100.0,100.0,,,
+Seawell Elementary,271,97.6,High,96.0,100.0,100.0,91.0,97.0,100.0,,100.0,100.0,91.0,,100.0
+St. Thomas More Catholic School,186,99.2,High,98.0,100.0,98.0,100.0,98.0,99.0,,100.0,,100.0,,
+The Expedition School,237,97.6,High,96.0,97.0,94.0,100.0,100.0,97.0,,97.0,94.0,100.0,100.0,97.0

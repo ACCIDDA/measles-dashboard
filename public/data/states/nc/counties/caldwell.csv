@@ -1,0 +1,16 @@
+school,enrollment,coverage_pct,tier,estimated_K_pct,estimated_1st_pct,estimated_2nd_pct,estimated_3rd_pct,estimated_4th_pct,estimated_5th_pct,reported_K_pct,reported_1st_pct,reported_2nd_pct,reported_3rd_pct,reported_4th_pct,reported_5th_pct
+Baton Elementary,350,98.5,High,98.0,98.0,95.0,98.0,100.0,100.0,,98.0,95.0,98.0,100.0,100.0
+Collettsville School,187,93.8,Medium,95.0,93.0,93.0,96.0,82.0,100.0,,93.0,93.0,96.0,82.0,100.0
+Davenport A+ School,418,98.1,High,97.0,98.0,100.0,95.0,98.0,98.0,,98.0,100.0,95.0,98.0,
+Dudley Shoals Elementary,419,96.8,High,96.0,97.0,96.0,92.0,97.0,100.0,,97.0,96.0,92.0,97.0,100.0
+Gamewell Elementary,470,97.9,High,97.0,97.0,96.0,96.0,100.0,100.0,,97.0,96.0,96.0,100.0,100.0
+Granite Falls Elementary,635,97.4,High,97.0,96.0,97.0,95.0,97.0,100.0,,96.0,97.0,95.0,97.0,100.0
+Happy Valley Elementary,136,98.7,High,97.0,100.0,94.0,100.0,100.0,100.0,,100.0,94.0,100.0,100.0,100.0
+Horizons Elementary School,12,99.2,High,,100.0,100.0,100.0,100.0,,,100.0,100.0,100.0,100.0,
+Hudson Elementary,618,96.7,High,96.0,98.0,89.0,97.0,97.0,100.0,,98.0,89.0,97.0,,100.0
+Kings Creek Elementary,101,94.5,Medium,95.0,100.0,94.0,85.0,95.0,100.0,,100.0,94.0,85.0,95.0,100.0
+Lower Creek Elementary,425,96.9,High,96.0,98.0,98.0,94.0,95.0,97.0,,98.0,98.0,94.0,95.0,
+Pine Mountain Academy,31,86.7,Low,89.0,90.0,,,,,,90.0,,,,
+Sawmills Elementary,342,97.7,High,97.0,98.0,100.0,96.0,100.0,93.0,,98.0,100.0,96.0,100.0,93.0
+Valmead Elementary,288,88.8,Low,89.0,94.0,80.0,94.0,72.0,100.0,,94.0,80.0,94.0,72.0,100.0
+Whitnel Elementary,249,97.3,High,97.0,96.0,96.0,97.0,100.0,97.0,,96.0,96.0,97.0,100.0,97.0

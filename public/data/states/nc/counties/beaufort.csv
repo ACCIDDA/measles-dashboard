@@ -1,0 +1,10 @@
+school,enrollment,coverage_pct,tier,estimated_K_pct,estimated_1st_pct,estimated_2nd_pct,estimated_3rd_pct,estimated_4th_pct,estimated_5th_pct,reported_K_pct,reported_1st_pct,reported_2nd_pct,reported_3rd_pct,reported_4th_pct,reported_5th_pct
+.Unity Christian Academy,98,96.0,High,96.0,90.0,100.0,,100.0,100.0,,90.0,100.0,,100.0,100.0
+Bath Elementary,291,96.5,High,95.0,95.0,91.0,98.0,97.0,100.0,,95.0,91.0,98.0,97.0,100.0
+Chocowinity Primary,519,97.4,High,97.0,96.0,100.0,93.0,97.0,100.0,,96.0,100.0,93.0,97.0,100.0
+Eastern Elementary,1216,96.2,High,95.0,96.0,98.0,96.0,98.0,91.0,,96.0,98.0,96.0,98.0,91.0
+Northeast Elementary,210,91.6,Medium,91.0,96.0,92.0,80.0,91.0,97.0,,96.0,92.0,80.0,91.0,97.0
+Pungo Christian Academy,104,95.5,High,95.0,93.0,93.0,90.0,100.0,100.0,,93.0,93.0,90.0,100.0,100.0
+S W Snowden Elementary,92,92.0,Medium,,100.0,62.0,95.0,100.0,100.0,,100.0,62.0,95.0,100.0,100.0
+Terra Ceia Christian School,78,95.2,High,95.0,100.0,91.0,,100.0,100.0,,100.0,91.0,,100.0,100.0
+Washington Montessori Public Charter School,249,94.8,Medium,94.0,91.0,94.0,93.0,95.0,100.0,,91.0,,93.0,,100.0

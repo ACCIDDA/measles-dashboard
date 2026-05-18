@@ -1,0 +1,11 @@
+school,enrollment,coverage_pct,tier,estimated_K_pct,estimated_1st_pct,estimated_2nd_pct,estimated_3rd_pct,estimated_4th_pct,estimated_5th_pct,reported_K_pct,reported_1st_pct,reported_2nd_pct,reported_3rd_pct,reported_4th_pct,reported_5th_pct
+Carr Preparatory Academy,8,82.5,Low,,,,,,,,,,,,
+Dominion Christian Academy,24,97.9,High,95.0,100.0,,,,,,100.0,,,,
+Don D Steed Elementary,624,93.7,Medium,93.0,99.0,89.0,89.0,96.0,94.0,,99.0,89.0,89.0,96.0,94.0
+Hawk Eye Elementary,294,96.7,High,96.0,96.0,95.0,96.0,96.0,100.0,,96.0,95.0,96.0,,100.0
+J W McLauchlin Elementary,301,94.8,Medium,95.0,100.0,100.0,80.0,95.0,100.0,,100.0,100.0,80.0,,100.0
+Rockfish Hoke Elementary,593,93.9,Medium,93.0,99.0,92.0,86.0,94.0,98.0,,99.0,92.0,86.0,,98.0
+Sandy Grove Elementary,521,92.9,Medium,92.0,96.0,96.0,79.0,93.0,97.0,,96.0,96.0,79.0,,97.0
+Scurlock Elementary,571,95.0,High,95.0,97.0,94.0,90.0,96.0,96.0,,97.0,94.0,90.0,,96.0
+Upchurch Elementary,571,85.0,Low,86.0,71.0,97.0,75.0,88.0,92.0,,71.0,97.0,75.0,,92.0
+West Hoke Elementary,393,88.4,Low,89.0,75.0,81.0,95.0,91.0,100.0,,75.0,81.0,95.0,,100.0

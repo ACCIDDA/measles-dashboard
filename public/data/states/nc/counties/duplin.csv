@@ -1,0 +1,10 @@
+school,enrollment,coverage_pct,tier,estimated_K_pct,estimated_1st_pct,estimated_2nd_pct,estimated_3rd_pct,estimated_4th_pct,estimated_5th_pct,reported_K_pct,reported_1st_pct,reported_2nd_pct,reported_3rd_pct,reported_4th_pct,reported_5th_pct
+B F Grady Elementary,539,98.4,High,98.0,100.0,98.0,96.0,100.0,96.0,,100.0,98.0,96.0,100.0,96.0
+Beulaville Elementary,541,99.6,High,99.0,100.0,98.0,100.0,100.0,100.0,,100.0,98.0,100.0,100.0,100.0
+Chinquapin Elementary,343,99.2,High,98.0,98.0,100.0,100.0,100.0,98.0,,98.0,100.0,100.0,100.0,98.0
+Kenansville Elementary,407,99.2,High,98.0,98.0,100.0,98.0,100.0,100.0,,98.0,100.0,98.0,100.0,100.0
+North Duplin Elementary,583,99.5,High,99.0,100.0,100.0,97.0,100.0,100.0,,100.0,100.0,97.0,100.0,100.0
+Rose Hill-Magnolia Elementary,694,98.0,High,97.0,96.0,100.0,96.0,98.0,99.0,,96.0,100.0,96.0,,99.0
+Wallace Christian Academy,75,99.6,High,98.0,100.0,100.0,100.0,,,,100.0,100.0,100.0,,
+Wallace Elementary,677,98.4,High,98.0,99.0,94.0,100.0,99.0,100.0,,99.0,94.0,100.0,99.0,100.0
+Warsaw Elementary,534,98.4,High,98.0,98.0,95.0,100.0,99.0,98.0,,98.0,95.0,100.0,99.0,98.0

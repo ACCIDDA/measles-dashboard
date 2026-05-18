@@ -1,0 +1,39 @@
+school,enrollment,coverage_pct,tier,estimated_K_pct,estimated_1st_pct,estimated_2nd_pct,estimated_3rd_pct,estimated_4th_pct,estimated_5th_pct,reported_K_pct,reported_1st_pct,reported_2nd_pct,reported_3rd_pct,reported_4th_pct,reported_5th_pct
+Bessemer City Primary,786,92.3,Medium,91.0,86.0,98.0,86.0,98.0,90.0,,86.0,98.0,86.0,98.0,90.0
+Brookside Elementary,453,88.6,Low,89.0,87.0,96.0,71.0,88.0,97.0,,87.0,96.0,71.0,88.0,97.0
+Carr Elementary,618,94.3,Medium,95.0,91.0,91.0,95.0,96.0,95.0,,91.0,91.0,95.0,,95.0
+Catawba Heights Elementary,244,97.5,High,97.0,100.0,94.0,95.0,100.0,97.0,,100.0,94.0,95.0,100.0,97.0
+Chapel Grove Elementary,382,93.4,Medium,93.0,97.0,97.0,78.0,98.0,90.0,,97.0,97.0,78.0,98.0,90.0
+Cherryville Elementary,534,94.9,Medium,94.0,94.0,96.0,98.0,95.0,88.0,,94.0,96.0,98.0,95.0,88.0
+Costner Elementary,403,95.7,High,96.0,90.0,96.0,95.0,96.0,100.0,,90.0,96.0,95.0,96.0,100.0
+Cramerton Christian Academy,263,90.3,Medium,89.0,86.0,90.0,93.0,92.0,90.0,,86.0,90.0,93.0,92.0,90.0
+Edward D Sadler Jr  Elementary School,334,90.4,Medium,89.0,79.0,93.0,92.0,91.0,97.0,,79.0,93.0,92.0,91.0,97.0
+First Wesleyan Christian School,158,94.0,Medium,94.0,91.0,96.0,92.0,90.0,100.0,,91.0,96.0,92.0,90.0,100.0
+Gardner Park Elementary,464,94.5,Medium,93.0,92.0,98.0,87.0,96.0,98.0,,92.0,98.0,87.0,96.0,98.0
+Gaston Christian School,477,89.7,Low,91.0,85.0,83.0,86.0,92.0,100.0,,85.0,83.0,86.0,92.0,100.0
+Gaston Day School,185,96.9,High,97.0,96.0,96.0,94.0,97.0,100.0,,96.0,96.0,94.0,,100.0
+Gaston Virtual Academy,35,61.9,Low,69.0,57.0,,,,,,57.0,,,,
+H H Beam Elementary,497,86.6,Low,87.0,94.0,86.0,94.0,58.0,95.0,,94.0,86.0,94.0,58.0,95.0
+Hawks Nest STEAM Academy,345,96.8,High,96.0,98.0,96.0,98.0,96.0,94.0,,98.0,96.0,98.0,96.0,94.0
+Ida Rankin Elementary School,476,98.1,High,97.0,98.0,97.0,95.0,100.0,100.0,,98.0,97.0,95.0,100.0,100.0
+J B Page Primary School,978,96.5,High,95.0,94.0,95.0,98.0,97.0,97.0,,94.0,95.0,98.0,97.0,97.0
+Judah Christian Academy,41,90.6,Medium,,,,,100.0,100.0,,,,,100.0,100.0
+Lingerfeldt Elementary,364,85.9,Low,87.0,68.0,90.0,75.0,91.0,100.0,,68.0,90.0,75.0,91.0,100.0
+Lowell Elementary,349,96.3,High,96.0,93.0,98.0,92.0,98.0,98.0,,93.0,98.0,92.0,98.0,98.0
+McAdenville Elementary,178,97.4,High,96.0,100.0,100.0,92.0,100.0,93.0,,100.0,100.0,92.0,100.0,93.0
+Mountain Island Charter School,755,96.2,High,96.0,96.0,91.0,96.0,96.0,100.0,,96.0,91.0,96.0,,100.0
+New Hope Elementary,505,97.6,High,96.0,96.0,97.0,97.0,98.0,98.0,,96.0,97.0,97.0,98.0,98.0
+North Belmont Elementary,292,96.8,High,95.0,94.0,90.0,100.0,100.0,100.0,,94.0,90.0,100.0,100.0,100.0
+Piedmont Community Charter School,792,98.0,High,97.0,97.0,98.0,99.0,97.0,98.0,,97.0,98.0,99.0,97.0,98.0
+Pinewood Elementary,436,97.1,High,95.0,97.0,98.0,98.0,94.0,98.0,,97.0,98.0,98.0,94.0,98.0
+Pleasant Ridge Elementary,814,90.8,Medium,91.0,95.0,84.0,80.0,92.0,100.0,,95.0,84.0,80.0,92.0,100.0
+Robinson Elementary,403,96.5,High,95.0,95.0,97.0,96.0,96.0,98.0,,95.0,97.0,96.0,96.0,98.0
+Sherwood Elementary,537,84.4,Low,86.0,87.0,96.0,82.0,91.0,59.0,,87.0,96.0,82.0,91.0,59.0
+Springfield Primary,612,94.2,Medium,95.0,91.0,97.0,85.0,97.0,97.0,,91.0,97.0,85.0,97.0,97.0
+TeamCFA: Community Public Charter School,595,97.2,High,95.0,98.0,95.0,96.0,96.0,100.0,,98.0,95.0,96.0,,100.0
+Tryon Elementary,318,93.1,Medium,92.0,89.0,96.0,91.0,96.0,92.0,,89.0,96.0,91.0,96.0,92.0
+UR Academy,36,91.4,Medium,92.0,100.0,,,,,,100.0,,,,
+Victory Christian Academy,24,92.6,Medium,93.0,91.0,,,,,,91.0,,,,
+W A Bess Elementary School,593,93.5,Medium,94.0,78.0,98.0,94.0,98.0,98.0,,78.0,98.0,94.0,98.0,98.0
+Webb Street School,29,99.5,High,,100.0,100.0,100.0,100.0,100.0,,100.0,100.0,100.0,100.0,100.0
+Woodhill Elementary,477,94.7,Medium,93.0,92.0,93.0,98.0,96.0,95.0,,92.0,93.0,98.0,96.0,95.0

@@ -1,0 +1,38 @@
+school,enrollment,coverage_pct,tier,estimated_K_pct,estimated_1st_pct,estimated_2nd_pct,estimated_3rd_pct,estimated_4th_pct,estimated_5th_pct,reported_K_pct,reported_1st_pct,reported_2nd_pct,reported_3rd_pct,reported_4th_pct,reported_5th_pct
+American Renaissance School,657,93.3,Medium,92.0,91.0,92.0,89.0,97.0,98.0,,91.0,92.0,89.0,97.0,98.0
+Calvary Chapel Academy,37,18.3,Low,,,18.0,,0.0,,,,18.0,,0.0,
+Celeste Henkel Elementary,547,98.1,High,97.0,100.0,100.0,92.0,100.0,98.0,,100.0,100.0,92.0,100.0,98.0
+Central Elementary,306,98.0,High,97.0,95.0,93.0,100.0,100.0,100.0,,95.0,93.0,100.0,100.0,100.0
+Cloverleaf Elementary,485,96.2,High,96.0,96.0,92.0,97.0,94.0,100.0,,96.0,92.0,97.0,94.0,100.0
+Coddle Creek Elementary,686,94.5,Medium,93.0,95.0,94.0,92.0,94.0,96.0,,95.0,94.0,92.0,,96.0
+Cool Spring Elementary,417,97.0,High,96.0,95.0,98.0,94.0,96.0,100.0,,95.0,98.0,94.0,96.0,100.0
+Cornerstone Christian Academy,146,76.3,Low,78.0,61.0,78.0,72.0,84.0,82.0,,61.0,,72.0,84.0,
+Eagles Refuge Academy,4,68.9,Low,,,,,,,,,,,,
+East Iredell Elementary,628,95.8,High,96.0,96.0,93.0,95.0,93.0,100.0,,96.0,93.0,95.0,93.0,100.0
+Harmony Elementary,336,95.9,High,96.0,92.0,94.0,96.0,100.0,98.0,,92.0,94.0,96.0,100.0,98.0
+Headwaters Christian Academy,69,74.6,Low,76.0,93.0,76.0,59.0,,,,93.0,76.0,59.0,,
+Hope Christian Academy,19,91.8,Medium,,100.0,,,100.0,,,100.0,,,100.0,
+Iredell Charter Academy,523,94.4,Medium,93.0,93.0,96.0,95.0,89.0,100.0,,93.0,96.0,95.0,89.0,100.0
+Iredell-Statesville Schools Virtual Academy,10,63.8,Low,,100.0,0.0,,,,,100.0,0.0,,,
+Lake Norman Elementary,598,96.1,High,95.0,94.0,100.0,96.0,93.0,97.0,,94.0,100.0,96.0,93.0,97.0
+Lakeshore Elementary,599,96.6,High,96.0,96.0,98.0,95.0,92.0,100.0,,96.0,98.0,95.0,92.0,100.0
+Langtree Charter Academy,660,86.4,Low,88.0,82.0,84.0,77.0,95.0,94.0,,82.0,84.0,77.0,95.0,94.0
+Liberty Preparatory Christian Acad.,188,69.7,Low,69.0,59.0,65.0,66.0,77.0,80.0,,59.0,65.0,66.0,77.0,80.0
+N B Mills Elementary,356,92.8,Medium,92.0,90.0,83.0,98.0,94.0,93.0,,90.0,83.0,98.0,94.0,93.0
+Park View Elementary,794,95.2,High,94.0,92.0,94.0,91.0,97.0,100.0,,92.0,94.0,91.0,97.0,100.0
+Pine Lake Preparatory,671,92.7,Medium,91.0,95.0,91.0,91.0,92.0,93.0,,95.0,91.0,,,
+Pressly School,3,97.8,High,,100.0,,,100.0,,,100.0,,,100.0,
+Primrose School of Lake Norman,24,97.8,High,95.0,100.0,,,,,,100.0,,,,
+Rocky River Elementary,754,96.2,High,95.0,94.0,96.0,95.0,95.0,100.0,,94.0,96.0,95.0,95.0,100.0
+Scotts Elementary,280,95.8,High,95.0,100.0,81.0,100.0,100.0,100.0,,100.0,81.0,100.0,100.0,100.0
+Sharon Elementary,242,96.5,High,96.0,93.0,97.0,92.0,100.0,100.0,,93.0,97.0,92.0,100.0,100.0
+Shepherd Elementary,660,93.9,Medium,93.0,94.0,97.0,88.0,93.0,97.0,,94.0,97.0,88.0,93.0,97.0
+South Elementary,762,95.8,High,96.0,95.0,94.0,91.0,97.0,99.0,,95.0,94.0,91.0,97.0,99.0
+Southview Christian School,42,92.6,Medium,,100.0,,,,92.0,,100.0,,,,92.0
+Statesville Christian School,168,87.7,Low,88.0,84.0,88.0,88.0,88.0,90.0,,84.0,,88.0,88.0,
+Statesville Montessori,80,90.9,Medium,91.0,93.0,85.0,83.0,,100.0,,93.0,85.0,83.0,,100.0
+Third Creek Elementary,517,96.7,High,96.0,96.0,96.0,94.0,96.0,100.0,,96.0,96.0,94.0,96.0,100.0
+Troutman Elementary,711,95.7,High,96.0,89.0,95.0,97.0,98.0,98.0,,89.0,95.0,97.0,98.0,98.0
+Union Grove Elementary,235,91.9,Medium,92.0,78.0,84.0,97.0,100.0,100.0,,78.0,84.0,97.0,100.0,100.0
+Woodland Heights Elementary,522,94.6,Medium,95.0,93.0,98.0,92.0,98.0,90.0,,93.0,98.0,92.0,98.0,90.0
+Woodlawn School,107,98.3,High,96.0,100.0,100.0,93.0,100.0,100.0,,100.0,100.0,93.0,100.0,100.0

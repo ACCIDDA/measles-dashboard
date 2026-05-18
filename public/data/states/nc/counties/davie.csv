@@ -1,0 +1,8 @@
+school,enrollment,coverage_pct,tier,estimated_K_pct,estimated_1st_pct,estimated_2nd_pct,estimated_3rd_pct,estimated_4th_pct,estimated_5th_pct,reported_K_pct,reported_1st_pct,reported_2nd_pct,reported_3rd_pct,reported_4th_pct,reported_5th_pct
+Cooleemee Elementary,396,96.3,High,96.0,100.0,92.0,91.0,98.0,100.0,,100.0,92.0,91.0,98.0,100.0
+Cornatzer Elementary,366,98.9,High,98.0,96.0,100.0,100.0,100.0,97.0,,96.0,100.0,100.0,100.0,97.0
+Mocksville Elementary,478,96.0,High,96.0,100.0,97.0,89.0,96.0,97.0,,100.0,97.0,89.0,,
+Pinebrook Elementary,436,96.9,High,97.0,97.0,94.0,97.0,96.0,100.0,,97.0,94.0,97.0,96.0,100.0
+Shady Grove Elementary,422,95.5,High,96.0,95.0,97.0,90.0,96.0,98.0,,95.0,97.0,90.0,,98.0
+Trinity Baptist Academy,50,74.0,Low,,,,100.0,,,,,,100.0,,
+William R Davie Elementary,358,92.0,Medium,93.0,100.0,98.0,97.0,100.0,59.0,,100.0,98.0,97.0,100.0,59.0

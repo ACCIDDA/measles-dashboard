@@ -1,0 +1,5 @@
+school,enrollment,coverage_pct,tier,estimated_K_pct,estimated_1st_pct,estimated_2nd_pct,estimated_3rd_pct,estimated_4th_pct,estimated_5th_pct,reported_K_pct,reported_1st_pct,reported_2nd_pct,reported_3rd_pct,reported_4th_pct,reported_5th_pct
+North Elementary,269,93.6,Medium,94.0,94.0,95.0,83.0,100.0,97.0,,94.0,95.0,83.0,100.0,97.0
+Oakwood Elementary,330,94.8,Medium,93.0,96.0,96.0,86.0,100.0,96.0,,96.0,96.0,86.0,100.0,96.0
+South Elementary,260,95.8,High,96.0,98.0,91.0,95.0,100.0,92.0,,98.0,91.0,95.0,100.0,92.0
+Stoney Creek Elementary,158,94.0,Medium,94.0,92.0,90.0,93.0,96.0,96.0,,92.0,90.0,93.0,96.0,96.0

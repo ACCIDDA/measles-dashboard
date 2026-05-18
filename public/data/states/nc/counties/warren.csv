@@ -1,0 +1,4 @@
+school,enrollment,coverage_pct,tier,estimated_K_pct,estimated_1st_pct,estimated_2nd_pct,estimated_3rd_pct,estimated_4th_pct,estimated_5th_pct,reported_K_pct,reported_1st_pct,reported_2nd_pct,reported_3rd_pct,reported_4th_pct,reported_5th_pct
+Mariam Boyd Elementary,256,98.6,High,98.0,96.0,97.0,97.0,100.0,100.0,,96.0,97.0,97.0,100.0,100.0
+Norlina Christian School,16,98.2,High,,100.0,,,100.0,100.0,,100.0,,,100.0,100.0
+Northside K-8,259,96.8,High,97.0,100.0,97.0,91.0,97.0,97.0,,100.0,97.0,91.0,97.0,97.0

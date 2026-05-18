@@ -1,0 +1,11 @@
+school,enrollment,coverage_pct,tier,estimated_K_pct,estimated_1st_pct,estimated_2nd_pct,estimated_3rd_pct,estimated_4th_pct,estimated_5th_pct,reported_K_pct,reported_1st_pct,reported_2nd_pct,reported_3rd_pct,reported_4th_pct,reported_5th_pct
+Bethel Elementary,79,96.3,High,96.0,100.0,87.0,100.0,96.0,100.0,,100.0,87.0,100.0,,100.0
+Blowing Rock Elementary,252,96.7,High,97.0,92.0,97.0,95.0,100.0,96.0,,92.0,97.0,95.0,100.0,96.0
+Cove Creek Elementary,198,97.8,High,97.0,100.0,93.0,97.0,98.0,100.0,,100.0,93.0,97.0,,100.0
+Grace Academy,149,77.7,Low,79.0,64.0,74.0,75.0,87.0,90.0,,64.0,74.0,75.0,87.0,90.0
+Green Valley Elementary,174,97.7,High,96.0,100.0,100.0,89.0,100.0,100.0,,100.0,100.0,89.0,100.0,100.0
+Hardin Park Elementary,511,95.3,High,95.0,90.0,94.0,96.0,95.0,98.0,,90.0,94.0,96.0,95.0,98.0
+Mabel Elementary,102,97.3,High,97.0,93.0,94.0,100.0,97.0,100.0,,93.0,94.0,100.0,,100.0
+Parkway Elementary,355,98.3,High,98.0,97.0,98.0,98.0,98.0,98.0,,97.0,98.0,98.0,,
+Two Rivers Community School,113,74.2,Low,77.0,70.0,80.0,47.0,80.0,94.0,,70.0,80.0,47.0,,94.0
+Valle Crucis Elementary,190,98.6,High,98.0,96.0,96.0,100.0,100.0,100.0,,96.0,96.0,100.0,100.0,100.0
