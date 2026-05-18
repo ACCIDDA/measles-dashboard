@@ -49,5 +49,6 @@
   "wa": { "fips": "53", "name": "Washington", "status": "coming_soon" },
   "wv": { "fips": "54", "name": "West Virginia", "status": "coming_soon" },
   "wi": { "fips": "55", "name": "Wisconsin", "status": "coming_soon" },
-  "wy": { "fips": "56", "name": "Wyoming", "status": "coming_soon" }
+  "wy": { "fips": "56", "name": "Wyoming", "status": "coming_soon" },
+  "pr": { "fips": "72", "name": "Puerto Rico", "status": "coming_soon" }
 }
