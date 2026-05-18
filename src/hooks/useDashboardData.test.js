@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
-import { useDashboardData } from './useDashboardData.js';
+import { useDashboardData, useNationalData } from './useDashboardData.js';
 
 // A minimal us-atlas-shaped topology with two synthetic states (FIPS "37"
 // and "99") and one county per state, so we can verify that the hook
@@ -151,5 +151,86 @@ describe('useDashboardData', () => {
     expect(school.coverage).toBe(95);
     expect(school.tier).toBe('H');
     expect(school.coords).toEqual([-78.6, 35.8]);
+  });
+});
+
+function buildNationalFetchMock(captured, { nationalOk = true } = {}) {
+  return vi.fn((url) => {
+    captured.push(url);
+    if (url.includes('counties-10m.json')) {
+      return Promise.resolve({ ok: true, json: () => Promise.resolve(mockUsAtlas()) });
+    }
+    if (url.endsWith('data/national.json')) {
+      if (!nationalOk) return Promise.resolve({ ok: false, json: () => Promise.resolve({}) });
+      return Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve({
+          states: {
+            // Test both zero-padded and non-padded key handling.
+            '37': { coverage: 0.951, status: 'ready' },
+            '6': { coverage: 0.88, status: 'ready' },
+          },
+        }),
+      });
+    }
+    return Promise.resolve({ ok: false, json: () => Promise.resolve({}) });
+  });
+}
+
+describe('useNationalData', () => {
+  let originalFetch;
+  let captured;
+
+  beforeEach(() => {
+    captured = [];
+    originalFetch = globalThis.fetch;
+    globalThis.fetch = buildNationalFetchMock(captured);
+  });
+
+  afterEach(() => {
+    globalThis.fetch = originalFetch;
+  });
+
+  it('loads the US topology and exposes all state features', async () => {
+    const { result } = renderHook(() => useNationalData());
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    expect(result.current.error).toBeNull();
+    expect(captured.some(u => u.includes('counties-10m.json'))).toBe(true);
+    expect(captured.some(u => u.endsWith('data/national.json'))).toBe(true);
+
+    expect(Array.isArray(result.current.stateFeatures)).toBe(true);
+    // Both synthetic states (37, 99) survive — the national view renders
+    // every state feature regardless of coverage availability.
+    expect(result.current.stateFeatures).toHaveLength(2);
+    const ids = result.current.stateFeatures.map(f => String(f.id));
+    expect(ids).toContain('37');
+    expect(ids).toContain('99');
+  });
+
+  it('builds coverageByFips keyed by zero-padded FIPS', async () => {
+    const { result } = renderHook(() => useNationalData());
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    expect(result.current.coverageByFips['37']).toEqual({
+      coverage: 0.951,
+      status: 'ready',
+    });
+    // Single-digit "6" in the stub should normalize to "06".
+    expect(result.current.coverageByFips['06']).toEqual({
+      coverage: 0.88,
+      status: 'ready',
+    });
+  });
+
+  it('still resolves when the coverage stub is missing', async () => {
+    captured = [];
+    globalThis.fetch = buildNationalFetchMock(captured, { nationalOk: false });
+    const { result } = renderHook(() => useNationalData());
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    expect(result.current.error).toBeNull();
+    expect(result.current.stateFeatures).toHaveLength(2);
+    expect(result.current.coverageByFips).toEqual({});
   });
 });

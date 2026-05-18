@@ -1,8 +1,14 @@
 import { TIER_COLORS, LEGEND } from '../../config/index.js';
 import { getStateConfig } from '../../config/states.js';
 
-export default function MapLegend({ currentView, stateCode }) {
-  const lv = LEGEND[currentView] || LEGEND.coverage;
+const NO_DATA_FILL = '#d9d4cb';
+
+export default function MapLegend({ currentView, stateCode, variant }) {
+  // 'national' uses the coverage tier semantics (the only meaningful view at
+  // the state-aggregate zoom) and shows a "no data" swatch for greyed states.
+  const isNational = variant === 'national';
+  const view = isNational ? 'coverage' : currentView;
+  const lv = LEGEND[view] || LEGEND.coverage;
   const stateCfg = getStateConfig(stateCode);
 
   return (
@@ -26,11 +32,28 @@ export default function MapLegend({ currentView, stateCode }) {
         </svg>
         <span>{lv.l}</span>
       </div>
+      {isNational && (
+        <div className="map-leg-item">
+          <svg width="14" height="14" viewBox="0 0 12 12" aria-hidden="true">
+            <rect x="1" y="1" width="10" height="10" rx="2" fill={NO_DATA_FILL} stroke="#bdb5a8" strokeWidth="0.5" />
+          </svg>
+          <span>No data yet</span>
+        </div>
+      )}
       <div className="map-leg-sources">
-        <a href={stateCfg.sourceUrl} target="_blank" rel="noopener noreferrer">{stateCfg.sourceLabel}</a>
-        {' · '}
-        <a href="https://www.cdc.gov/vaccines/data-reporting/index.html" target="_blank" rel="noopener noreferrer">CDC VaxView</a>
-        {' · imuGAP'}
+        {isNational ? (
+          <>
+            <a href="https://www.cdc.gov/vaccines/data-reporting/index.html" target="_blank" rel="noopener noreferrer">CDC VaxView</a>
+            {' · imuGAP'}
+          </>
+        ) : (
+          <>
+            <a href={stateCfg.sourceUrl} target="_blank" rel="noopener noreferrer">{stateCfg.sourceLabel}</a>
+            {' · '}
+            <a href="https://www.cdc.gov/vaccines/data-reporting/index.html" target="_blank" rel="noopener noreferrer">CDC VaxView</a>
+            {' · imuGAP'}
+          </>
+        )}
       </div>
     </div>
   );

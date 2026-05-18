@@ -28,3 +28,35 @@ export function getStateConfig(code) {
   const key = (code || DEFAULT_STATE_CODE).toLowerCase();
   return STATES[key] || STATES[DEFAULT_STATE_CODE];
 }
+
+// 2-digit state FIPS → USPS abbreviation for all 50 states + DC.
+// Used by the national-view map to translate the FIPS id on each state
+// feature into the lowercase state code expected by /state/<code> routing.
+export const FIPS_TO_USPS = {
+  '01': 'AL', '02': 'AK', '04': 'AZ', '05': 'AR', '06': 'CA',
+  '08': 'CO', '09': 'CT', '10': 'DE', '11': 'DC', '12': 'FL',
+  '13': 'GA', '15': 'HI', '16': 'ID', '17': 'IL', '18': 'IN',
+  '19': 'IA', '20': 'KS', '21': 'KY', '22': 'LA', '23': 'ME',
+  '24': 'MD', '25': 'MA', '26': 'MI', '27': 'MN', '28': 'MS',
+  '29': 'MO', '30': 'MT', '31': 'NE', '32': 'NV', '33': 'NH',
+  '34': 'NJ', '35': 'NM', '36': 'NY', '37': 'NC', '38': 'ND',
+  '39': 'OH', '40': 'OK', '41': 'OR', '42': 'PA', '44': 'RI',
+  '45': 'SC', '46': 'SD', '47': 'TN', '48': 'TX', '49': 'UT',
+  '50': 'VT', '51': 'VA', '53': 'WA', '54': 'WV', '55': 'WI',
+  '56': 'WY',
+};
+
+// Normalize a us-atlas state feature id (which may be a number or a
+// numeric string with or without a leading zero) to a 2-digit FIPS string.
+export function normalizeFips(id) {
+  if (id == null) return '';
+  return String(id).padStart(2, '0');
+}
+
+// Resolve a state feature id to the lowercase USPS code used by routing,
+// e.g. 37 → "nc". Returns null when the FIPS isn't one of the 50 + DC.
+export function fipsToUsps(id) {
+  const fips = normalizeFips(id);
+  const usps = FIPS_TO_USPS[fips];
+  return usps ? usps.toLowerCase() : null;
+}
