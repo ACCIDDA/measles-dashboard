@@ -6,6 +6,7 @@ import Header from './components/Header/Header.jsx';
 import StateMap from './components/Map/StateMap.jsx';
 import Sidebar from './components/Sidebar/Sidebar.jsx';
 import Tour from './components/Tour.jsx';
+import NationalView from './components/NationalView.jsx';
 
 // Parse a state code from the URL path (e.g. "/state/nc") or hash
 // ("#/state/nc"). Falls back to DEFAULT_STATE_CODE when no match is found,
@@ -20,8 +21,20 @@ function parseStateCodeFromLocation() {
   return DEFAULT_STATE_CODE;
 }
 
-export default function App() {
-  const [stateCode] = useState(parseStateCodeFromLocation);
+// Detect whether the URL targets the national overview view. The
+// state-default behavior at "/" is preserved for backward compatibility;
+// "/national" (or "#/national") opts into the manifest-driven national
+// view. Issue #14 will eventually swap "/" to the choropleth.
+function isNationalRoute() {
+  if (typeof window === 'undefined') return false;
+  const sources = [window.location.pathname || '', window.location.hash || ''];
+  return sources.some((src) => /\/national(?:[/?#]|$)/.test(src));
+}
+
+// State-scoped view (existing NC drill-down) extracted into its own
+// component so App can branch between the national overview and a state
+// view without violating React's rules of hooks.
+function StateScopedApp({ stateCode }) {
   const stateCfg = getStateConfig(stateCode);
 
   const [selectedCounty, setSelectedCounty] = useState(null);
@@ -108,4 +121,19 @@ export default function App() {
       <Tour />
     </div>
   );
+}
+
+export default function App() {
+  const [stateCode] = useState(parseStateCodeFromLocation);
+  const [nationalRoute] = useState(isNationalRoute);
+
+  if (nationalRoute) {
+    return (
+      <div id="app">
+        <div id="aria-live" aria-live="polite" aria-atomic="true"></div>
+        <NationalView />
+      </div>
+    );
+  }
+  return <StateScopedApp stateCode={stateCode} />;
 }
