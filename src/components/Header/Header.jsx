@@ -32,7 +32,7 @@ export default function Header({
       />
 
       <div className="hd-title">
-        <h1>{stateName} Measles (MMR) Coverage</h1>
+        <h1>Measles Vaccination (MMR) Coverage</h1>
         <p>K&ndash;5 schools &middot; Click a county to explore</p>
       </div>
 
