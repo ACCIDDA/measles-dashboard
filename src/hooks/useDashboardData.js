@@ -1,7 +1,68 @@
 import { useState, useEffect } from 'react';
 import * as topojson from 'topojson-client';
 import { covTier } from '../config/index.js';
-import { getStateConfig, DEFAULT_STATE_CODE } from '../config/states.js';
+import { getStateConfig, DEFAULT_STATE_CODE, normalizeFips } from '../config/states.js';
+
+// National-view data hook: loads the US states topology and the per-state
+// coverage stub. Kept separate from useDashboardData(stateCode) so adding
+// the national view doesn't change the existing state-level path. Real
+// per-state coverage values will arrive with USImmunityProfiles output
+// (see issue #14); the stub at public/data/national.json drives the UI in
+// the meantime, and states absent from it render greyed.
+export function useNationalData() {
+  const [state, setState] = useState({
+    stateFeatures: null,
+    coverageByFips: null,
+    loading: true,
+    error: null,
+  });
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function load() {
+      try {
+        const [usRes, natRes] = await Promise.all([
+          fetch('https://cdn.jsdelivr.net/npm/us-atlas@3/counties-10m.json'),
+          fetch(`${import.meta.env.BASE_URL}data/national.json`),
+        ]);
+
+        if (!usRes.ok) throw new Error('Failed to load map data');
+
+        const us = await usRes.json();
+        // Coverage stub is optional — if missing, every state renders greyed.
+        const national = natRes.ok ? await natRes.json() : { states: {} };
+
+        const stateFeatures = topojson.feature(us, us.objects.states).features;
+
+        // Normalize the FIPS keys so callers can look up by 2-char id.
+        const coverageByFips = {};
+        const raw = (national && national.states) || {};
+        Object.keys(raw).forEach(k => {
+          coverageByFips[normalizeFips(k)] = raw[k];
+        });
+
+        if (!cancelled) {
+          setState({
+            stateFeatures,
+            coverageByFips,
+            loading: false,
+            error: null,
+          });
+        }
+      } catch (err) {
+        if (!cancelled) {
+          setState(prev => ({ ...prev, loading: false, error: err.message }));
+        }
+      }
+    }
+
+    load();
+    return () => { cancelled = true; };
+  }, []);
+
+  return state;
+}
 
 export function useDashboardData(stateCode = DEFAULT_STATE_CODE) {
   const [state, setState] = useState({
