@@ -1,0 +1,24 @@
+school,enrollment,coverage_pct,tier,estimated_K_pct,estimated_1st_pct,estimated_2nd_pct,estimated_3rd_pct,estimated_4th_pct,estimated_5th_pct,reported_K_pct,reported_1st_pct,reported_2nd_pct,reported_3rd_pct,reported_4th_pct,reported_5th_pct
+Deep Branch Elementary,308,97.2,High,97.0,96.0,100.0,96.0,95.0,98.0,,96.0,100.0,96.0,95.0,
+East Robeson Primary,748,95.3,High,95.0,97.0,87.0,94.0,96.0,99.0,,97.0,87.0,94.0,,99.0
+Green Grove Elementary,248,96.2,High,96.0,97.0,97.0,95.0,97.0,92.0,,97.0,97.0,95.0,97.0,92.0
+Highlander Academy,45,92.2,Medium,,100.0,72.0,100.0,100.0,100.0,,100.0,72.0,100.0,100.0,100.0
+Long Branch Elementary,473,95.9,High,95.0,95.0,97.0,94.0,96.0,95.0,,95.0,97.0,94.0,,95.0
+New Pathway Christian Academy,10,87.0,Low,,100.0,,,,,,100.0,,,,
+Old Main Stream Academy,340,98.6,High,98.0,97.0,98.0,100.0,100.0,,,97.0,98.0,100.0,100.0,
+Oxendine Elementary,241,98.9,High,98.0,100.0,97.0,100.0,97.0,100.0,,100.0,97.0,100.0,97.0,100.0
+Parkton Elementary,380,95.4,High,93.0,100.0,92.0,86.0,100.0,98.0,,100.0,92.0,86.0,100.0,98.0
+Peterson Elementary,670,92.4,Medium,90.0,100.0,100.0,78.0,91.0,92.0,,100.0,100.0,78.0,,
+Piney Grove Elementary,405,98.8,High,97.0,95.0,100.0,100.0,100.0,100.0,,95.0,100.0,100.0,100.0,100.0
+Prospect Elementary,472,98.2,High,97.0,100.0,98.0,97.0,100.0,96.0,,100.0,98.0,97.0,100.0,96.0
+Rex-Rennert Elementary,418,95.9,High,96.0,98.0,90.0,98.0,96.0,95.0,,98.0,90.0,98.0,96.0,95.0
+Rosenwald Elementary,395,96.2,High,92.0,100.0,95.0,97.0,93.0,98.0,,100.0,95.0,97.0,,98.0
+Rowland Norment Elementary,749,94.8,Medium,94.0,100.0,95.0,92.0,89.0,95.0,,100.0,95.0,92.0,89.0,95.0
+Saint Pauls Elementary,770,94.9,Medium,94.0,99.0,96.0,100.0,95.0,81.0,,99.0,96.0,100.0,,81.0
+Southeastern Academy,122,99.3,High,98.0,100.0,98.0,100.0,98.0,100.0,,100.0,,100.0,,100.0
+Southside/Ashpole Elem,174,93.2,Medium,94.0,100.0,100.0,77.0,94.0,95.0,,100.0,100.0,77.0,,
+Tanglewood Elementary,534,96.6,High,96.0,96.0,93.0,95.0,98.0,100.0,,96.0,93.0,95.0,98.0,100.0
+Townsend Elementary,270,98.4,High,97.0,95.0,97.0,100.0,100.0,100.0,,95.0,97.0,100.0,100.0,100.0
+Union Chapel Elementary,354,94.1,Medium,94.0,100.0,92.0,97.0,93.0,85.0,,100.0,92.0,97.0,93.0,85.0
+Union Elementary,310,99.0,High,98.0,96.0,100.0,100.0,100.0,100.0,,96.0,100.0,100.0,100.0,100.0
+W H Knuckles,609,94.0,Medium,92.0,97.0,94.0,93.0,96.0,90.0,,97.0,94.0,93.0,96.0,90.0

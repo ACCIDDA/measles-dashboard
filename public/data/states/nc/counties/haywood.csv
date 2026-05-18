@@ -1,0 +1,11 @@
+school,enrollment,coverage_pct,tier,estimated_K_pct,estimated_1st_pct,estimated_2nd_pct,estimated_3rd_pct,estimated_4th_pct,estimated_5th_pct,reported_K_pct,reported_1st_pct,reported_2nd_pct,reported_3rd_pct,reported_4th_pct,reported_5th_pct
+Bethel Christian Academy,63,53.6,Low,,,58.0,66.0,,,,,,66.0,,
+Bethel Elementary,470,96.8,High,95.0,98.0,100.0,87.0,100.0,100.0,,98.0,100.0,87.0,100.0,100.0
+Clyde Elementary,517,95.8,High,95.0,98.0,95.0,90.0,96.0,98.0,,98.0,95.0,90.0,96.0,98.0
+Haywood Christian Academy,88,78.1,Low,81.0,64.0,80.0,92.0,68.0,,,64.0,80.0,92.0,68.0,
+Hazelwood Elementary,460,96.7,High,96.0,97.0,94.0,96.0,97.0,98.0,,97.0,94.0,96.0,97.0,98.0
+Jonathan Valley Elementary,349,95.5,High,94.0,95.0,88.0,94.0,97.0,100.0,,95.0,88.0,94.0,97.0,100.0
+Junaluska Elementary,409,95.0,High,95.0,93.0,98.0,90.0,94.0,100.0,,93.0,98.0,90.0,94.0,100.0
+Meadowbrook Elementary,205,97.4,High,95.0,100.0,100.0,95.0,95.0,100.0,,100.0,100.0,95.0,95.0,100.0
+North Canton Elementary,308,98.0,High,97.0,93.0,98.0,100.0,100.0,97.0,,93.0,98.0,100.0,100.0,97.0
+Shining Rock Classical Academy: CFA,345,94.1,Medium,93.0,96.0,88.0,91.0,96.0,100.0,,96.0,88.0,91.0,96.0,100.0

@@ -1,0 +1,14 @@
+school,enrollment,coverage_pct,tier,estimated_K_pct,estimated_1st_pct,estimated_2nd_pct,estimated_3rd_pct,estimated_4th_pct,estimated_5th_pct,reported_K_pct,reported_1st_pct,reported_2nd_pct,reported_3rd_pct,reported_4th_pct,reported_5th_pct
+Aurelian Springs Elementary,136,98.9,High,98.0,100.0,95.0,100.0,100.0,100.0,,100.0,95.0,100.0,100.0,100.0
+Belmont Elementary School,545,98.2,High,98.0,95.0,96.0,100.0,99.0,100.0,,95.0,96.0,100.0,99.0,100.0
+Cornerstone Christian School,106,84.1,Low,86.0,80.0,90.0,80.0,77.0,100.0,,80.0,90.0,80.0,77.0,100.0
+Everetts Elementary,194,98.1,High,97.0,100.0,96.0,97.0,96.0,100.0,,100.0,96.0,97.0,96.0,100.0
+Halifax Academy,150,99.7,High,98.0,100.0,100.0,100.0,100.0,100.0,,100.0,100.0,100.0,100.0,100.0
+Hobgood Academy,236,98.6,High,98.0,100.0,97.0,100.0,98.0,97.0,,100.0,97.0,100.0,,97.0
+Hollister Elementary,167,97.8,High,98.0,100.0,96.0,94.0,100.0,100.0,,100.0,96.0,94.0,100.0,100.0
+KIPP Halifax College Preparatory,354,96.0,High,96.0,100.0,92.0,98.0,96.0,92.0,,100.0,92.0,98.0,,92.0
+Littleton Academy,31,98.2,High,,100.0,,100.0,,,,100.0,,100.0,,
+Manning Elementary School,568,93.9,Medium,95.0,96.0,95.0,90.0,87.0,100.0,,96.0,95.0,90.0,87.0,100.0
+Pittman Elementary,129,98.1,High,98.0,95.0,95.0,100.0,100.0,100.0,,95.0,95.0,100.0,100.0,100.0
+Scotland Neck Elementary,166,95.0,High,96.0,86.0,100.0,93.0,96.0,100.0,,86.0,100.0,93.0,96.0,100.0
+Weldon Elementary,256,94.7,Medium,96.0,94.0,93.0,100.0,95.0,88.0,,94.0,93.0,100.0,95.0,88.0

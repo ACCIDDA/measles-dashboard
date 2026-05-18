@@ -1,0 +1,20 @@
+school,enrollment,coverage_pct,tier,estimated_K_pct,estimated_1st_pct,estimated_2nd_pct,estimated_3rd_pct,estimated_4th_pct,estimated_5th_pct,reported_K_pct,reported_1st_pct,reported_2nd_pct,reported_3rd_pct,reported_4th_pct,reported_5th_pct
+Bailey Elementary,527,96.7,High,96.0,98.0,97.0,96.0,98.0,90.0,,98.0,97.0,96.0,98.0,90.0
+Benvenue Elementary,561,94.2,Medium,94.0,92.0,86.0,98.0,100.0,94.0,,92.0,86.0,98.0,100.0,94.0
+Coopers Elementary,507,99.8,High,98.0,100.0,100.0,100.0,100.0,100.0,,100.0,100.0,100.0,100.0,100.0
+Englewood Bapt. Weekday Sch.,40,97.3,High,,100.0,,,,,,100.0,,,,
+Englewood Elementary,106,92.8,Medium,93.0,92.0,,,,,,92.0,,,,
+Faith Christian School,168,96.3,High,96.0,94.0,96.0,96.0,100.0,94.0,,94.0,96.0,96.0,100.0,94.0
+G R Edwards Elementary,220,97.8,High,97.0,98.0,,,,,,98.0,,,,
+M B Hubbard Elementary,386,91.0,Medium,92.0,98.0,98.0,100.0,65.0,95.0,,98.0,98.0,100.0,65.0,95.0
+Middlesex Elementary,278,97.6,High,96.0,100.0,100.0,90.0,100.0,95.0,,100.0,100.0,90.0,100.0,95.0
+Nashville Elementary,621,95.1,High,95.0,97.0,95.0,93.0,95.0,92.0,,97.0,95.0,93.0,95.0,92.0
+New Life Christian Academy,133,99.6,High,98.0,100.0,100.0,100.0,100.0,98.0,,100.0,100.0,100.0,100.0,
+Our Lady Perpetual Help Cath Sch,85,95.9,High,95.0,93.0,93.0,100.0,96.0,96.0,,93.0,93.0,100.0,,
+Red Oak Elementary,548,96.6,High,96.0,96.0,96.0,92.0,98.0,100.0,,96.0,96.0,92.0,98.0,100.0
+Rocky Mount Academy,166,97.7,High,97.0,96.0,91.0,100.0,100.0,100.0,,96.0,91.0,100.0,100.0,100.0
+"Rocky Mount Preparatory School, Inc.",387,97.3,High,97.0,92.0,97.0,97.0,100.0,98.0,,92.0,97.0,97.0,100.0,98.0
+Southside Academy,38,92.6,Medium,93.0,100.0,85.0,,,,,100.0,85.0,,,
+Spring Hope Elementary,319,93.7,Medium,94.0,100.0,93.0,79.0,98.0,96.0,,100.0,93.0,79.0,98.0,96.0
+St. Andrew's Preschool & Kindergarten,40,99.2,High,,100.0,100.0,100.0,100.0,,,100.0,100.0,100.0,100.0,
+Winstead Avenue Elementary,862,96.3,High,96.0,99.0,98.0,94.0,97.0,94.0,,99.0,98.0,94.0,97.0,94.0

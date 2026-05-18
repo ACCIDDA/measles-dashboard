@@ -1,0 +1,40 @@
+school,enrollment,coverage_pct,tier,estimated_K_pct,estimated_1st_pct,estimated_2nd_pct,estimated_3rd_pct,estimated_4th_pct,estimated_5th_pct,reported_K_pct,reported_1st_pct,reported_2nd_pct,reported_3rd_pct,reported_4th_pct,reported_5th_pct
+Bradley Creek Elementary,300,97.6,High,97.0,97.0,100.0,91.0,98.0,100.0,,97.0,100.0,91.0,98.0,100.0
+Cape Fear Academy,255,96.5,High,96.0,91.0,97.0,97.0,97.0,100.0,,91.0,97.0,,,100.0
+Cape Fear Center for Inquiry,235,95.7,High,94.0,97.0,95.0,95.0,97.0,94.0,,97.0,95.0,95.0,97.0,94.0
+Coastal Preparatory Academy: A Challenge Foundation Academy,585,90.3,Medium,88.0,88.0,86.0,86.0,89.0,100.0,,88.0,86.0,86.0,,100.0
+DC Virgo Preparatory Academy,107,97.2,High,96.0,91.0,94.0,100.0,97.0,100.0,,91.0,94.0,100.0,,100.0
+Douglass Academy,158,96.3,High,96.0,96.0,92.0,95.0,97.0,100.0,,96.0,92.0,95.0,,100.0
+Dr Hubert Eaton Sr Elem,496,97.6,High,97.0,97.0,98.0,98.0,93.0,100.0,,97.0,98.0,98.0,93.0,100.0
+Dr John Codington Elem,460,97.2,High,97.0,95.0,97.0,95.0,98.0,100.0,,95.0,,95.0,98.0,100.0
+Edwin A Alderman Elementary,252,94.2,Medium,94.0,94.0,94.0,88.0,95.0,100.0,,94.0,,88.0,,100.0
+Edwin A Anderson Elementary,451,97.7,High,96.0,98.0,98.0,96.0,97.0,98.0,,98.0,98.0,96.0,,98.0
+Friends School of Wilmington,82,91.5,Medium,91.0,91.0,100.0,100.0,77.0,93.0,,91.0,100.0,100.0,77.0,93.0
+Heyward C Bellamy Elem,438,97.4,High,97.0,95.0,98.0,97.0,97.0,97.0,,95.0,98.0,97.0,,
+Holly Tree Elementary,347,98.1,High,97.0,100.0,94.0,98.0,100.0,100.0,,100.0,94.0,98.0,100.0,100.0
+Island Montessori Charter,160,86.4,Low,86.0,88.0,81.0,85.0,88.0,88.0,,88.0,81.0,85.0,,88.0
+John J Blair Elementary,382,96.9,High,95.0,94.0,98.0,97.0,98.0,96.0,,94.0,98.0,97.0,98.0,
+Lake Forest Academy,3,98.3,High,,100.0,,,,100.0,,100.0,,,,100.0
+Mary C Williams Elementary,350,97.4,High,96.0,100.0,95.0,94.0,100.0,98.0,,100.0,95.0,94.0,100.0,98.0
+Murrayville Elementary,516,98.2,High,97.0,100.0,96.0,96.0,98.0,100.0,,100.0,96.0,96.0,98.0,100.0
+Myrtle Grove Christian School,234,95.3,High,93.0,97.0,91.0,94.0,94.0,100.0,,97.0,91.0,94.0,,100.0
+New Horizons Elem. School,108,96.2,High,93.0,94.0,100.0,94.0,94.0,100.0,,94.0,100.0,,94.0,100.0
+Northside School of Christian Leadersip,31,76.4,Low,79.0,72.0,,,,,,72.0,,,,
+Ogden Elementary,584,97.7,High,97.0,94.0,98.0,97.0,98.0,100.0,,94.0,98.0,97.0,98.0,100.0
+Peace Rose Montessori,75,82.4,Low,83.0,80.0,85.0,75.0,,,,80.0,85.0,75.0,,
+Pine Valley Elementary,434,97.3,High,96.0,98.0,98.0,96.0,93.0,100.0,,98.0,98.0,96.0,93.0,100.0
+Porters Neck Elementary School,645,95.7,High,95.0,94.0,92.0,96.0,97.0,98.0,,94.0,92.0,96.0,97.0,98.0
+PVUMC Wee Care Kindergarten,56,91.1,Medium,,,100.0,91.0,93.0,94.0,,,100.0,91.0,,
+R Freeman Sch of Engineering,296,93.6,Medium,94.0,100.0,91.0,90.0,95.0,89.0,,100.0,91.0,90.0,,89.0
+Snipes Academy,348,97.1,High,96.0,96.0,96.0,96.0,96.0,100.0,,96.0,,,,100.0
+St. Mark Catholic School,251,96.1,High,96.0,93.0,97.0,97.0,97.0,94.0,,93.0,97.0,,97.0,94.0
+St. Mary Catholic School,98,93.6,Medium,94.0,82.0,94.0,95.0,95.0,100.0,,82.0,,,,100.0
+Sunset Park Elementary,449,98.2,High,96.0,100.0,98.0,97.0,97.0,100.0,,100.0,98.0,97.0,,100.0
+The School of Wonder,57,55.2,Low,60.0,50.0,,,,,,50.0,,,,
+Walter L Parsley Elementary,476,97.0,High,97.0,92.0,94.0,99.0,97.0,100.0,,92.0,94.0,99.0,97.0,100.0
+Wilmington Christian Academy,453,93.0,Medium,94.0,85.0,90.0,94.0,93.0,100.0,,85.0,90.0,94.0,93.0,100.0
+Wilmington Preparatory Academy,60,91.4,Medium,,100.0,100.0,,,91.0,,100.0,100.0,,,91.0
+Wilmington School of the Arts,341,85.3,Low,84.0,81.0,86.0,84.0,86.0,88.0,,81.0,86.0,84.0,,88.0
+Winter Park Model Elementary,309,95.1,High,94.0,92.0,95.0,92.0,98.0,98.0,,92.0,95.0,92.0,98.0,98.0
+Wrightsboro Elementary,428,97.8,High,97.0,100.0,92.0,100.0,98.0,98.0,,100.0,92.0,100.0,98.0,
+Wrightsville Beach Elem,238,97.3,High,96.0,97.0,93.0,100.0,97.0,100.0,,97.0,93.0,100.0,97.0,100.0

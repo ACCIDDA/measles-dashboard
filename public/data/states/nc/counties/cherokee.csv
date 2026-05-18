@@ -1,0 +1,7 @@
+school,enrollment,coverage_pct,tier,estimated_K_pct,estimated_1st_pct,estimated_2nd_pct,estimated_3rd_pct,estimated_4th_pct,estimated_5th_pct,reported_K_pct,reported_1st_pct,reported_2nd_pct,reported_3rd_pct,reported_4th_pct,reported_5th_pct
+Andrews Elementary,332,88.6,Low,88.0,88.0,84.0,84.0,93.0,92.0,,88.0,84.0,84.0,93.0,92.0
+Martins Creek Elementary/Mid,125,80.7,Low,84.0,65.0,77.0,81.0,87.0,100.0,,65.0,77.0,81.0,87.0,100.0
+Murphy Elementary,419,88.7,Low,91.0,91.0,81.0,83.0,91.0,97.0,,91.0,81.0,83.0,91.0,97.0
+Peachtree Elementary,169,94.9,Medium,95.0,96.0,89.0,93.0,96.0,100.0,,96.0,89.0,93.0,96.0,100.0
+Ranger Elementary/Middle,201,93.9,Medium,92.0,90.0,94.0,100.0,96.0,92.0,,90.0,94.0,100.0,96.0,92.0
+Shepherd Academy,21,97.6,High,,100.0,,100.0,,,,100.0,,100.0,,

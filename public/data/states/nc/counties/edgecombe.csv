@@ -1,0 +1,9 @@
+school,enrollment,coverage_pct,tier,estimated_K_pct,estimated_1st_pct,estimated_2nd_pct,estimated_3rd_pct,estimated_4th_pct,estimated_5th_pct,reported_K_pct,reported_1st_pct,reported_2nd_pct,reported_3rd_pct,reported_4th_pct,reported_5th_pct
+Coker-Wimberly Elementary,217,97.4,High,97.0,100.0,90.0,98.0,97.0,100.0,,100.0,90.0,98.0,97.0,100.0
+Fairview Elementary,576,79.0,Low,83.0,86.0,81.0,36.0,96.0,94.0,,86.0,81.0,36.0,96.0,94.0
+G W Bulluck Elementary,504,95.8,High,96.0,100.0,92.0,95.0,94.0,96.0,,100.0,92.0,95.0,94.0,96.0
+G W Carver Elementary,514,95.2,High,95.0,97.0,90.0,90.0,100.0,98.0,,97.0,90.0,90.0,100.0,98.0
+Martin Millennium Academy,360,96.1,High,96.0,100.0,95.0,87.0,100.0,97.0,,100.0,95.0,87.0,100.0,97.0
+North East Carolina Preparatory,451,96.1,High,96.0,95.0,96.0,94.0,94.0,100.0,,95.0,96.0,94.0,94.0,100.0
+Princeville Elementary,231,95.6,High,95.0,100.0,92.0,88.0,100.0,100.0,,100.0,92.0,88.0,100.0,100.0
+Stocks Elementary,365,94.0,Medium,95.0,96.0,82.0,92.0,100.0,100.0,,96.0,82.0,92.0,100.0,100.0

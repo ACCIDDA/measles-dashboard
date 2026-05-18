@@ -1,0 +1,9 @@
+school,enrollment,coverage_pct,tier,estimated_K_pct,estimated_1st_pct,estimated_2nd_pct,estimated_3rd_pct,estimated_4th_pct,estimated_5th_pct,reported_K_pct,reported_1st_pct,reported_2nd_pct,reported_3rd_pct,reported_4th_pct,reported_5th_pct
+Bethlehem Elementary,387,97.6,High,96.0,93.0,97.0,98.0,100.0,100.0,,93.0,97.0,98.0,100.0,100.0
+Ellendale Elementary,175,97.3,High,96.0,100.0,96.0,92.0,100.0,100.0,,100.0,96.0,92.0,100.0,100.0
+Hiddenite Elementary,315,98.2,High,96.0,93.0,100.0,97.0,100.0,100.0,,93.0,100.0,97.0,100.0,100.0
+Millersville Christian Academy,154,91.3,Medium,91.0,100.0,100.0,93.0,71.0,93.0,,100.0,100.0,93.0,71.0,
+Stony Point Elementary,189,97.6,High,95.0,96.0,96.0,97.0,100.0,100.0,,96.0,96.0,97.0,100.0,100.0
+Sugar Loaf Elementary,207,96.1,High,94.0,94.0,88.0,100.0,100.0,100.0,,94.0,88.0,100.0,100.0,100.0
+Taylorsville Elementary,223,97.3,High,94.0,91.0,100.0,97.0,100.0,100.0,,91.0,100.0,97.0,100.0,100.0
+Wittenburg Elementary,261,95.3,High,95.0,96.0,95.0,93.0,94.0,97.0,,96.0,95.0,93.0,94.0,97.0

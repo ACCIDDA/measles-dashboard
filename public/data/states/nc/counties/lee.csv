@@ -1,0 +1,15 @@
+school,enrollment,coverage_pct,tier,estimated_K_pct,estimated_1st_pct,estimated_2nd_pct,estimated_3rd_pct,estimated_4th_pct,estimated_5th_pct,reported_K_pct,reported_1st_pct,reported_2nd_pct,reported_3rd_pct,reported_4th_pct,reported_5th_pct
+Broadway Elementary,481,91.3,Medium,93.0,93.0,76.0,89.0,95.0,100.0,,93.0,76.0,89.0,95.0,100.0
+BT Bullock Elementary,448,98.0,High,97.0,100.0,98.0,96.0,98.0,96.0,,100.0,98.0,96.0,98.0,96.0
+Calvary Education Center,21,60.9,Low,,,,,,,,,,,,
+Carolina Christian Academy,8,96.6,High,,100.0,100.0,,100.0,,,100.0,100.0,,100.0,
+Deep River Elementary,499,95.2,High,95.0,90.0,96.0,93.0,96.0,100.0,,90.0,96.0,93.0,96.0,100.0
+Floyd L Knight Children Center,12,99.3,High,,100.0,100.0,100.0,100.0,100.0,,100.0,100.0,100.0,100.0,100.0
+Grace Christian School,495,93.4,Medium,93.0,83.0,95.0,97.0,92.0,100.0,,83.0,95.0,97.0,92.0,100.0
+Greenwood Elementary,538,97.7,High,97.0,97.0,94.0,94.0,100.0,100.0,,97.0,94.0,94.0,100.0,100.0
+J Glenn Edwards Elementary,522,97.9,High,98.0,99.0,98.0,95.0,100.0,95.0,,99.0,98.0,95.0,100.0,95.0
+J R Ingram Jr Elementary,380,94.7,Medium,96.0,87.0,96.0,90.0,100.0,98.0,,87.0,96.0,90.0,100.0,98.0
+Lee Christian School,122,89.5,Low,90.0,100.0,82.0,84.0,91.0,92.0,,100.0,82.0,84.0,,
+MINA Charter School of Lee County,323,98.9,High,98.0,100.0,96.0,100.0,98.0,100.0,,100.0,96.0,100.0,,100.0
+Tramway Elementary,615,98.5,High,98.0,99.0,97.0,96.0,100.0,100.0,,99.0,97.0,96.0,100.0,100.0
+WB Wicker Elementary,590,97.3,High,96.0,94.0,98.0,98.0,99.0,97.0,,94.0,98.0,98.0,99.0,97.0

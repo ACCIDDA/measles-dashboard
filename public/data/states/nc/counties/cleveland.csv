@@ -1,0 +1,20 @@
+school,enrollment,coverage_pct,tier,estimated_K_pct,estimated_1st_pct,estimated_2nd_pct,estimated_3rd_pct,estimated_4th_pct,estimated_5th_pct,reported_K_pct,reported_1st_pct,reported_2nd_pct,reported_3rd_pct,reported_4th_pct,reported_5th_pct
+Arise Christian Academy,4,40.7,Low,,0.0,,,,,,0.0,,,,
+Boiling Springs Elementary,502,96.7,High,96.0,94.0,95.0,95.0,98.0,98.0,,94.0,95.0,95.0,98.0,98.0
+Casar Elementary,230,97.9,High,98.0,100.0,100.0,93.0,100.0,97.0,,100.0,100.0,93.0,100.0,97.0
+Champion Christian Academy,33,99.3,High,98.0,100.0,100.0,,100.0,,,100.0,100.0,,100.0,
+Cleveland Innovation,16,99.6,High,,100.0,100.0,100.0,,,,100.0,100.0,100.0,,
+East Elementary,227,97.9,High,97.0,94.0,97.0,100.0,97.0,100.0,,94.0,97.0,100.0,,100.0
+Elizabeth Elementary,371,91.9,Medium,92.0,92.0,93.0,90.0,,,,92.0,93.0,90.0,,
+Fallston Elementary,462,97.5,High,97.0,94.0,98.0,100.0,97.0,97.0,,94.0,98.0,100.0,,
+Gaston Christian - Shelby,65,86.5,Low,88.0,84.0,86.0,,,,,84.0,86.0,,,
+Grover Elementary,365,95.8,High,96.0,100.0,88.0,88.0,100.0,100.0,,100.0,88.0,88.0,100.0,100.0
+James Love Elementary,384,93.1,Medium,92.0,87.0,98.0,83.0,100.0,100.0,,87.0,98.0,83.0,100.0,100.0
+Jefferson Elementary,438,97.3,High,96.0,98.0,98.0,93.0,97.0,100.0,,98.0,98.0,93.0,97.0,100.0
+North Elementary,284,96.7,High,95.0,93.0,96.0,95.0,100.0,100.0,,93.0,96.0,95.0,100.0,100.0
+Pinnacle Classical Academy,647,96.7,High,97.0,94.0,96.0,95.0,97.0,100.0,,94.0,96.0,95.0,,100.0
+Springmore Elementary,562,97.3,High,97.0,94.0,99.0,96.0,98.0,98.0,,94.0,99.0,96.0,98.0,98.0
+Township Three Elementary,481,98.5,High,98.0,100.0,98.0,97.0,98.0,97.0,,100.0,98.0,97.0,98.0,97.0
+Union Elementary,364,98.5,High,98.0,100.0,100.0,94.0,98.0,100.0,,100.0,100.0,94.0,98.0,100.0
+Washington Elementary,346,96.3,High,95.0,100.0,91.0,98.0,96.0,96.0,,100.0,91.0,98.0,,
+West Elementary,305,95.9,High,97.0,93.0,93.0,100.0,96.0,95.0,,93.0,93.0,100.0,96.0,95.0

@@ -1,0 +1,8 @@
+school,enrollment,coverage_pct,tier,estimated_K_pct,estimated_1st_pct,estimated_2nd_pct,estimated_3rd_pct,estimated_4th_pct,estimated_5th_pct,reported_K_pct,reported_1st_pct,reported_2nd_pct,reported_3rd_pct,reported_4th_pct,reported_5th_pct
+Banner Elk Elementary,139,97.9,High,95.0,100.0,96.0,100.0,96.0,100.0,,100.0,96.0,100.0,96.0,100.0
+Bethel Christian Academy,50,81.2,Low,,,,,,,,,,,,
+Crossnore Elementary,184,98.2,High,95.0,100.0,100.0,96.0,97.0,100.0,,100.0,100.0,96.0,97.0,100.0
+Freedom Trail Elementary,169,93.7,Medium,94.0,92.0,90.0,91.0,96.0,100.0,,92.0,90.0,91.0,96.0,100.0
+Marjorie Williams Academy,32,98.8,High,,100.0,100.0,100.0,100.0,100.0,,100.0,100.0,100.0,100.0,100.0
+Newland Elementary,217,98.4,High,96.0,97.0,100.0,100.0,97.0,100.0,,97.0,100.0,100.0,97.0,100.0
+Riverside Elementary,88,98.2,High,96.0,100.0,100.0,100.0,93.0,100.0,,100.0,100.0,100.0,93.0,100.0

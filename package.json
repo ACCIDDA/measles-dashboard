@@ -5,6 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "build:data": "node scripts/build-downloads.mjs",
+    "prebuild": "npm run build:data",
     "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint src/",

@@ -1,0 +1,10 @@
+school,enrollment,coverage_pct,tier,estimated_K_pct,estimated_1st_pct,estimated_2nd_pct,estimated_3rd_pct,estimated_4th_pct,estimated_5th_pct,reported_K_pct,reported_1st_pct,reported_2nd_pct,reported_3rd_pct,reported_4th_pct,reported_5th_pct
+Bladen Lakes Primary,154,96.7,High,96.0,96.0,96.0,92.0,100.0,100.0,,96.0,96.0,92.0,100.0,100.0
+Bladenboro Primary,435,96.5,High,93.0,98.0,95.0,97.0,98.0,97.0,,98.0,95.0,97.0,98.0,97.0
+Dublin Primary,266,98.1,High,95.0,97.0,96.0,100.0,100.0,100.0,,97.0,96.0,100.0,100.0,100.0
+East Arcadia Elementary,59,92.5,Medium,,,100.0,100.0,100.0,85.0,,,100.0,100.0,100.0,85.0
+Elizabethtown Christian Educational Ministries,96,97.3,High,96.0,95.0,100.0,96.0,,,,95.0,100.0,,,
+Elizabethtown Primary,536,96.2,High,96.0,97.0,95.0,92.0,99.0,97.0,,97.0,95.0,92.0,99.0,97.0
+Emereau: Bladen,328,97.3,High,97.0,96.0,97.0,91.0,100.0,100.0,,96.0,97.0,91.0,100.0,100.0
+Homestead Christian School,5,79.1,Low,,100.0,,,,,,100.0,,,,
+Tar Heel School,82,97.9,High,95.0,100.0,,,,,,100.0,,,,

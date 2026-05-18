@@ -1,0 +1,10 @@
+school,enrollment,coverage_pct,tier,estimated_K_pct,estimated_1st_pct,estimated_2nd_pct,estimated_3rd_pct,estimated_4th_pct,estimated_5th_pct,reported_K_pct,reported_1st_pct,reported_2nd_pct,reported_3rd_pct,reported_4th_pct,reported_5th_pct
+Eastfield Global Magnet,264,98.2,High,98.0,100.0,100.0,97.0,98.0,95.0,,100.0,100.0,97.0,,95.0
+Glenwood Elementary,378,97.3,High,96.0,96.0,96.0,95.0,98.0,100.0,,96.0,96.0,95.0,98.0,100.0
+Harvest Tme Baptist Academy,6,99.1,High,,100.0,100.0,,,,,100.0,100.0,,,
+Marion Elementary,317,97.7,High,97.0,100.0,96.0,92.0,100.0,100.0,,100.0,96.0,92.0,100.0,100.0
+Nebo Elementary,309,97.2,High,97.0,96.0,96.0,96.0,98.0,100.0,,96.0,96.0,96.0,98.0,100.0
+New Manna Christian School,104,95.4,High,95.0,94.0,94.0,100.0,100.0,87.0,,94.0,94.0,100.0,100.0,87.0
+North Cove Elementary,187,98.0,High,97.0,100.0,94.0,100.0,100.0,96.0,,100.0,94.0,100.0,100.0,96.0
+Pleasant Gardens Elementary,273,99.4,High,98.0,100.0,100.0,100.0,97.0,100.0,,100.0,100.0,100.0,97.0,100.0
+West Marion Elementary,343,98.9,High,98.0,98.0,98.0,98.0,100.0,100.0,,98.0,98.0,98.0,100.0,100.0

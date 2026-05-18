@@ -1,0 +1,48 @@
+school,enrollment,coverage_pct,tier,estimated_K_pct,estimated_1st_pct,estimated_2nd_pct,estimated_3rd_pct,estimated_4th_pct,estimated_5th_pct,reported_K_pct,reported_1st_pct,reported_2nd_pct,reported_3rd_pct,reported_4th_pct,reported_5th_pct
+ALA Monroe,68,91.4,Medium,91.0,91.0,,,,,,91.0,,,,
+Antioch Elementary,637,97.3,High,96.0,93.0,97.0,100.0,95.0,100.0,,93.0,97.0,100.0,95.0,100.0
+Arborbrook Christian Academy,135,60.0,Low,61.0,56.0,65.0,50.0,47.0,76.0,,56.0,65.0,50.0,47.0,76.0
+Benton Heights Elementary,487,97.4,High,97.0,93.0,94.0,100.0,100.0,100.0,,93.0,94.0,100.0,100.0,100.0
+Bright Spot Baptist Academy,6,76.7,Low,,,,,,,,,,,,
+Covenant Christian Academy,25,72.1,Low,,,,,,,,,,,,
+East Elementary,368,92.2,Medium,90.0,98.0,86.0,96.0,94.0,87.0,,98.0,86.0,96.0,94.0,87.0
+Fairview Elementary,363,94.0,Medium,92.0,89.0,97.0,92.0,94.0,100.0,,89.0,97.0,92.0,94.0,100.0
+First Assembly Christian School,79,94.1,Medium,,,93.0,93.0,100.0,100.0,,,93.0,,100.0,100.0
+Grace Academy,65,57.1,Low,61.0,33.0,,69.0,,,,33.0,,69.0,,
+Hemby Bridge Elementary,412,96.2,High,95.0,95.0,95.0,94.0,96.0,100.0,,95.0,95.0,94.0,96.0,100.0
+Indian Trail Elementary,532,93.7,Medium,93.0,89.0,92.0,93.0,94.0,100.0,,89.0,92.0,93.0,94.0,100.0
+Kensington Elementary,738,95.7,High,95.0,95.0,89.0,95.0,96.0,99.0,,95.0,89.0,95.0,96.0,99.0
+Marshville Elementary,400,95.3,High,94.0,90.0,94.0,92.0,100.0,100.0,,90.0,94.0,92.0,100.0,100.0
+Marvin Elementary,478,97.2,High,95.0,95.0,93.0,97.0,100.0,100.0,,95.0,93.0,97.0,100.0,100.0
+Metrolina Christian Academy,446,80.9,Low,82.0,70.0,81.0,83.0,84.0,85.0,,70.0,81.0,,,
+Monroe Charter Academy,131,75.4,Low,79.0,37.0,80.0,65.0,81.0,100.0,,37.0,80.0,65.0,,100.0
+New Salem Elementary,235,97.4,High,97.0,97.0,97.0,97.0,95.0,100.0,,97.0,97.0,97.0,95.0,100.0
+New Town Elementary,533,96.4,High,96.0,94.0,92.0,97.0,98.0,100.0,,94.0,92.0,97.0,98.0,100.0
+NorthPoint Christian Academy,78,64.9,Low,66.0,52.0,64.0,73.0,,,,52.0,64.0,73.0,,
+Pleasant Plains Christian Sch.,34,53.0,Low,,,,,,,,,,,,
+Poplin Elementary,635,94.6,Medium,93.0,93.0,95.0,95.0,95.0,93.0,,93.0,95.0,95.0,95.0,93.0
+Porter Ridge Elementary,583,95.5,High,94.0,92.0,99.0,93.0,97.0,96.0,,92.0,99.0,93.0,97.0,96.0
+Prospect Elementary,372,96.7,High,95.0,94.0,93.0,98.0,100.0,100.0,,94.0,93.0,98.0,100.0,100.0
+Rea View Elementary,510,96.7,High,96.0,93.0,94.0,98.0,98.0,98.0,,93.0,94.0,98.0,98.0,98.0
+Rock Rest Elementary,368,96.9,High,96.0,93.0,97.0,93.0,98.0,100.0,,93.0,97.0,93.0,98.0,100.0
+Rocky River Elementary,475,90.9,Medium,91.0,97.0,75.0,89.0,91.0,100.0,,97.0,75.0,89.0,91.0,100.0
+Sandy Ridge Elementary,403,96.8,High,96.0,94.0,98.0,96.0,94.0,100.0,,94.0,98.0,96.0,94.0,100.0
+Sardis Elementary,423,90.8,Medium,90.0,85.0,89.0,92.0,95.0,92.0,,85.0,89.0,92.0,95.0,92.0
+Shining Light Baptist Academy,152,60.3,Low,60.0,53.0,60.0,62.0,64.0,66.0,,53.0,,,,
+Stallings Elementary,687,94.4,Medium,94.0,90.0,94.0,93.0,95.0,98.0,,90.0,94.0,93.0,95.0,98.0
+Sun Valley Elementary,1013,94.5,Medium,93.0,95.0,92.0,94.0,95.0,96.0,,95.0,92.0,94.0,95.0,96.0
+Tabernacle Christian School,122,95.4,High,95.0,92.0,100.0,92.0,93.0,100.0,,92.0,100.0,92.0,93.0,100.0
+Thales Academy,408,89.6,Low,89.0,81.0,91.0,85.0,88.0,100.0,,81.0,91.0,85.0,88.0,100.0
+The Learning Habitat,40,83.1,Low,86.0,80.0,,,,,,80.0,,,,
+Union Academy Charter School,982,96.1,High,95.0,90.0,96.0,96.0,96.0,100.0,,90.0,96.0,96.0,96.0,100.0
+Union Day School,381,93.2,Medium,88.0,88.0,94.0,96.0,98.0,92.0,,88.0,94.0,96.0,98.0,92.0
+Union Elementary,271,94.5,Medium,94.0,96.0,94.0,76.0,100.0,100.0,,96.0,94.0,76.0,100.0,100.0
+Union Prep Academy at Indian Trail,322,95.0,High,95.0,93.0,96.0,,,,,93.0,96.0,,,
+Unionville Elementary,597,95.3,High,96.0,90.0,95.0,93.0,98.0,98.0,,90.0,95.0,93.0,98.0,98.0
+Walter Bickett Elementary,441,96.1,High,95.0,93.0,92.0,98.0,96.0,100.0,,93.0,92.0,98.0,96.0,100.0
+Waxhaw Elementary,536,94.0,Medium,93.0,90.0,97.0,90.0,94.0,98.0,,90.0,97.0,90.0,94.0,98.0
+Weddington Christian Academy,113,91.8,Medium,92.0,96.0,86.0,93.0,92.0,84.0,,96.0,86.0,93.0,92.0,84.0
+Weddington Elementary,511,96.2,High,95.0,93.0,96.0,93.0,97.0,100.0,,93.0,96.0,93.0,97.0,100.0
+Wesley Chapel Elementary,581,94.2,Medium,94.0,95.0,95.0,92.0,94.0,93.0,,95.0,95.0,92.0,94.0,93.0
+Western Union Elementary,455,91.7,Medium,92.0,83.0,85.0,93.0,95.0,100.0,,83.0,85.0,93.0,95.0,100.0
+Wingate Elementary,338,98.1,High,97.0,98.0,98.0,98.0,98.0,98.0,,98.0,98.0,98.0,98.0,98.0

@@ -1,0 +1,5 @@
+school,enrollment,coverage_pct,tier,estimated_K_pct,estimated_1st_pct,estimated_2nd_pct,estimated_3rd_pct,estimated_4th_pct,estimated_5th_pct,reported_K_pct,reported_1st_pct,reported_2nd_pct,reported_3rd_pct,reported_4th_pct,reported_5th_pct
+Central Elementary,354,98.5,High,98.0,100.0,98.0,100.0,98.0,93.0,,100.0,,100.0,,93.0
+Gaston College Preparatory,477,94.4,Medium,95.0,98.0,93.0,88.0,100.0,89.0,,98.0,93.0,88.0,100.0,89.0
+Gaston Elementary,176,98.7,High,98.0,96.0,98.0,100.0,98.0,100.0,,96.0,,100.0,,100.0
+Northeast Academy,69,99.7,High,98.0,100.0,100.0,100.0,100.0,100.0,,100.0,100.0,100.0,100.0,100.0

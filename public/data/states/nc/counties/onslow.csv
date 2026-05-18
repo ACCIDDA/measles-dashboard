@@ -1,0 +1,30 @@
+school,enrollment,coverage_pct,tier,estimated_K_pct,estimated_1st_pct,estimated_2nd_pct,estimated_3rd_pct,estimated_4th_pct,estimated_5th_pct,reported_K_pct,reported_1st_pct,reported_2nd_pct,reported_3rd_pct,reported_4th_pct,reported_5th_pct
+Bell Fork Elementary,540,93.5,Medium,92.0,95.0,89.0,92.0,93.0,97.0,,95.0,89.0,92.0,,97.0
+Blue Creek Elementary,487,96.4,High,95.0,100.0,97.0,92.0,96.0,96.0,,100.0,97.0,92.0,,96.0
+Carolina Forest Elementary,591,81.9,Low,83.0,56.0,93.0,93.0,85.0,80.0,,56.0,93.0,93.0,,80.0
+Clyde Erwin Elementary,312,92.6,Medium,91.0,100.0,89.0,92.0,83.0,100.0,,100.0,89.0,92.0,83.0,100.0
+Coastal Elementary,575,85.9,Low,85.0,90.0,92.0,76.0,,,,90.0,92.0,76.0,,
+Dixon Elementary,815,93.7,Medium,94.0,91.0,90.0,84.0,97.0,99.0,,91.0,90.0,84.0,97.0,99.0
+Grace Classical School,94,65.7,Low,67.0,57.0,53.0,66.0,71.0,100.0,,57.0,53.0,66.0,,100.0
+Hunters Creek Elementary,610,96.5,High,95.0,94.0,98.0,99.0,96.0,93.0,,94.0,98.0,99.0,96.0,93.0
+Infant of Prague Catholic School,200,96.1,High,95.0,89.0,100.0,96.0,100.0,95.0,,89.0,100.0,96.0,100.0,95.0
+Jacksonville Christian Academy,161,75.4,Low,75.0,70.0,75.0,76.0,78.0,78.0,,70.0,,,,78.0
+Jacksonville Commons Elem,463,93.4,Medium,94.0,93.0,82.0,94.0,98.0,97.0,,93.0,82.0,94.0,98.0,97.0
+Liberty Christian Academy,262,90.9,Medium,91.0,87.0,88.0,94.0,93.0,91.0,,87.0,88.0,94.0,93.0,91.0
+Living Water Christian School,228,86.5,Low,88.0,81.0,89.0,85.0,82.0,93.0,,81.0,89.0,85.0,82.0,93.0
+Meadow View Elementary,553,97.5,High,94.0,98.0,100.0,95.0,99.0,96.0,,98.0,100.0,95.0,99.0,96.0
+Montessori Children's School,140,82.4,Low,83.0,89.0,83.0,77.0,84.0,73.0,,89.0,83.0,77.0,84.0,73.0
+Morton Elementary,655,95.8,High,94.0,99.0,91.0,94.0,96.0,98.0,,99.0,91.0,94.0,96.0,98.0
+Northwoods Elementary,383,80.4,Low,84.0,52.0,96.0,81.0,80.0,92.0,,52.0,96.0,81.0,80.0,92.0
+One World Montessori,69,87.8,Low,88.0,83.0,88.0,92.0,,100.0,,83.0,88.0,92.0,,100.0
+Parkwood Elementary,440,95.6,High,92.0,95.0,94.0,94.0,97.0,98.0,,95.0,94.0,94.0,97.0,98.0
+Queens Creek Elementary,647,89.5,Low,89.0,96.0,95.0,97.0,69.0,93.0,,96.0,95.0,97.0,69.0,93.0
+Richlands Elementary,676,90.5,Medium,90.0,63.0,90.0,96.0,96.0,98.0,,63.0,90.0,96.0,96.0,98.0
+Richlands Primary,557,95.7,High,96.0,96.0,92.0,91.0,96.0,99.0,,96.0,92.0,91.0,,99.0
+Silverdale Elementary,589,94.2,Medium,92.0,96.0,89.0,89.0,99.0,100.0,,96.0,89.0,89.0,99.0,100.0
+Southwest Elementary,708,95.8,High,95.0,96.0,95.0,91.0,100.0,97.0,,96.0,95.0,91.0,100.0,97.0
+St. Anne's Parish Day School,96,98.4,High,97.0,93.0,100.0,100.0,100.0,100.0,,93.0,100.0,100.0,100.0,100.0
+Stateside Elementary,554,95.0,High,94.0,93.0,92.0,91.0,98.0,100.0,,93.0,92.0,91.0,98.0,100.0
+Summersill Elementary,423,89.1,Low,90.0,62.0,92.0,92.0,94.0,98.0,,62.0,92.0,92.0,94.0,98.0
+Swansboro Elementary,563,96.0,High,95.0,94.0,94.0,96.0,99.0,96.0,,94.0,94.0,96.0,99.0,96.0
+Z.E.C.A. School of Arts and Technology,86,94.7,Medium,95.0,91.0,94.0,90.0,91.0,100.0,,91.0,94.0,90.0,91.0,100.0

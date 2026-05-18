@@ -1,0 +1,5 @@
+school,enrollment,coverage_pct,tier,estimated_K_pct,estimated_1st_pct,estimated_2nd_pct,estimated_3rd_pct,estimated_4th_pct,estimated_5th_pct,reported_K_pct,reported_1st_pct,reported_2nd_pct,reported_3rd_pct,reported_4th_pct,reported_5th_pct
+Mountain Discovery,90,94.9,Medium,95.0,94.0,95.0,,,,,94.0,95.0,,,
+NEW KITUWAH ACADEMY,60,99.6,High,97.0,100.0,100.0,100.0,100.0,100.0,,100.0,100.0,100.0,100.0,100.0
+Swain County East Elementary,379,96.5,High,96.0,98.0,95.0,91.0,98.0,98.0,,98.0,95.0,91.0,98.0,98.0
+Swain County West Elementary,391,95.4,High,95.0,98.0,91.0,93.0,96.0,97.0,,98.0,91.0,93.0,96.0,97.0

@@ -1,0 +1,6 @@
+school,enrollment,coverage_pct,tier,estimated_K_pct,estimated_1st_pct,estimated_2nd_pct,estimated_3rd_pct,estimated_4th_pct,estimated_5th_pct,reported_K_pct,reported_1st_pct,reported_2nd_pct,reported_3rd_pct,reported_4th_pct,reported_5th_pct
+Infinite Minds Academy,4,98.6,High,,100.0,100.0,,,,,100.0,100.0,,,
+Long Hill Christian School,16,85.8,Low,,,,100.0,100.0,100.0,,,,100.0,100.0,100.0
+Mount Gilead Elementary,159,93.5,Medium,94.0,100.0,96.0,77.0,96.0,96.0,,100.0,96.0,77.0,96.0,96.0
+Star Elementary,263,96.8,High,97.0,100.0,95.0,97.0,100.0,89.0,,100.0,95.0,97.0,100.0,89.0
+Troy Elementary,486,96.6,High,97.0,98.0,97.0,93.0,97.0,95.0,,98.0,97.0,93.0,97.0,95.0

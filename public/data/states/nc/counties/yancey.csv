@@ -1,0 +1,5 @@
+school,enrollment,coverage_pct,tier,estimated_K_pct,estimated_1st_pct,estimated_2nd_pct,estimated_3rd_pct,estimated_4th_pct,estimated_5th_pct,reported_K_pct,reported_1st_pct,reported_2nd_pct,reported_3rd_pct,reported_4th_pct,reported_5th_pct
+Blue Ridge Elementary School,350,95.8,High,95.0,90.0,100.0,98.0,96.0,93.0,,90.0,100.0,98.0,96.0,93.0
+Burnsville Elementary,313,97.9,High,97.0,95.0,98.0,100.0,97.0,100.0,,95.0,98.0,100.0,97.0,100.0
+Micaville Elementary,183,99.2,High,98.0,96.0,100.0,100.0,100.0,100.0,,96.0,100.0,100.0,100.0,100.0
+South Toe Elementary,107,97.6,High,96.0,94.0,93.0,100.0,100.0,100.0,,94.0,93.0,100.0,100.0,100.0

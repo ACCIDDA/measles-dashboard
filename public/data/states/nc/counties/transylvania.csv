@@ -1,0 +1,8 @@
+school,enrollment,coverage_pct,tier,estimated_K_pct,estimated_1st_pct,estimated_2nd_pct,estimated_3rd_pct,estimated_4th_pct,estimated_5th_pct,reported_K_pct,reported_1st_pct,reported_2nd_pct,reported_3rd_pct,reported_4th_pct,reported_5th_pct
+Bethany Christian School,57,61.5,Low,70.0,46.0,66.0,,,,,46.0,66.0,,,
+Brevard Academy,138,92.3,Medium,92.0,85.0,100.0,,,,,85.0,100.0,,,
+Brevard Elementary,489,95.0,High,93.0,95.0,97.0,94.0,95.0,93.0,,95.0,97.0,94.0,95.0,93.0
+Mountain Sun Community School,98,77.9,Low,74.0,72.0,75.0,81.0,93.0,73.0,,72.0,75.0,81.0,93.0,73.0
+Pisgah Forest Elementary,380,97.7,High,96.0,96.0,96.0,98.0,98.0,100.0,,96.0,96.0,98.0,98.0,100.0
+Rosman Elementary,323,94.4,Medium,93.0,91.0,91.0,98.0,92.0,98.0,,91.0,91.0,98.0,92.0,98.0
+T C Henderson Elementary,142,94.5,Medium,93.0,88.0,95.0,92.0,100.0,100.0,,88.0,95.0,92.0,100.0,100.0

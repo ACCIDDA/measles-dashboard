@@ -1,0 +1,4 @@
+school,enrollment,coverage_pct,tier,estimated_K_pct,estimated_1st_pct,estimated_2nd_pct,estimated_3rd_pct,estimated_4th_pct,estimated_5th_pct,reported_K_pct,reported_1st_pct,reported_2nd_pct,reported_3rd_pct,reported_4th_pct,reported_5th_pct
+Foothills Academy,32,43.7,Low,53.0,30.0,,,,,,30.0,,,,
+Polk Central Elementary School,305,96.1,High,96.0,95.0,92.0,94.0,98.0,100.0,,95.0,92.0,94.0,98.0,100.0
+Tryon Elementary School,338,90.1,Medium,89.0,88.0,91.0,90.0,86.0,95.0,,88.0,91.0,90.0,86.0,95.0

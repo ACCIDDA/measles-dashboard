@@ -1,0 +1,24 @@
+school,enrollment,coverage_pct,tier,estimated_K_pct,estimated_1st_pct,estimated_2nd_pct,estimated_3rd_pct,estimated_4th_pct,estimated_5th_pct,reported_K_pct,reported_1st_pct,reported_2nd_pct,reported_3rd_pct,reported_4th_pct,reported_5th_pct
+Brogden Primary,871,99.3,High,98.0,99.0,99.0,99.0,99.0,100.0,,99.0,99.0,99.0,99.0,100.0
+Carver Elementary,639,96.2,High,95.0,96.0,93.0,95.0,98.0,98.0,,96.0,93.0,95.0,98.0,98.0
+Children's House Montessori Sch,20,91.3,Medium,,100.0,,100.0,,,,100.0,,100.0,,
+Dillard Academy Charter School,146,92.8,Medium,94.0,96.0,92.0,88.0,95.0,90.0,,96.0,92.0,88.0,,90.0
+Eastern Wayne Elementary,531,95.1,High,94.0,98.0,97.0,100.0,82.0,97.0,,98.0,97.0,100.0,82.0,97.0
+Faith Christian Academy,220,84.4,Low,83.0,87.0,62.0,84.0,100.0,85.0,,87.0,62.0,84.0,100.0,85.0
+Fremont STARS Elementary,333,98.9,High,98.0,100.0,97.0,100.0,97.0,100.0,,100.0,97.0,100.0,97.0,100.0
+Grantham,551,91.8,Medium,92.0,95.0,98.0,92.0,98.0,70.0,,95.0,98.0,92.0,98.0,70.0
+Living Waters Christian School,60,84.1,Low,86.0,88.0,,,,,,88.0,,,,
+Meadow Lane Elementary,848,97.9,High,97.0,98.0,95.0,98.0,100.0,97.0,,98.0,95.0,98.0,100.0,97.0
+North Drive Elementary,1031,96.2,High,96.0,98.0,98.0,89.0,96.0,99.0,,98.0,98.0,89.0,96.0,99.0
+Northeast Elementary,533,98.1,High,97.0,95.0,100.0,98.0,98.0,99.0,,95.0,100.0,98.0,98.0,99.0
+Northwest Elementary,581,98.6,High,97.0,96.0,98.0,100.0,99.0,100.0,,96.0,98.0,100.0,99.0,100.0
+Pathway Christian Academy,41,85.5,Low,,100.0,,,100.0,,,100.0,,,100.0,
+Rhema Christian Academy,16,92.1,Medium,,100.0,100.0,100.0,,,,100.0,100.0,100.0,,
+Rosewood Elementary,613,98.7,High,98.0,100.0,99.0,98.0,96.0,100.0,,100.0,99.0,98.0,96.0,100.0
+Spring Creek Elementary,973,98.1,High,97.0,100.0,98.0,96.0,97.0,97.0,,100.0,98.0,96.0,97.0,97.0
+St. Mary Catholic School,130,97.3,High,97.0,100.0,95.0,92.0,100.0,100.0,,100.0,95.0,92.0,100.0,100.0
+Tommy's Road Elementary,484,93.6,Medium,93.0,82.0,93.0,95.0,98.0,100.0,,82.0,,95.0,98.0,100.0
+Wayne Christian School,338,93.1,Medium,93.0,91.0,86.0,94.0,94.0,100.0,,91.0,86.0,94.0,,100.0
+Wayne Country Day School,117,96.2,High,95.0,90.0,95.0,100.0,100.0,96.0,,90.0,95.0,100.0,100.0,
+Wayne Preparatory Academy,342,99.0,High,98.0,100.0,100.0,97.0,99.0,100.0,,100.0,100.0,97.0,,100.0
+Wayne STEM Academy,210,88.7,Low,89.0,81.0,95.0,,,,,81.0,95.0,,,
