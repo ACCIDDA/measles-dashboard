@@ -1,17 +1,43 @@
 import { useState, useEffect } from 'react';
 import { useDashboardData } from './hooks/useDashboardData.js';
 import { useGeolocation } from './hooks/useGeolocation.js';
+import { DEFAULT_STATE_CODE, getStateConfig } from './config/states.js';
 import Header from './components/Header/Header.jsx';
-import NCMap from './components/Map/NCMap.jsx';
+import StateMap from './components/Map/StateMap.jsx';
 import Sidebar from './components/Sidebar/Sidebar.jsx';
 import Tour from './components/Tour.jsx';
 
+// Parse a state code from the URL path (e.g. "/state/nc") or hash
+// ("#/state/nc"). Falls back to DEFAULT_STATE_CODE when no match is found,
+// so the existing entry URL still loads the NC view.
+function parseStateCodeFromLocation() {
+  if (typeof window === 'undefined') return DEFAULT_STATE_CODE;
+  const sources = [window.location.pathname || '', window.location.hash || ''];
+  for (const src of sources) {
+    const match = src.match(/\/state\/([a-zA-Z]{2})(?:[/?#]|$)/);
+    if (match) return match[1].toLowerCase();
+  }
+  return DEFAULT_STATE_CODE;
+}
+
 export default function App() {
+  const [stateCode] = useState(parseStateCodeFromLocation);
+  const stateCfg = getStateConfig(stateCode);
+
   const [selectedCounty, setSelectedCounty] = useState(null);
   const [selectedSchool, setSelectedSchool] = useState(null);
   const [currentView, setCurrentView] = useState('coverage');
-  const { countyData, allSchools, ncFeatures, neighborStates, stateMesh, adjacencyMap, loading, error } = useDashboardData();
-  const { userCountyName, userCoords, setGeoCounty } = useGeolocation();
+  const {
+    countyData,
+    allSchools,
+    stateFeatures,
+    neighborStates,
+    stateMesh,
+    adjacencyMap,
+    loading,
+    error,
+  } = useDashboardData(stateCode);
+  const { userCountyName, userCoords, setGeoCounty } = useGeolocation(stateCode);
 
   useEffect(() => {
     const onKey = e => { if (e.key === 'Escape') { setSelectedCounty(null); setSelectedSchool(null); } };
@@ -42,15 +68,18 @@ export default function App() {
       <Header
         currentView={currentView}
         onViewChange={setCurrentView}
-        ncFeatures={ncFeatures || []}
+        stateFeatures={stateFeatures || []}
         countyData={countyData || {}}
         onCountySelect={handleCountySelect}
+        stateName={stateCfg.name}
       />
       <div id="body-row">
-        <NCMap
+        <StateMap
           countyData={countyData || {}}
           allSchools={allSchools || []}
-          ncFeatures={ncFeatures || []}
+          stateFeatures={stateFeatures || []}
+          stateCode={stateCode}
+          stateName={stateCfg.name}
           selectedCounty={selectedCounty}
           selectedSchool={selectedSchool}
           onCountySelect={handleCountySelect}

@@ -6,7 +6,7 @@ import Header from './Header.jsx';
 const defaultProps = {
   currentView: 'coverage',
   onViewChange: () => {},
-  ncFeatures: [],
+  stateFeatures: [],
   countyData: {},
   onCountySelect: () => {},
 };
@@ -14,7 +14,7 @@ const defaultProps = {
 describe('Header', () => {
   it('renders title', () => {
     render(<Header {...defaultProps} />);
-    expect(screen.getByText('NC Measles (MMR) Coverage')).toBeInTheDocument();
+    expect(screen.getByText('Measles Vaccination (MMR) Coverage')).toBeInTheDocument();
   });
 
   it('renders ACCIDDA logo', () => {

@@ -6,7 +6,7 @@ test.describe('App loads', () => {
     await page.waitForSelector('.county-path', { timeout: 15000 });
 
     await expect(page.locator('#map-svg')).toBeVisible();
-    await expect(page.locator('h1')).toContainText('NC Measles (MMR) Coverage');
+    await expect(page.locator('h1')).toContainText('Measles Vaccination (MMR) Coverage');
     await expect(page.locator('#map-legend')).toBeVisible();
     await expect(page.locator('#map-legend')).toContainText('Coverage Level');
   });

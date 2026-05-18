@@ -2,13 +2,26 @@ import { useState, useRef, useEffect } from 'react';
 import { covTier } from '../../config/index.js';
 import TierMarker from '../TierMarker.jsx';
 
-export default function CountySearch({ ncFeatures, countyData, onSelect, inputId, dropdownId, placeholder, isMobile }) {
+export default function CountySearch({
+  stateFeatures,
+  countyData,
+  onSelect,
+  inputId,
+  dropdownId,
+  placeholder,
+  ariaLabel,
+  isMobile,
+}) {
   const [query, setQuery] = useState('');
   const [open, setOpen] = useState(false);
   const wrapRef = useRef(null);
 
+  const features = stateFeatures || [];
+  const resolvedPlaceholder = placeholder || 'Search counties…';
+  const resolvedAriaLabel = ariaLabel || 'Search for a county';
+
   const filtered = query.trim()
-    ? ncFeatures
+    ? features
         .filter(f => {
           const name = f.properties.name + ' County';
           return name.toLowerCase().includes(query.toLowerCase());
@@ -46,9 +59,9 @@ export default function CountySearch({ ncFeatures, countyData, onSelect, inputId
           <input
             id={inputId}
             type="search"
-            placeholder={placeholder || 'Search NC counties…'}
+            placeholder={resolvedPlaceholder}
             autoComplete="off"
-            aria-label="Search for an NC county"
+            aria-label={resolvedAriaLabel}
             inputMode="search"
             value={query}
             onChange={e => { setQuery(e.target.value); setOpen(true); }}
@@ -64,9 +77,9 @@ export default function CountySearch({ ncFeatures, countyData, onSelect, inputId
           <input
             id={inputId}
             type="search"
-            placeholder={placeholder || 'Search NC counties…'}
+            placeholder={resolvedPlaceholder}
             autoComplete="off"
-            aria-label="Search for an NC county"
+            aria-label={resolvedAriaLabel}
             inputMode="search"
             value={query}
             onChange={e => { setQuery(e.target.value); setOpen(true); }}
