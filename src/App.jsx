@@ -93,6 +93,7 @@ function NationalView({ onStateSelect }) {
         stateFeatures={[]}
         countyData={{}}
         onCountySelect={() => {}}
+        onStateSelect={handleStateSelect}
         stateName=""
         view="national"
       />

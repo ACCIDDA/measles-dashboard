@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import Header from './Header.jsx';
@@ -10,6 +10,29 @@ const defaultProps = {
   countyData: {},
   onCountySelect: () => {},
 };
+
+// StateSearch (rendered on the national view) reads the state manifest via
+// useStateManifest(), which calls fetch on mount. We stub fetch so the
+// test environment doesn't issue real network requests.
+let originalFetch;
+beforeEach(() => {
+  originalFetch = globalThis.fetch;
+  globalThis.fetch = vi.fn((url) => {
+    if (typeof url === 'string' && url.endsWith('data/states.json')) {
+      return Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve({
+          nc: { fips: '37', name: 'North Carolina', status: 'ready' },
+          tx: { fips: '48', name: 'Texas', status: 'coming_soon' },
+        }),
+      });
+    }
+    return Promise.resolve({ ok: true, json: () => Promise.resolve({}) });
+  });
+});
+afterEach(() => {
+  globalThis.fetch = originalFetch;
+});
 
 describe('Header', () => {
   it('renders title', () => {
@@ -55,6 +78,19 @@ describe('Header', () => {
     expect(screen.queryByPlaceholderText('Search NC counties…')).not.toBeInTheDocument();
     expect(screen.queryByLabelText('Search NC counties')).not.toBeInTheDocument();
     expect(document.getElementById('hd-search-btn')).toBeNull();
+  });
+
+  it('renders StateSearch on the national view (not CountySearch)', () => {
+    render(<Header {...defaultProps} view="national" />);
+    expect(screen.getByPlaceholderText('Search states…')).toBeInTheDocument();
+    expect(screen.queryByPlaceholderText(/Search NC counties/)).not.toBeInTheDocument();
+  });
+
+  it('does not render StateSearch on the state view', () => {
+    render(<Header {...defaultProps} view="state" />);
+    expect(screen.queryByPlaceholderText('Search states…')).not.toBeInTheDocument();
+    // CountySearch is still rendered (one or more inputs).
+    expect(screen.getAllByPlaceholderText('Search NC counties…').length).toBeGreaterThanOrEqual(1);
   });
 
   it('hides the view toggle on the national view', () => {
