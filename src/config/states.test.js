@@ -5,6 +5,7 @@ import {
   getStateConfig,
   FIPS_TO_USPS,
   fipsToUsps,
+  uspsToFips,
   normalizeFips,
 } from './states.js';
 
@@ -111,5 +112,21 @@ describe('fipsToUsps', () => {
 
   it('returns "pr" for Puerto Rico FIPS 72', () => {
     expect(fipsToUsps('72')).toBe('pr');
+  });
+});
+
+describe('uspsToFips', () => {
+  it('returns the zero-padded FIPS for known USPS codes', () => {
+    expect(uspsToFips('nc')).toBe('37');
+    expect(uspsToFips('NC')).toBe('37');
+    expect(uspsToFips('ca')).toBe('06');
+    expect(uspsToFips('al')).toBe('01');
+  });
+
+  it('returns null for unknown / missing codes', () => {
+    expect(uspsToFips('zz')).toBeNull();
+    expect(uspsToFips('')).toBeNull();
+    expect(uspsToFips(null)).toBeNull();
+    expect(uspsToFips(undefined)).toBeNull();
   });
 });

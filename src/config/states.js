@@ -60,3 +60,17 @@ export function fipsToUsps(id) {
   const usps = FIPS_TO_USPS[fips];
   return usps ? usps.toLowerCase() : null;
 }
+
+// Inverse lookup: "nc" → "37". Returns null when the code isn't one of the
+// 50 + DC + PR. Builds the inverse table lazily on first call.
+let _USPS_TO_FIPS = null;
+export function uspsToFips(code) {
+  if (!code) return null;
+  if (!_USPS_TO_FIPS) {
+    _USPS_TO_FIPS = {};
+    Object.keys(FIPS_TO_USPS).forEach(fips => {
+      _USPS_TO_FIPS[FIPS_TO_USPS[fips].toLowerCase()] = fips;
+    });
+  }
+  return _USPS_TO_FIPS[String(code).toLowerCase()] || null;
+}
