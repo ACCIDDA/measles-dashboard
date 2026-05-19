@@ -172,6 +172,7 @@ export default function App() {
         stateFeatures={(stateData && stateData.stateFeatures) || []}
         countyData={(stateData && stateData.countyData) || {}}
         onCountySelect={handleZoomToCounty}
+        onStateSelect={handleZoomToState}
         stateName={focusedStateName || 'NC'}
         view={route.zoomLevel === 'national' ? 'national' : 'state'}
       />
