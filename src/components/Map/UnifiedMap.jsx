@@ -49,6 +49,33 @@ function scatterCoord(school) {
   return d3.geoCentroid(feature);
 }
 
+// Per-tier school-dot shape, centered on (0,0), sized for an unscaled
+// half-extent of `r`px so callers rescale via the parent <g> transform.
+// Tier mapping matches MapLegend / TierMarker / Sidebar: H → circle,
+// M → square, L → triangle. Returns the appended selection. (issue #28)
+function appendTierShape(parentSel, tier, r = 5.5) {
+  if (tier === 'M') {
+    const side = r * 2;
+    return parentSel.append('rect')
+      .attr('class', 'school-shape school-shape-square')
+      .attr('x', -r).attr('y', -r)
+      .attr('width', side).attr('height', side)
+      .attr('rx', r * 0.18);
+  }
+  if (tier === 'L') {
+    const top = -r;
+    const baseY = r * 0.85;
+    const halfBase = r * 1.05;
+    const points = `0,${top} ${halfBase},${baseY} ${-halfBase},${baseY}`;
+    return parentSel.append('polygon')
+      .attr('class', 'school-shape school-shape-triangle')
+      .attr('points', points);
+  }
+  return parentSel.append('circle')
+    .attr('class', 'school-shape school-shape-circle')
+    .attr('cx', 0).attr('cy', 0).attr('r', r);
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Fill helpers
 // ─────────────────────────────────────────────────────────────────────────────
@@ -491,11 +518,24 @@ export default function UnifiedMap({
         currentScaleRef.current = e.transform.k;
         const k = e.transform.k;
         if (schoolsGRef.current) {
-          schoolsGRef.current.selectAll('circle')
-            .attr('r', d => d === activeSchoolRef.current ? 8 / k : 5.5 / k)
-            .attr('stroke-width', d => d === activeSchoolRef.current ? 2 / k : 0.8 / k);
+          schoolsGRef.current.selectAll('g.school-dot').each(function (d) {
+            const sel = d3.select(this);
+            const x = +sel.attr('data-x');
+            const y = +sel.attr('data-y');
+            const active = d === activeSchoolRef.current;
+            const sc = (active ? 1.45 : 1) / k;
+            sel.attr('transform', `translate(${x},${y}) scale(${sc})`);
+            sel.select('.school-shape').attr('stroke-width', (active ? 2 : 0.8) / sc);
+          });
         }
-        if (adjSchoolsGRef.current) adjSchoolsGRef.current.selectAll('circle').attr('r', 3 / k);
+        if (adjSchoolsGRef.current) {
+          adjSchoolsGRef.current.selectAll('g.adj-school-dot').each(function () {
+            const sel = d3.select(this);
+            const x = +sel.attr('data-x');
+            const y = +sel.attr('data-y');
+            sel.attr('transform', `translate(${x},${y}) scale(${(3 / 5.5) / k})`);
+          });
+        }
         if (locHighlightGRef.current) {
           locHighlightGRef.current.selectAll('circle[fill="white"]').attr('r', 5 / k).attr('stroke-width', 1.5 / k);
           const strokeEl = document.getElementById('loc-county-stroke');
@@ -791,10 +831,11 @@ export default function UnifiedMap({
     if (!focusedCounty) {
       activeSchoolRef.current = null;
       countyPaths.each(function () {
-        d3.select(this).style('opacity', '1').style('filter', null).call(s0);
+        d3.select(this).classed('county-focal', false).attr('fill-opacity', null)
+          .style('opacity', '1').style('filter', null).call(s0);
       });
-      schoolsG.selectAll('circle').transition().duration(160).attr('r', 0).attr('opacity', 0).remove();
-      adjSchoolsG.selectAll('circle').remove();
+      schoolsG.selectAll('g.school-dot').transition().duration(160).attr('opacity', 0).remove();
+      adjSchoolsG.selectAll('*').remove();
       return;
     }
 
@@ -804,35 +845,46 @@ export default function UnifiedMap({
     activeSchoolRef.current = null;
     countyPaths.each(function (dd) {
       const el = d3.select(this);
-      if (dd.id === feature.id) el.style('opacity', '1').call(sSel);
-      else el.style('opacity', '0.3').call(sDim);
+      const focal = dd.id === feature.id;
+      el.classed('county-focal', focal);
+      if (focal) el.style('opacity', '1').attr('fill-opacity', 0.6).call(sSel);
+      else el.style('opacity', '0.3').attr('fill-opacity', null).call(sDim);
     });
 
-    // Adjacent county ghost schools (desktop only).
-    adjSchoolsG.selectAll('circle').remove();
+    // Adjacent county ghost schools (desktop only) — small per-tier shapes.
+    adjSchoolsG.selectAll('*').remove();
     if (!isMobile() && adjacencyMap) {
       const adjList = (adjacencyMap[feature.id] || []).flatMap(id => {
         const f = counties.find(ff => ff.id === id);
         return f ? allSchools.filter(s => s.county === f.properties.name + ' County') : [];
       });
-      adjSchoolsG.selectAll('circle').data(adjList).enter().append('circle')
-        .attr('cx', s => proj(scatterCoord(s))[0])
-        .attr('cy', s => proj(scatterCoord(s))[1])
-        .attr('r', 3).attr('fill', s => TC[s.tier]).attr('opacity', 0.18).attr('stroke', 'none')
-        .style('pointer-events', 'none');
+      adjSchoolsG.selectAll('g.adj-school-dot').data(adjList).enter().append('g')
+        .attr('class', d => `adj-school-dot adj-school-dot-${d.tier}`)
+        .each(function (d) {
+          const [px, py] = proj(scatterCoord(d));
+          d3.select(this).attr('data-x', px).attr('data-y', py)
+            .attr('transform', `translate(${px},${py}) scale(${3 / 5.5})`)
+            .attr('opacity', 0.18).style('pointer-events', 'none');
+          appendTierShape(d3.select(this), d.tier, 5.5).attr('fill', TC[d.tier]).attr('stroke', 'none');
+        });
     }
 
-    // School dots
+    // School dots — per-tier shapes inside translate/scale <g> wrappers (#28).
     const countySchools = [...allSchools.filter(s => s.county === focusedCounty)]
       .sort((a, b) => a.name.localeCompare(b.name));
-    schoolsG.selectAll('circle').remove();
+    schoolsG.selectAll('*').remove();
     const tt = document.getElementById('tooltip');
-    schoolsG.selectAll('circle').data(countySchools).enter().append('circle')
-      .attr('class', 'school-dot')
-      .attr('cx', s => proj(scatterCoord(s))[0])
-      .attr('cy', s => proj(scatterCoord(s))[1])
-      .attr('r', 5.5).attr('fill', s => TC[s.tier])
-      .attr('stroke', 'rgba(245,240,232,0.7)').attr('stroke-width', 0.8).attr('opacity', 0.9)
+    schoolsG.selectAll('g.school-dot').data(countySchools).enter().append('g')
+      .attr('class', d => `school-dot school-dot-${d.tier}`)
+      .attr('data-tier', d => d.tier)
+      .each(function (s) {
+        const [px, py] = proj(scatterCoord(s));
+        const k0 = currentScaleRef.current || 1;
+        d3.select(this).attr('data-x', px).attr('data-y', py)
+          .attr('transform', `translate(${px},${py}) scale(${1 / k0})`).attr('opacity', 0.9);
+        appendTierShape(d3.select(this), s.tier, 5.5)
+          .attr('fill', TC[s.tier]).attr('stroke', 'none').attr('stroke-width', 0);
+      })
       .style('cursor', 'pointer')
       .on('mousemove', function (e, s) {
         if (s === activeSchoolRef.current || isMobile() || !tt) return;
@@ -859,12 +911,18 @@ export default function UnifiedMap({
     activeSchoolRef.current = selectedSchool;
     const schoolsG = schoolsGRef.current;
     if (!schoolsG) return;
-    const k = currentScaleRef.current;
-    schoolsG.selectAll('circle.school-dot')
-      .attr('r', d => d === selectedSchool ? 9 / k : 5.5 / k)
-      .attr('stroke', d => d === selectedSchool ? '#fff' : 'rgba(245,240,232,0.7)')
-      .attr('stroke-width', d => d === selectedSchool ? 2.5 / k : 0.8 / k)
-      .attr('opacity', d => d === selectedSchool ? 1 : 0.9);
+    const k = currentScaleRef.current || 1;
+    schoolsG.selectAll('g.school-dot').each(function (d) {
+      const sel = d3.select(this);
+      const x = +sel.attr('data-x');
+      const y = +sel.attr('data-y');
+      const active = d === selectedSchool;
+      const sc = (active ? 1.45 : 1) / k;
+      sel.attr('transform', `translate(${x},${y}) scale(${sc})`).attr('opacity', active ? 1 : 0.9);
+      sel.select('.school-shape')
+        .attr('stroke', active ? '#fff' : 'rgba(245,240,232,0.7)')
+        .attr('stroke-width', (active ? 2.5 : 0.8) / sc);
+    });
   }, [selectedSchool]);
 
   // ───────────────────────────────────────────────────────────────────────
