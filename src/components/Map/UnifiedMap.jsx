@@ -6,7 +6,10 @@ import MapLegend from './MapLegend.jsx';
 
 const TC = TIER_COLORS;
 const TL = TIER_LABELS;
-const NO_DATA_FILL = '#d9d4cb';
+// Neutral light grey so no-data US states read as "grey" rather than "tan"
+// regardless of zoom — clearly distinct from the world-countries tan fill
+// even when state borders are sparse at state/county zoom.
+const NO_DATA_FILL = '#e3e3e0';
 
 function isMobile() {
   return typeof window !== 'undefined' && window.innerWidth <= 640;
