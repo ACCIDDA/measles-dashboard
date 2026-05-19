@@ -253,33 +253,35 @@ export default function UnifiedMap({
     const W = wrap.clientWidth || 800;
     const H = wrap.clientHeight || 600;
     const pad = isMobile() ? 12 : 24;
-    const stateFC = { type: 'FeatureCollection', features: stateFeatures };
 
-    // us-atlas is pre-projected (AlbersUsa-flavour); geoIdentity simply fits
-    // it to the viewport. We re-use the same identity projection for the
-    // world layer by independently projecting the world topo through
-    // geoAlbersUsa(), then drawing those generated paths with a separate
-    // path generator — both share the same SVG coordinate space.
-    const proj = d3.geoIdentity()
-      .reflectY(true)
-      .fitExtent([[pad, pad], [W - pad, H - pad]], stateFC);
+    // The us-atlas counties-10m topology is in WGS84 lat/lon despite the
+    // distributed name. We project it through d3.geoAlbers() — a single
+    // conic projection that's good for North America — and reuse the SAME
+    // projection for the world-countries layer so they share a coordinate
+    // system. Fit the projection to the contiguous-US bbox so the 48
+    // states + DC fill the viewport prominently; AK/HI/PR/territories
+    // project to their real geographic positions (outside the viewport
+    // for AK/HI, partly visible for PR).
+    const CONTIG_FIPS = new Set(['01','04','05','06','08','09','10','11','12','13','16','17','18','19','20','21','22','23','24','25','26','27','28','29','30','31','32','33','34','35','36','37','38','39','40','41','42','44','45','46','47','48','49','50','51','53','54','55','56']);
+    const fitFC = {
+      type: 'FeatureCollection',
+      features: stateFeatures.filter(f => CONTIG_FIPS.has(normalizeFips(f.id))),
+    };
+    const proj = d3.geoAlbers()
+      .fitExtent([[pad, pad], [W - pad, H - pad]], fitFC);
     const pathGen = d3.geoPath().projection(proj);
     projRef.current = proj;
     pathGenRef.current = pathGen;
 
-    // World countries — drawn first so the US choropleth is layered on top.
-    // We project them through geoAlbersUsa() with the same viewport bounds
-    // as the us-atlas data so they line up visually. This isn't a perfect
-    // geographic match (us-atlas's internal projection has subtle insets for
-    // AK/HI), but it produces a recognisable Canada/Mexico/Caribbean shape.
+    // World countries — drawn first so the US choropleth layers on top.
+    // Uses the SAME projection as the US states, so the two layers line
+    // up geographically (Canada north of US border, Mexico south, etc.).
     const worldG = g.append('g').attr('id', 'world-g').style('pointer-events', 'none');
     worldGRef.current = worldG;
     if (countriesFeatures && countriesFeatures.length) {
-      const worldProj = d3.geoAlbersUsa().fitExtent([[pad, pad], [W - pad, H - pad]], stateFC);
-      const worldPath = d3.geoPath().projection(worldProj);
       worldG.selectAll('path.world-path').data(countriesFeatures).enter().append('path')
         .attr('class', 'world-path')
-        .attr('d', d => worldPath(d) || '')
+        .attr('d', pathGen)
         .attr('fill', '#e7ddc8')
         .attr('stroke', '#bdb5a8')
         .attr('stroke-width', 0.5);
@@ -352,6 +354,7 @@ export default function UnifiedMap({
       .on('click', function (e, d) {
         e.stopPropagation();
         if (zoomLevelRef.current !== 'national') return;
+        this.blur();
         const usps = fipsToUsps(d.id);
         if (usps && typeof onStateSelectRef.current === 'function') onStateSelectRef.current(usps);
       })
@@ -438,12 +441,10 @@ export default function UnifiedMap({
       const nW = wrap.clientWidth || W;
       const nH = wrap.clientHeight || H;
       const nPad = isMobile() ? 12 : 24;
-      proj.fitExtent([[nPad, nPad], [nW - nPad, nH - nPad]], stateFC);
+      proj.fitExtent([[nPad, nPad], [nW - nPad, nH - nPad]], fitFC);
       statePaths.attr('d', pathGen);
       if (countriesFeatures && countriesFeatures.length) {
-        const worldProj = d3.geoAlbersUsa().fitExtent([[nPad, nPad], [nW - nPad, nH - nPad]], stateFC);
-        const worldPath = d3.geoPath().projection(worldProj);
-        worldG.selectAll('path.world-path').attr('d', d => worldPath(d) || '');
+        worldG.selectAll('path.world-path').attr('d', pathGen);
       }
       if (countyPathsRef.current) countyPathsRef.current.attr('d', pathGen);
       if (neighborGRef.current) neighborGRef.current.selectAll('path.neighbor-county').attr('d', pathGen);
