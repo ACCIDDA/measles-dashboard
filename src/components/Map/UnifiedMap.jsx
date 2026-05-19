@@ -268,7 +268,13 @@ export default function UnifiedMap({
       type: 'FeatureCollection',
       features: stateFeatures.filter(f => CONTIG_FIPS.has(normalizeFips(f.id))),
     };
-    const proj = d3.geoAlbers()
+    // Use Mercator (not Albers) so individual states appear "straight on"
+    // when the user zooms into them. Albers is a conic projection that
+    // rotates parallels — states far from the projection center (NC, FL,
+    // ME, WA) end up visibly tilted at state zoom. Mercator's straight
+    // meridians keep every state upright at the cost of mild N-S stretch
+    // in northern latitudes (acceptable for a US map; AK is in the inset).
+    const proj = d3.geoMercator()
       .fitExtent([[pad, pad], [W - pad, H - pad]], fitFC);
     const pathGen = d3.geoPath().projection(proj);
     projRef.current = proj;
@@ -650,7 +656,7 @@ export default function UnifiedMap({
       // At state/county zoom we dim the choropleth states beneath the
       // focused state's counties; keeping them in the DOM ensures the
       // zoom-out transition has a target to ease back to.
-      stateGRef.current.style('opacity', zoomLevel === 'national' ? 1 : 0.25);
+      stateGRef.current.style('opacity', zoomLevel === 'national' ? 1 : 0.85);
       if (statePathsRef.current) {
         statePathsRef.current.style('pointer-events', zoomLevel === 'national' ? null : 'none');
       }
