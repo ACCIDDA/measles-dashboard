@@ -64,6 +64,7 @@ header{flex-shrink:0;height:var(--header-h);background:var(--surface);border-bot
 #map-svg{width:100%;height:100%;display:block}
 
 .county-path{cursor:pointer;vector-effect:non-scaling-stroke}
+.county-path.county-focal{fill-opacity:.4}
 .state-path{cursor:pointer;vector-effect:non-scaling-stroke;transition:filter .15s ease}
 .state-path.no-data{cursor:default}
 .state-path.no-data:focus{outline:none}
@@ -71,6 +72,7 @@ header{flex-shrink:0;height:var(--header-h);background:var(--surface);border-bot
 .neighbor-county{fill:var(--land);stroke:#bdb5a8;stroke-width:.4px;vector-effect:non-scaling-stroke;pointer-events:none}
 .neighbor-state-line{fill:none;stroke:#9c9085;stroke-width:.9px;vector-effect:non-scaling-stroke;pointer-events:none}
 .school-dot{cursor:pointer}
+.school-dot .school-shape{vector-effect:non-scaling-stroke}
 
 /* Floating controls */
 #map-controls{position:absolute;top:10px;left:10px;display:flex;flex-direction:column;gap:6px;z-index:10}

@@ -45,6 +45,38 @@ function scatterCoord(school) {
   return d3.geoCentroid(feature);
 }
 
+// Per-tier school-dot shape rendered inside a translated <g>. The shape is
+// centered on (0, 0) and sized for an unscaled half-extent of `r` pixels so
+// callers can rescale via the parent <g>'s transform. Tier mapping matches
+// MapLegend / TierMarker / Sidebar: H → circle, M → square, L → triangle.
+//
+// Returns the appended D3 selection (the shape element) so callers can keep
+// chaining (.attr / .style / etc.).
+function appendTierShape(parentSel, tier, r = 5.5) {
+  if (tier === 'M') {
+    const side = r * 2;
+    return parentSel.append('rect')
+      .attr('class', 'school-shape school-shape-square')
+      .attr('x', -r).attr('y', -r)
+      .attr('width', side).attr('height', side)
+      .attr('rx', r * 0.18);
+  }
+  if (tier === 'L') {
+    // Equilateral-ish triangle centered on (0,0), pointing up. Top vertex
+    // sits at -r, base spans roughly r * 2 wide.
+    const top = -r;
+    const baseY = r * 0.85;
+    const halfBase = r * 1.05;
+    const points = `0,${top} ${halfBase},${baseY} ${-halfBase},${baseY}`;
+    return parentSel.append('polygon')
+      .attr('class', 'school-shape school-shape-triangle')
+      .attr('points', points);
+  }
+  return parentSel.append('circle')
+    .attr('class', 'school-shape school-shape-circle')
+    .attr('cx', 0).attr('cy', 0).attr('r', r);
+}
+
 function countyFill(nm, countyData, allSchools, view) {
   const cd = countyData[nm];
   if (!cd) return '#ccc';
@@ -222,10 +254,25 @@ export default function StateMap({
         g.attr('transform', e.transform);
         currentScaleRef.current = e.transform.k;
         const k = e.transform.k;
-        schoolsG.selectAll('circle')
-          .attr('r', d => d === activeSchoolRef.current ? 8 / k : 5.5 / k)
-          .attr('stroke-width', d => d === activeSchoolRef.current ? 2 / k : 0.8 / k);
-        adjSchoolsG.selectAll('circle').attr('r', 3 / k);
+        // School dots are <g class="school-dot"> wrappers whose translate
+        // positions them and whose scale renormalizes the inner shape so it
+        // stays visually constant under zoom (active dot ~45% larger).
+        schoolsG.selectAll('g.school-dot').each(function (d) {
+          const sel = d3.select(this);
+          const x = +sel.attr('data-x');
+          const y = +sel.attr('data-y');
+          const active = d === activeSchoolRef.current;
+          const sc = (active ? 1.45 : 1) / k;
+          sel.attr('transform', `translate(${x},${y}) scale(${sc})`);
+          sel.select('.school-shape')
+            .attr('stroke-width', (active ? 2 : 0.8) / sc);
+        });
+        adjSchoolsG.selectAll('g.adj-school-dot').each(function () {
+          const sel = d3.select(this);
+          const x = +sel.attr('data-x');
+          const y = +sel.attr('data-y');
+          sel.attr('transform', `translate(${x},${y}) scale(${(3 / 5.5) / k})`);
+        });
         // Rescale location highlight
         locHighlightG.selectAll('circle[fill="white"]').attr('r', 5 / k).attr('stroke-width', 1.5 / k);
         const strokeEl = document.getElementById('loc-county-stroke');
@@ -340,12 +387,21 @@ export default function StateMap({
           const ty = visH / 2 - scale * (y0 + y1) / 2;
           svg.call(zoomBehavior.transform, d3.zoomIdentity.translate(tx, ty).scale(scale));
 
-          schoolsG.selectAll('circle.school-dot')
-            .attr('cx', s => proj(scatterCoord(s))[0])
-            .attr('cy', s => proj(scatterCoord(s))[1]);
-          adjSchoolsG.selectAll('circle')
-            .attr('cx', s => proj(scatterCoord(s))[0])
-            .attr('cy', s => proj(scatterCoord(s))[1]);
+          const kRO = currentScaleRef.current || 1;
+          schoolsG.selectAll('g.school-dot').each(function (s) {
+            const [px, py] = proj(scatterCoord(s));
+            const active = s === activeSchoolRef.current;
+            const sc = (active ? 1.45 : 1) / kRO;
+            d3.select(this)
+              .attr('data-x', px).attr('data-y', py)
+              .attr('transform', `translate(${px},${py}) scale(${sc})`);
+          });
+          adjSchoolsG.selectAll('g.adj-school-dot').each(function (s) {
+            const [px, py] = proj(scatterCoord(s));
+            d3.select(this)
+              .attr('data-x', px).attr('data-y', py)
+              .attr('transform', `translate(${px},${py}) scale(${(3 / 5.5) / kRO})`);
+          });
         }
       }
     });
@@ -388,12 +444,19 @@ export default function StateMap({
     activeSchoolRef.current = selectedSchool;
     const schoolsG = schoolsGRef.current;
     if (!schoolsG) return;
-    const k = currentScaleRef.current;
-    schoolsG.selectAll('circle.school-dot')
-      .attr('r', d => d === selectedSchool ? 9 / k : 5.5 / k)
-      .attr('stroke', d => d === selectedSchool ? '#fff' : 'rgba(245,240,232,0.7)')
-      .attr('stroke-width', d => d === selectedSchool ? 2.5 / k : 0.8 / k)
-      .attr('opacity', d => d === selectedSchool ? 1 : 0.9);
+    const k = currentScaleRef.current || 1;
+    schoolsG.selectAll('g.school-dot').each(function (d) {
+      const sel = d3.select(this);
+      const x = +sel.attr('data-x');
+      const y = +sel.attr('data-y');
+      const active = d === selectedSchool;
+      const sc = (active ? 1.45 : 1) / k;
+      sel.attr('transform', `translate(${x},${y}) scale(${sc})`)
+        .attr('opacity', active ? 1 : 0.9);
+      sel.select('.school-shape')
+        .attr('stroke', active ? '#fff' : 'rgba(245,240,232,0.7)')
+        .attr('stroke-width', (active ? 2.5 : 0.8) / sc);
+    });
   }, [selectedSchool]);
 
   // ── selectedCounty effect: zoom + school dots ──
@@ -431,9 +494,16 @@ export default function StateMap({
       zoomedRef.current = false;
       activeSchoolRef.current = null;
       setZoomed(false);
-      countyPaths.each(function () { d3.select(this).style('opacity', '1').style('filter', null).call(s0); });
-      schoolsG.selectAll('circle').transition().duration(160).attr('r', 0).attr('opacity', 0).remove();
-      adjSchoolsG.selectAll('circle').remove();
+      countyPaths.each(function () {
+        d3.select(this)
+          .classed('county-focal', false)
+          .attr('fill-opacity', null)
+          .style('opacity', '1')
+          .style('filter', null)
+          .call(s0);
+      });
+      schoolsG.selectAll('g.school-dot').transition().duration(160).attr('opacity', 0).remove();
+      adjSchoolsG.selectAll('*').remove();
       svg.transition().duration(800).ease(d3.easeCubicInOut)
         .call(zoomBehavior.transform, d3.zoomIdentity);
       // Restore beacon and pill
@@ -455,39 +525,66 @@ export default function StateMap({
     if (locHighlightG) locHighlightG.style('display', 'none');
     if (locPill) locPill.classList.remove('show');
 
-    // Dim/highlight counties
+    // Dim/highlight counties. The focal county gets a muted fill (issue #29):
+    // we keep its tier color so the legend semantics still apply, but drop
+    // fill-opacity so school-tier shapes pop on top instead of disappearing
+    // into a saturated background.
     countyPaths.each(function (dd) {
       const el = d3.select(this);
-      if (dd.id === feature.id) el.style('opacity', '1').call(sSel);
-      else el.style('opacity', '0.3').call(sDim);
+      const focal = dd.id === feature.id;
+      el.classed('county-focal', focal);
+      if (focal) {
+        el.style('opacity', '1').attr('fill-opacity', 0.4).call(sSel);
+      } else {
+        el.style('opacity', '0.3').attr('fill-opacity', null).call(sDim);
+      }
     });
 
-    // Adjacent county ghost dots (desktop only)
-    adjSchoolsG.selectAll('circle').remove();
+    // Adjacent county ghost dots (desktop only) — small per-tier shapes,
+    // very low opacity so they hint at neighbors without competing with the
+    // focal county's dots.
+    adjSchoolsG.selectAll('*').remove();
     if (!isMobile() && adjacencyMap) {
       const adjCounties = adjacencyMap[feature.id] || [];
       const adjList = adjCounties.flatMap(id => {
         const f = stateFeatures.find(ff => ff.id === id);
         return f ? allSchools.filter(s => s.county === f.properties.name + ' County') : [];
       });
-      adjSchoolsG.selectAll('circle').data(adjList).enter().append('circle')
-        .attr('cx', s => proj(scatterCoord(s))[0])
-        .attr('cy', s => proj(scatterCoord(s))[1])
-        .attr('r', 3).attr('fill', s => TC[s.tier]).attr('opacity', 0.18).attr('stroke', 'none')
-        .style('pointer-events', 'none');
+      adjSchoolsG.selectAll('g.adj-school-dot').data(adjList).enter()
+        .append('g')
+        .attr('class', d => `adj-school-dot adj-school-dot-${d.tier}`)
+        .each(function (d) {
+          const [px, py] = proj(scatterCoord(d));
+          const sel = d3.select(this);
+          sel.attr('data-x', px).attr('data-y', py)
+            .attr('transform', `translate(${px},${py}) scale(${3 / 5.5})`)
+            .attr('opacity', 0.18)
+            .style('pointer-events', 'none');
+          appendTierShape(sel, d.tier, 5.5)
+            .attr('fill', TC[d.tier])
+            .attr('stroke', 'none');
+        });
     }
 
     // School dots — pre-bind data and events now; position after resize settles
     const countySchools = [...allSchools.filter(s => s.county === selectedCounty)]
       .sort((a, b) => a.name.localeCompare(b.name));
 
-    schoolsG.selectAll('circle').remove();
-    schoolsG.selectAll('circle').data(countySchools).enter().append('circle')
-      .attr('class', 'school-dot')
-      .attr('cx', -9999).attr('cy', -9999)  // off-screen until positioned in setTimeout
-      .attr('r', 5.5).attr('fill', s => TC[s.tier])
-      .attr('stroke', 'rgba(245,240,232,0.7)').attr('stroke-width', 0.8).attr('opacity', 0.9)
+    schoolsG.selectAll('*').remove();
+    schoolsG.selectAll('g.school-dot').data(countySchools).enter()
+      .append('g')
+      .attr('class', d => `school-dot school-dot-${d.tier}`)
+      .attr('data-tier', d => d.tier)
+      .attr('data-x', -9999).attr('data-y', -9999)
+      .attr('transform', 'translate(-9999,-9999)')
+      .attr('opacity', 0.9)
       .style('cursor', 'pointer')
+      .each(function (d) {
+        appendTierShape(d3.select(this), d.tier, 5.5)
+          .attr('fill', TC[d.tier])
+          .attr('stroke', 'rgba(245,240,232,0.7)')
+          .attr('stroke-width', 0.8);
+      })
       .on('mousemove', function (e, s) {
         if (s === activeSchoolRef.current || isMobile()) return;
         const pt = d3.pointer(e, wrap);
@@ -512,10 +609,14 @@ export default function StateMap({
       svg.interrupt().transition().duration(800).ease(d3.easeCubicInOut)
         .call(zoomBehavior.transform, d3.zoomIdentity.translate(tx, ty).scale(scale));
 
-      schoolsG.selectAll('circle.school-dot')
-        .attr('cx', s => proj(scatterCoord(s))[0])
-        .attr('cy', s => proj(scatterCoord(s))[1])
-        .attr('r', 5.5).attr('opacity', 0.9);
+      schoolsG.selectAll('g.school-dot').each(function (s) {
+        const [px, py] = proj(scatterCoord(s));
+        const sc = 1 / scale;
+        d3.select(this)
+          .attr('data-x', px).attr('data-y', py)
+          .attr('transform', `translate(${px},${py}) scale(${sc})`)
+          .attr('opacity', 0.9);
+      });
     }, 50);
 
     hideTT();
