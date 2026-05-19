@@ -289,9 +289,13 @@ export default function UnifiedMap({
       worldG.selectAll('path.world-path').data(countriesFeatures).enter().append('path')
         .attr('class', 'world-path')
         .attr('d', pathGen)
-        .attr('fill', '#e7ddc8')
-        .attr('stroke', '#bdb5a8')
-        .attr('stroke-width', 0.5);
+        // Slightly desaturated tan that contrasts with the lighter
+        // no-data US state fill (#d9d4cb), so Canada and Mexico read as
+        // distinct geography even at state zoom where neighboring US
+        // states sit alongside them.
+        .attr('fill', '#cbbe9d')
+        .attr('stroke', '#a39785')
+        .attr('stroke-width', 0.6);
     }
 
     // State paths — always rendered (the choropleth at national zoom; muted
@@ -648,7 +652,11 @@ export default function UnifiedMap({
   // to swap "what's painted" in lock-step with the zoom transform.
   // ───────────────────────────────────────────────────────────────────────
   useEffect(() => {
-    if (worldGRef.current) worldGRef.current.style('display', zoomLevel === 'national' ? null : 'none');
+    // World countries layer stays visible at all zoom levels — it scales
+    // with the d3-zoom transform along with the state/county layers, so
+    // Canada / Mexico / Caribbean stay in geographic context when the
+    // user zooms into a state.
+    if (worldGRef.current) worldGRef.current.style('display', null);
     if (insetGRef.current) insetGRef.current.style('display', zoomLevel === 'national' ? null : 'none');
     if (neighborGRef.current) neighborGRef.current.style('display', zoomLevel === 'national' ? 'none' : null);
     if (countyGRef.current) countyGRef.current.style('display', zoomLevel === 'national' ? 'none' : null);
@@ -656,7 +664,7 @@ export default function UnifiedMap({
       // At state/county zoom we dim the choropleth states beneath the
       // focused state's counties; keeping them in the DOM ensures the
       // zoom-out transition has a target to ease back to.
-      stateGRef.current.style('opacity', zoomLevel === 'national' ? 1 : 0.85);
+      stateGRef.current.style('opacity', 1);
       if (statePathsRef.current) {
         statePathsRef.current.style('pointer-events', zoomLevel === 'national' ? null : 'none');
       }
@@ -695,7 +703,10 @@ export default function UnifiedMap({
       const visW = nW - sidebarW;
       const visH = nH;
       const [[x0, y0], [x1, y1]] = pathGen.bounds(feat);
-      const scale = Math.min(12, 0.9 / Math.max((x1 - x0) / visW, (y1 - y0) / visH));
+      // 0.55 fills ~55% of the viewport with the state, leaving generous
+      // surrounding context (neighbour states, Canada/Mexico, Atlantic)
+      // so users keep their geographic bearings at state zoom.
+      const scale = Math.min(12, 0.55 / Math.max((x1 - x0) / visW, (y1 - y0) / visH));
       const tx = visW / 2 - scale * (x0 + x1) / 2;
       const ty = visH / 2 - scale * (y0 + y1) / 2;
       svg.transition().duration(800).ease(d3.easeCubicInOut)
