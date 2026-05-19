@@ -200,6 +200,7 @@ export default function UnifiedMap({
   userCountyName,
   userCoords,
   onGeoCountyDetected,
+  highlightedFips = null,
   // labels
   focusedStateName = '',
 }) {
@@ -547,6 +548,20 @@ export default function UnifiedMap({
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [stateFeatures, countriesFeatures, coverageByFips]);
+
+  // Highlight the geolocation-resolved state on the national choropleth
+  // (issue #16: when the visitor is in a no-data state, it gets a pulsing
+  // halo). Run as a standalone effect against the already-rendered state
+  // paths so toggling the highlight never rebuilds the zoom-aware map.
+  // Geolocation resolves after the initial render, so the paths are in
+  // place by the time this fires.
+  useEffect(() => {
+    const paths = statePathsRef.current;
+    if (!paths) return;
+    const hi = highlightedFips ? normalizeFips(highlightedFips) : null;
+    paths.classed('state-user-location', d => hi != null && normalizeFips(d.id) === hi);
+    if (hi != null) paths.filter(d => normalizeFips(d.id) === hi).raise();
+  }, [highlightedFips]);
 
   // ───────────────────────────────────────────────────────────────────────
   // Build / tear down the focused state's county layer + schools when
