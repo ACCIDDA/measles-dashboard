@@ -661,7 +661,12 @@ export default function UnifiedMap({
     // user zooms into a state.
     if (worldGRef.current) worldGRef.current.style('display', null);
     if (insetGRef.current) insetGRef.current.style('display', zoomLevel === 'national' ? null : 'none');
-    if (neighborGRef.current) neighborGRef.current.style('display', zoomLevel === 'national' ? 'none' : null);
+    // neighbor-g is a legacy layer from the original StateMap that drew
+    // neighbouring counties as tan "land" background to differentiate them
+    // from the focused state. The unified map's state-g already provides
+    // that role with the actual state fills, so neighbour-g would just
+    // cover the surrounding states with tan — hide it entirely.
+    if (neighborGRef.current) neighborGRef.current.style('display', 'none');
     if (countyGRef.current) countyGRef.current.style('display', zoomLevel === 'national' ? 'none' : null);
     if (stateGRef.current) {
       // At state/county zoom we dim the choropleth states beneath the
