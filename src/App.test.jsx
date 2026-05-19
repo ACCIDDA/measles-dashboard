@@ -17,7 +17,15 @@ vi.mock('./components/Tour.jsx', () => ({
   default: () => null,
 }));
 
+// Default the geolocation hook to a permanently-pending state so existing
+// tests (which don't care about geolocation) keep their old behavior.
+// Individual tests below override this with vi.mocked(...).mockReturnValue.
+vi.mock('./hooks/useStateGeolocation.js', () => ({
+  useStateGeolocation: vi.fn(() => ({ stateCode: null, loading: true, error: null })),
+}));
+
 import App from './App.jsx';
+import { useStateGeolocation } from './hooks/useStateGeolocation.js';
 
 // Same shim as NationalMap.test.jsx — jsdom doesn't ship ResizeObserver, and
 // NationalMap relies on it for its layout responsiveness.
@@ -40,6 +48,7 @@ function mockUsAtlas() {
     arcs: [
       [[0, 0], [1, 0], [1, 1], [0, 1], [0, 0]],
       [[2, 2], [3, 2], [3, 3], [2, 3], [2, 2]],
+      [[4, 4], [5, 4], [5, 5], [4, 5], [4, 4]],
     ],
     transform: { scale: [1, 1], translate: [0, 0] },
     objects: {
@@ -55,6 +64,7 @@ function mockUsAtlas() {
         geometries: [
           { type: 'Polygon', id: '37', arcs: [[0]], properties: { name: 'North Carolina' } },
           { type: 'Polygon', id: '51', arcs: [[1]], properties: { name: 'Virginia' } },
+          { type: 'Polygon', id: '48', arcs: [[2]], properties: { name: 'Texas' } },
         ],
       },
     },
@@ -123,6 +133,9 @@ describe('App routing', () => {
   beforeEach(() => {
     originalFetch = globalThis.fetch;
     globalThis.fetch = buildFetchMock();
+    // Reset the geolocation mock to "still loading" so it never fires
+    // during routing-only tests.
+    vi.mocked(useStateGeolocation).mockReturnValue({ stateCode: null, loading: true, error: null });
   });
 
   afterEach(() => {
@@ -168,5 +181,70 @@ describe('App routing', () => {
     await waitFor(() => {
       expect(screen.queryAllByPlaceholderText('Search NC counties…').length).toBeGreaterThanOrEqual(1);
     });
+  });
+});
+
+describe('App geolocation routing', () => {
+  let originalFetch;
+
+  beforeEach(() => {
+    originalFetch = globalThis.fetch;
+    globalThis.fetch = buildFetchMock();
+    vi.mocked(useStateGeolocation).mockReturnValue({ stateCode: null, loading: true, error: null });
+  });
+
+  afterEach(() => {
+    globalThis.fetch = originalFetch;
+    window.history.replaceState({}, '', '/');
+  });
+
+  it('transitions to /state/<code> when geolocation resolves to a manifest-ready state', async () => {
+    window.history.replaceState({}, '', '/');
+    vi.mocked(useStateGeolocation).mockReturnValue({ stateCode: 'nc', loading: false, error: null });
+    render(<App />);
+
+    // Once routing flips to the state view, the state-map stub appears.
+    await waitFor(() => {
+      expect(screen.getByTestId('state-map-stub')).toBeInTheDocument();
+    });
+    expect(window.location.pathname).toMatch(/\/state\/nc$/);
+  });
+
+  it('stays on the national view and highlights the user state when the state has no data', async () => {
+    window.history.replaceState({}, '', '/');
+    // TX is in the mock manifest as coming_soon — not ready.
+    vi.mocked(useStateGeolocation).mockReturnValue({ stateCode: 'tx', loading: false, error: null });
+    const { container } = render(<App />);
+
+    // National view should still be rendered.
+    await waitFor(() => {
+      expect(screen.getByText('Click a state to explore')).toBeInTheDocument();
+    });
+
+    // Route stays on root.
+    expect(window.location.pathname).toBe('/');
+
+    // The TX state path (FIPS 48) picks up the user-location halo class.
+    await waitFor(() => {
+      const tx = container.querySelector('path.state-path.state-user-location');
+      expect(tx).not.toBeNull();
+      expect(tx.getAttribute('data-fips')).toBe('48');
+    });
+  });
+
+  it('ignores the geolocation result when the user already deep-linked to a state', async () => {
+    // The user landed on /state/nc directly (deep link / browser back).
+    // Geolocation resolves to TX, but we should NOT navigate them away
+    // from the page they intentionally opened.
+    window.history.replaceState({}, '', '/state/nc');
+    vi.mocked(useStateGeolocation).mockReturnValue({ stateCode: 'tx', loading: false, error: null });
+    render(<App />);
+
+    await waitFor(() => {
+      expect(screen.getByTestId('state-map-stub')).toBeInTheDocument();
+    });
+
+    // URL stays on /state/nc; the TX resolution is dropped.
+    expect(window.location.pathname).toMatch(/\/state\/nc$/);
   });
 });

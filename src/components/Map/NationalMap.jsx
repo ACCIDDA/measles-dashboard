@@ -77,6 +77,7 @@ export default function NationalMap({
   coverageByFips,
   onStateSelect,
   currentView,
+  highlightedFips = null,
 }) {
   const svgRef = useRef(null);
   const wrapRef = useRef(null);
@@ -118,13 +119,15 @@ export default function NationalMap({
     function hideTT() { if (tt) tt.classList.remove('show'); }
 
     const stateG = g.append('g').attr('id', 'state-g');
+    const highlightFips = highlightedFips ? normalizeFips(highlightedFips) : null;
     const statePaths = stateG.selectAll('.state-path').data(stateFeatures).enter().append('path')
       .attr('class', d => {
         const fips = normalizeFips(d.id);
         const entry = coverageByFips ? coverageByFips[fips] : null;
         const hasData = entry && entry.coverage != null;
         const usps = FIPS_TO_USPS[fips];
-        return `state-path${hasData ? '' : ' no-data'}${usps ? '' : ' non-state'}`;
+        const userLoc = highlightFips && fips === highlightFips ? ' state-user-location' : '';
+        return `state-path${hasData ? '' : ' no-data'}${usps ? '' : ' non-state'}${userLoc}`;
       })
       .attr('d', pathGen)
       .attr('fill', d => stateFill(normalizeFips(d.id), coverageByFips))
@@ -189,13 +192,17 @@ export default function NationalMap({
     });
     ro.observe(wrap);
 
+    if (highlightFips) {
+      statePaths.filter(d => normalizeFips(d.id) === highlightFips).raise();
+    }
+
     setLoaded(true);
 
     return () => {
       ro.disconnect();
       hideTT();
     };
-  }, [stateFeatures, coverageByFips, onStateSelect]);
+  }, [stateFeatures, coverageByFips, onStateSelect, highlightedFips]);
 
   return (
     <div id="map-wrap" ref={wrapRef}>

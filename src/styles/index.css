@@ -91,6 +91,13 @@ header{flex-shrink:0;height:var(--header-h);background:var(--surface);border-bot
 /* County highlight ring (SVG) */
 @keyframes ringpulse{0%,100%{opacity:.9;r:0}50%{opacity:.4}}
 
+/* User-location halo: applied to a state on the national map when we
+   resolved the visitor's location to a US state that doesn't yet have
+   coverage data. The dashed pulsing outline tells them "we know where
+   you are; we just don't have data for it yet". */
+@keyframes statehalo{0%,100%{stroke-opacity:.95;stroke-width:2.4px}50%{stroke-opacity:.55;stroke-width:1.6px}}
+.state-path.state-user-location{stroke:var(--focus,#005fcc);stroke-dasharray:6 4;stroke-width:2.4px;animation:statehalo 2.2s ease-in-out infinite;filter:drop-shadow(0 0 4px rgba(0,95,204,.45))}
+
 /* Legend — flush left, hugging the map edge */
 #map-legend{position:absolute;bottom:10px;left:0;background:rgba(250,247,242,.97);border:1px solid var(--border);border-left:3px solid var(--high);border-radius:0 8px 8px 0;padding:9px 12px 9px 10px;box-shadow:2px 2px 8px rgba(0,0,0,.08);transition:opacity .25s}
 .map-leg-title{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:6px}
