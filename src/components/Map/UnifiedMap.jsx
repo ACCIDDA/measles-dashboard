@@ -215,6 +215,7 @@ export default function UnifiedMap({
   const adjSchoolsGRef = useRef(null);
   const locHighlightGRef = useRef(null);
   const worldGRef = useRef(null);
+  const insetGRef = useRef(null);
   const stateGRef = useRef(null);
   const countyGRef = useRef(null);
   const neighborGRef = useRef(null);
@@ -317,6 +318,77 @@ export default function UnifiedMap({
         return `${name}: ${pct.toFixed(1)}% coverage`;
       });
     statePathsRef.current = statePaths;
+
+    // Inset callout for AK / HI / PR. These project off-canvas through the
+    // main contiguous-48 fit, so we render them again in a fixed corner box
+    // (outside the d3-zoom transform group #map-g, so they stay put as the
+    // user zooms). Each cell uses its own Mercator projection sized to fit
+    // that single feature.
+    const insetSel = d3.select(svg.node()).select('#inset-g');
+    insetSel.selectAll('*').remove();
+    insetGRef.current = insetSel;
+    const INSET_CELLS = [
+      // AK needs a polar-friendly projection because the Aleutian Islands
+      // cross the antimeridian and break geoMercator (paths render empty).
+      { fips: '02', label: 'AK', w: 90, projection: () => d3.geoAlbers().rotate([149, 0]).center([0, 64]).parallels([55, 65]) },
+      { fips: '15', label: 'HI', w: 70, projection: () => d3.geoMercator() },
+      { fips: '72', label: 'PR', w: 56, projection: () => d3.geoMercator() },
+    ];
+    const INSET_H = 70;
+    const INSET_GAP = 8;
+    const insetTotalW = INSET_CELLS.reduce((acc, c) => acc + c.w, 0)
+      + (INSET_CELLS.length - 1) * INSET_GAP;
+    const insetX0 = 24;
+    const insetY0 = 44; // top-left, below the page header
+    insetSel.attr('transform', `translate(${insetX0},${insetY0})`);
+    insetSel.append('rect')
+      .attr('x', -8).attr('y', -22)
+      .attr('width', insetTotalW + 16).attr('height', INSET_H + 30)
+      .attr('rx', 6).attr('ry', 6)
+      .attr('fill', 'rgba(255,255,255,0.88)')
+      .attr('stroke', '#bdb5a8').attr('stroke-width', 0.8);
+    let cellX = 0;
+    INSET_CELLS.forEach(({ fips, label, w, projection }) => {
+      const feature = stateFeatures.find(f => normalizeFips(f.id) === fips);
+      if (!feature) { cellX += w + INSET_GAP; return; }
+      const cellG = insetSel.append('g').attr('transform', `translate(${cellX},0)`);
+      cellG.append('text')
+        .attr('x', w / 2).attr('y', -8)
+        .attr('text-anchor', 'middle')
+        .attr('font-size', '10px').attr('font-weight', 600)
+        .attr('fill', '#555').text(label);
+      const subProj = projection().fitExtent([[2, 6], [w - 2, INSET_H - 4]], feature);
+      const subPath = d3.geoPath().projection(subProj);
+      const usps = FIPS_TO_USPS[fips];
+      const entry = coverageByFips ? coverageByFips[fips] : null;
+      const hasData = entry && entry.coverage != null;
+      const name = (feature.properties && feature.properties.name) || `State ${fips}`;
+      const ariaLabel = hasData
+        ? `${name}: ${toPercent(entry.coverage).toFixed(1)}% coverage`
+        : `${name} (no data yet)`;
+      cellG.append('path')
+        .datum(feature)
+        .attr('class', `state-path inset-state-path${hasData ? '' : ' no-data'}`)
+        .attr('d', subPath)
+        .attr('fill', stateFill(fips, coverageByFips))
+        .attr('data-state', usps ? usps.toLowerCase() : '')
+        .attr('data-fips', fips)
+        .style('stroke', 'rgba(255,255,255,0.5)')
+        .style('stroke-width', '0.7px')
+        .style('cursor', usps ? 'pointer' : 'default')
+        .attr('tabindex', usps ? 0 : -1)
+        .attr('role', 'button')
+        .attr('aria-label', ariaLabel)
+        .on('click', function (e) {
+          e.stopPropagation();
+          if (zoomLevelRef.current !== 'national') return;
+          this.blur();
+          if (usps && typeof onStateSelectRef.current === 'function') {
+            onStateSelectRef.current(usps.toLowerCase());
+          }
+        });
+      cellX += w + INSET_GAP;
+    });
 
     // Tooltip helpers (shared across hover handlers).
     const tt = document.getElementById('tooltip');
@@ -571,6 +643,7 @@ export default function UnifiedMap({
   // ───────────────────────────────────────────────────────────────────────
   useEffect(() => {
     if (worldGRef.current) worldGRef.current.style('display', zoomLevel === 'national' ? null : 'none');
+    if (insetGRef.current) insetGRef.current.style('display', zoomLevel === 'national' ? null : 'none');
     if (neighborGRef.current) neighborGRef.current.style('display', zoomLevel === 'national' ? 'none' : null);
     if (countyGRef.current) countyGRef.current.style('display', zoomLevel === 'national' ? 'none' : null);
     if (stateGRef.current) {
@@ -825,6 +898,7 @@ export default function UnifiedMap({
       >
         <rect id="ocean-bg" width="100%" height="100%" fill="#c5dae8" />
         <g id="map-g"></g>
+        <g id="inset-g"></g>
       </svg>
 
       <div id="map-controls">
