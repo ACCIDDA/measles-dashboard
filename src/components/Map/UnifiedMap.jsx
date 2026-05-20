@@ -711,10 +711,10 @@ export default function UnifiedMap({
       const visW = nW - sidebarW;
       const visH = nH;
       const [[x0, y0], [x1, y1]] = pathGen.bounds(feat);
-      // 0.55 fills ~55% of the viewport with the state, leaving generous
-      // surrounding context (neighbour states, Canada/Mexico, Atlantic)
-      // so users keep their geographic bearings at state zoom.
-      const scale = Math.min(12, 0.55 / Math.max((x1 - x0) / visW, (y1 - y0) / visH));
+      // ~0.75 fills the viewport with the focused state while leaving some
+      // surrounding context (neighbour states, Canada/Mexico) visible at
+      // the edges.
+      const scale = Math.min(12, 0.75 / Math.max((x1 - x0) / visW, (y1 - y0) / visH));
       const tx = visW / 2 - scale * (x0 + x1) / 2;
       const ty = visH / 2 - scale * (y0 + y1) / 2;
       svg.transition().duration(800).ease(d3.easeCubicInOut)
@@ -730,7 +730,9 @@ export default function UnifiedMap({
     const visW = nW - sidebarW;
     const visH = isMobile() ? nH * 0.52 : nH;
     const [[x0, y0], [x1, y1]] = pathGen.bounds(feat);
-    const scale = Math.min(12, 0.75 / Math.max((x1 - x0) / visW, (y1 - y0) / visH));
+    // ~0.9 fills most of the viewport with the focused county so schools
+    // are easy to click. Tight by design; the sidebar takes the rest.
+    const scale = Math.min(12, 0.9 / Math.max((x1 - x0) / visW, (y1 - y0) / visH));
     const tx = visW / 2 - scale * (x0 + x1) / 2;
     const ty = visH / 2 - scale * (y0 + y1) / 2;
     svg.transition().duration(800).ease(d3.easeCubicInOut)
