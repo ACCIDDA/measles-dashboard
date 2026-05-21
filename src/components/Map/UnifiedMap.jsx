@@ -679,6 +679,13 @@ export default function UnifiedMap({
     }
   }, [zoomLevel]);
 
+  // First-paint flag: the very first zoom application (e.g. for deep links
+  // straight into /state/nc or /state/nc/wake) should be instant. Animating
+  // from the national view down to a county on initial load just delays the
+  // user's first useful render by ~800ms and makes Playwright snapshot tests
+  // racy (they capture mid-transition). Subsequent zooms still animate.
+  const hasZoomedRef = useRef(false);
+
   // ───────────────────────────────────────────────────────────────────────
   // Zoom transitions driven by (zoomLevel, focusedStateCode, focusedCounty).
   // ───────────────────────────────────────────────────────────────────────
@@ -692,10 +699,25 @@ export default function UnifiedMap({
     const nW = wrap.clientWidth || 800;
     const nH = wrap.clientHeight || 600;
 
+    // Apply a zoom transform, either instantly (first paint or
+    // prefers-reduced-motion) or via a smooth transition. Marks the
+    // first-paint flag so subsequent navigations animate.
+    function applyTransform(transform, duration) {
+      const reduceMotion = typeof window !== 'undefined' && window.matchMedia
+        && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const skipAnim = !hasZoomedRef.current || reduceMotion;
+      hasZoomedRef.current = true;
+      if (skipAnim) {
+        svg.call(zoomBehavior.transform, transform);
+      } else {
+        svg.transition().duration(duration).ease(d3.easeCubicInOut)
+          .call(zoomBehavior.transform, transform);
+      }
+    }
+
     if (zoomLevel === 'national') {
       // Zoom out to identity (national choropleth + world background).
-      svg.transition().duration(700).ease(d3.easeCubicInOut)
-        .call(zoomBehavior.transform, d3.zoomIdentity);
+      applyTransform(d3.zoomIdentity, 700);
       return;
     }
 
@@ -717,8 +739,7 @@ export default function UnifiedMap({
       const scale = Math.min(12, 0.75 / Math.max((x1 - x0) / visW, (y1 - y0) / visH));
       const tx = visW / 2 - scale * (x0 + x1) / 2;
       const ty = visH / 2 - scale * (y0 + y1) / 2;
-      svg.transition().duration(800).ease(d3.easeCubicInOut)
-        .call(zoomBehavior.transform, d3.zoomIdentity.translate(tx, ty).scale(scale));
+      applyTransform(d3.zoomIdentity.translate(tx, ty).scale(scale), 800);
       return;
     }
 
@@ -735,8 +756,7 @@ export default function UnifiedMap({
     const scale = Math.min(12, 0.9 / Math.max((x1 - x0) / visW, (y1 - y0) / visH));
     const tx = visW / 2 - scale * (x0 + x1) / 2;
     const ty = visH / 2 - scale * (y0 + y1) / 2;
-    svg.transition().duration(800).ease(d3.easeCubicInOut)
-      .call(zoomBehavior.transform, d3.zoomIdentity.translate(tx, ty).scale(scale));
+    applyTransform(d3.zoomIdentity.translate(tx, ty).scale(scale), 800);
   }, [zoomLevel, focusedStateCode, focusedCounty, stateData, stateFeatures]);
 
   // ───────────────────────────────────────────────────────────────────────
