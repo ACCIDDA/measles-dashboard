@@ -41,7 +41,11 @@ test.describe('State search (national view)', () => {
     await expect(texasRow).toHaveClass(/cd-item-disabled/);
 
     const beforeUrl = page.url();
-    await texasRow.click();
+    // Playwright's default click() waits for the element to be enabled, which
+    // never happens here because the row is intentionally aria-disabled. Use
+    // { force: true } to bypass that actionability check — the assertions
+    // below still verify that the click is a no-op.
+    await texasRow.click({ force: true });
 
     // Click is a no-op: no navigation, no toast, and the query/dropdown
     // remain so the user can keep searching.
