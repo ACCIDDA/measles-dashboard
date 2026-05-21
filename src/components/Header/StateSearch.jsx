@@ -3,10 +3,14 @@ import { useStateManifest } from '../../hooks/useStateManifest.js';
 
 // Zoom-scoped search shown on the national view. Lets the user type a
 // state name; matching entries from the manifest are shown as
-// suggestions. Selecting one fires `onSelect(stateCode)` with a lowercase
-// USPS code. `coming_soon` states are still selectable so the parent can
-// surface a "data not yet available" toast — they are visually tagged with
-// a "(no data yet)" suffix.
+// suggestions. Selecting a "ready" state fires `onSelect(stateCode)` with
+// a lowercase USPS code.
+//
+// `coming_soon` states are intentionally rendered in the list but are
+// styled as disabled (greyed out, "no data yet" tag, not-allowed cursor)
+// and are non-selectable: clicking them and pressing Enter on them are
+// both no-ops, mirroring the choropleth's grey/non-clickable treatment of
+// states without data.
 //
 // The manifest can be passed in explicitly (useful for tests) or, when
 // omitted, the component reads it via `useStateManifest()`.
@@ -66,6 +70,11 @@ export default function StateSearch({
   }, []);
 
   const handleSelect = (entry) => {
+    // Unavailable states are searchable but not selectable: ignore the
+    // interaction entirely so the dropdown stays open and the query
+    // intact. This matches the choropleth, where coming_soon states are
+    // non-clickable.
+    if (entry.status !== 'ready') return;
     if (typeof onSelect === 'function') onSelect(entry.code.toLowerCase());
     setQuery('');
     setOpen(false);
@@ -114,12 +123,20 @@ export default function StateSearch({
             return (
               <div
                 key={entry.code}
-                className="cd-item"
+                className={`cd-item${isReady ? '' : ' cd-item-disabled'}`}
                 role="option"
                 aria-selected="false"
+                aria-disabled={isReady ? undefined : 'true'}
                 data-state-code={entry.code}
                 data-status={entry.status}
+                data-disabled={isReady ? undefined : 'true'}
                 onClick={() => handleSelect(entry)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    handleSelect(entry);
+                  }
+                }}
               >
                 <span className="cd-name">{entry.name}</span>
                 {!isReady && (

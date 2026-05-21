@@ -24,16 +24,30 @@ test.describe('State search (national view)', () => {
     await page.waitForSelector('.county-path', { timeout: 15000 });
   });
 
-  test('selecting a coming_soon state stays on / and shows the toast', async ({ page }) => {
+  test('coming_soon states appear in the dropdown but are not selectable', async ({ page }) => {
     await page.goto('/');
     await page.waitForSelector('path.state-path', { timeout: 15000 });
 
     await page.locator('#state-search-main').fill('Texas');
-    await page.locator('#state-search-dropdown .cd-item').first().click();
 
-    // URL should still be the root (no /state/<code> navigation).
-    await expect(page).toHaveURL(/\/(measles-dashboard\/?)?$/);
-    await expect(page.locator('[data-testid="no-data-toast"]')).toBeVisible({ timeout: 3000 });
-    await expect(page.locator('[data-testid="no-data-toast"]')).toContainText('Texas');
+    // Texas is in the dropdown, tagged as "no data yet" and marked as a
+    // non-selectable (aria-disabled) option that matches the choropleth's
+    // grey-out treatment.
+    const texasRow = page.locator('#state-search-dropdown .cd-item').first();
+    await expect(texasRow).toBeVisible();
+    await expect(texasRow).toContainText('Texas');
+    await expect(texasRow).toContainText('(no data yet)');
+    await expect(texasRow).toHaveAttribute('aria-disabled', 'true');
+    await expect(texasRow).toHaveClass(/cd-item-disabled/);
+
+    const beforeUrl = page.url();
+    await texasRow.click();
+
+    // Click is a no-op: no navigation, no toast, and the query/dropdown
+    // remain so the user can keep searching.
+    expect(page.url()).toBe(beforeUrl);
+    await expect(page.locator('[data-testid="no-data-toast"]')).toHaveCount(0);
+    await expect(page.locator('#state-search-main')).toHaveValue('Texas');
+    await expect(texasRow).toBeVisible();
   });
 });

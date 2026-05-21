@@ -67,22 +67,68 @@ describe('StateSearch', () => {
     expect(onSelect).toHaveBeenCalledWith('nc');
   });
 
-  it('keeps coming_soon states selectable and tags them visually', async () => {
+  it('renders coming_soon states in the list, tagged "(no data yet)"', async () => {
+    const user = userEvent.setup();
+    render(<StateSearch {...defaultProps} />);
+    await user.type(screen.getByPlaceholderText('Search states…'), 'Tex');
+    expect(screen.getByText('Texas')).toBeInTheDocument();
+    expect(screen.getByText('(no data yet)')).toBeInTheDocument();
+  });
+
+  it('marks coming_soon options as aria-disabled and applies the disabled class', async () => {
+    const user = userEvent.setup();
+    render(<StateSearch {...defaultProps} />);
+    await user.type(screen.getByPlaceholderText('Search states…'), 'Tex');
+    const option = screen.getByText('Texas').closest('[role="option"]');
+    expect(option).toHaveAttribute('aria-disabled', 'true');
+    expect(option).toHaveAttribute('data-disabled', 'true');
+    expect(option?.className).toContain('cd-item-disabled');
+  });
+
+  it('does not call onSelect when a coming_soon state is clicked', async () => {
+    const user = userEvent.setup();
+    const onSelect = vi.fn();
+    render(<StateSearch {...defaultProps} onSelect={onSelect} />);
+    const input = screen.getByPlaceholderText('Search states…');
+    await user.type(input, 'Tex');
+    await user.click(screen.getByText('Texas'));
+    expect(onSelect).not.toHaveBeenCalled();
+    // The query should remain so the user can keep searching; the
+    // dropdown should still be on screen with Texas visible.
+    expect(input).toHaveValue('Tex');
+    expect(screen.getByText('Texas')).toBeInTheDocument();
+  });
+
+  it('does not commit a selection when Enter/Space is pressed on a coming_soon option', async () => {
     const user = userEvent.setup();
     const onSelect = vi.fn();
     render(<StateSearch {...defaultProps} onSelect={onSelect} />);
     await user.type(screen.getByPlaceholderText('Search states…'), 'Tex');
-    expect(screen.getByText('(no data yet)')).toBeInTheDocument();
-    await user.click(screen.getByText('Texas'));
-    expect(onSelect).toHaveBeenCalledWith('tx');
+    const option = screen.getByText('Texas').closest('[role="option"]');
+    expect(option).not.toBeNull();
+    // Focus the disabled row and try to commit via keyboard.
+    option.focus();
+    await user.keyboard('{Enter}');
+    await user.keyboard(' ');
+    expect(onSelect).not.toHaveBeenCalled();
   });
 
-  it('clears the query after selection', async () => {
+  it('marks ready options as available (no disabled attrs/class)', async () => {
+    const user = userEvent.setup();
+    render(<StateSearch {...defaultProps} />);
+    await user.type(screen.getByPlaceholderText('Search states…'), 'North Caro');
+    const option = screen.getByText('North Carolina').closest('[role="option"]');
+    expect(option).not.toHaveAttribute('aria-disabled');
+    expect(option).not.toHaveAttribute('data-disabled');
+    expect(option?.className).not.toContain('cd-item-disabled');
+  });
+
+  it('clears the query after selecting a ready state', async () => {
     const user = userEvent.setup();
     render(<StateSearch {...defaultProps} />);
     const input = screen.getByPlaceholderText('Search states…');
-    await user.type(input, 'Texas');
-    await user.click(screen.getByText('Texas'));
+    await user.type(input, 'North Caro');
+    await user.click(screen.getByText('North Carolina'));
     expect(input).toHaveValue('');
   });
 
