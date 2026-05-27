@@ -50,6 +50,14 @@ header{flex-shrink:0;height:var(--header-h);background:var(--surface);border-bot
 .cd-marker{width:14px;height:14px;flex-shrink:0}
 .cd-name{flex:1;color:var(--text)}
 .cd-cov{font-family:var(--mono);font-size:11px;color:var(--muted)}
+/* Disabled dropdown row — used by StateSearch for states whose manifest
+   status !== "ready". Visual language matches .state-path.state-coming-soon
+   on the choropleth: muted text, not-allowed cursor, no hover background.
+   The row is rendered but cannot be selected (click + Enter are no-ops on
+   the JS side). */
+.cd-item.cd-item-disabled{cursor:not-allowed;opacity:.7}
+.cd-item.cd-item-disabled:hover,.cd-item.cd-item-disabled:active{background:transparent}
+.cd-item.cd-item-disabled .cd-name{color:var(--muted)}
 
 /* View toggle */
 .view-toggle{display:flex;border:1px solid var(--border2);border-radius:6px;overflow:hidden;flex-shrink:0}

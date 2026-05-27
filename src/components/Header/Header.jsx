@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import CountySearch from './CountySearch.jsx';
+import StateSearch from './StateSearch.jsx';
 
 export default function Header({
   currentView,
@@ -7,11 +8,13 @@ export default function Header({
   stateFeatures,
   countyData,
   onCountySelect,
+  onStateSelect,
   stateName = 'NC',
-  // 'national' hides the county search and shows national landing copy.
-  // 'state' (default) keeps the existing search + "Click a county to explore"
-  // copy. The view toggle is national-irrelevant (no undervax aggregation
-  // exists at the state level yet) so it is suppressed on the national view.
+  // 'national' shows the state search and national landing copy.
+  // 'state' (default) keeps the existing county search + "Click a county to
+  // explore" copy. The view toggle is national-irrelevant (no undervax
+  // aggregation exists at the state level yet) so it is suppressed on the
+  // national view.
   view = 'state',
 }) {
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
@@ -42,8 +45,17 @@ export default function Header({
         <p>{isNational ? 'Click a state to explore' : 'K–5 schools · Click a county to explore'}</p>
       </div>
 
-      {/* County search is scoped to a state, so it's hidden in the national
-          view (see issue #17 for the planned zoom-scoped search). */}
+      {/* On the national view, render the zoom-scoped state search. The
+          county search is state-scoped and only appears at the state view. */}
+      {isNational && (
+        <div className="hd-search-inline" role="search" aria-label="Find a state">
+          <StateSearch
+            onSelect={onStateSelect}
+            inputId="state-search-main"
+            dropdownId="state-search-dropdown"
+          />
+        </div>
+      )}
       {!isNational && (
         <>
           {/* Desktop: always-visible search */}
