@@ -67,7 +67,7 @@ header{flex-shrink:0;height:var(--header-h);background:var(--surface);border-bot
 .state-path{cursor:pointer;vector-effect:non-scaling-stroke;transition:filter .15s ease}
 .state-path.no-data{cursor:default}
 .state-path.no-data:focus{outline:none}
-.state-path:focus-visible{outline:2px solid var(--focus);outline-offset:-1px}
+.state-path:focus-visible{outline:none;stroke:var(--focus);stroke-width:2.5px}
 .neighbor-county{fill:var(--land);stroke:#bdb5a8;stroke-width:.4px;vector-effect:non-scaling-stroke;pointer-events:none}
 .neighbor-state-line{fill:none;stroke:#9c9085;stroke-width:.9px;vector-effect:non-scaling-stroke;pointer-events:none}
 .school-dot{cursor:pointer}
