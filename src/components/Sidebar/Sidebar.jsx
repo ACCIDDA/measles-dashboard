@@ -30,7 +30,7 @@ export default function Sidebar({ county, countyData: _countyData, schools, sele
             <div className={`sb-stat-val ${avgTier}`} id="sb-cov">
               {schools.length > 0 ? `${avgCoverage.toFixed(1)}%` : '\u2014'}
             </div>
-            <div className="sb-stat-lbl">Avg Coverage</div>
+            <div className="sb-stat-lbl">Avg. Coverage</div>
           </div>
           <div className="sb-stat">
             <div className="sb-stat-val" id="sb-pct">
