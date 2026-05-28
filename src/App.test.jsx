@@ -6,11 +6,12 @@ import { render, screen, waitFor, fireEvent, act } from '@testing-library/react'
 // callbacks the URL syncs against. Stub it to a lightweight surface that
 // preserves the headline visual signals e2e specs and assertions key off.
 vi.mock('./components/Map/UnifiedMap.jsx', () => ({
-  default: ({ zoomLevel, focusedStateCode, focusedStateName, focusedCounty, onStateSelect, onCountySelect }) => (
+  default: ({ zoomLevel, focusedStateCode, focusedStateName, focusedCounty, onStateSelect, onCountySelect, highlightedFips }) => (
     <div data-testid="unified-map-stub">
       <span data-testid="zoom-level">{zoomLevel}</span>
       <span data-testid="focused-state">{focusedStateCode || ''}</span>
       <span data-testid="focused-county">{focusedCounty || ''}</span>
+      <span data-testid="highlighted-fips">{highlightedFips || ''}</span>
       <svg
         id="map-svg"
         role="application"
@@ -25,7 +26,15 @@ vi.mock('./components/Map/UnifiedMap.jsx', () => ({
 
 vi.mock('./components/Tour.jsx', () => ({ default: () => null }));
 
+// Default the geolocation hook to a permanently-pending state so tests that
+// don't care about geolocation keep their old behavior. Individual tests
+// override this with vi.mocked(...).mockReturnValue.
+vi.mock('./hooks/useStateGeolocation.js', () => ({
+  useStateGeolocation: vi.fn(() => ({ stateCode: null, loading: true, error: null })),
+}));
+
 import App, { parseRoute, slugify, unslugify } from './App.jsx';
+import { useStateGeolocation } from './hooks/useStateGeolocation.js';
 
 beforeAll(() => {
   if (typeof global.ResizeObserver === 'undefined') {
@@ -43,6 +52,7 @@ function mockUsAtlas() {
     arcs: [
       [[0, 0], [1, 0], [1, 1], [0, 1], [0, 0]],
       [[2, 2], [3, 2], [3, 3], [2, 3], [2, 2]],
+      [[4, 4], [5, 4], [5, 5], [4, 5], [4, 4]],
     ],
     transform: { scale: [1, 1], translate: [0, 0] },
     objects: {
@@ -58,6 +68,7 @@ function mockUsAtlas() {
         geometries: [
           { type: 'Polygon', id: '37', arcs: [[0]], properties: { name: 'North Carolina' } },
           { type: 'Polygon', id: '51', arcs: [[1]], properties: { name: 'Virginia' } },
+          { type: 'Polygon', id: '48', arcs: [[2]], properties: { name: 'Texas' } },
         ],
       },
     },
@@ -134,6 +145,9 @@ describe('App orchestration', () => {
   beforeEach(() => {
     originalFetch = globalThis.fetch;
     globalThis.fetch = buildFetchMock();
+    // Reset the geolocation mock to "still loading" so it never fires
+    // during routing-only tests.
+    vi.mocked(useStateGeolocation).mockReturnValue({ stateCode: null, loading: true, error: null });
   });
 
   afterEach(() => {
@@ -226,5 +240,65 @@ describe('App orchestration', () => {
       window.dispatchEvent(new PopStateEvent('popstate'));
     });
     await waitFor(() => expect(screen.getByTestId('zoom-level').textContent).toBe('national'));
+  });
+});
+
+describe('App geolocation routing', () => {
+  let originalFetch;
+
+  beforeEach(() => {
+    originalFetch = globalThis.fetch;
+    globalThis.fetch = buildFetchMock();
+    vi.mocked(useStateGeolocation).mockReturnValue({ stateCode: null, loading: true, error: null });
+  });
+
+  afterEach(() => {
+    globalThis.fetch = originalFetch;
+    window.history.replaceState({}, '', '/');
+  });
+
+  it('zooms into the state when geolocation resolves to a manifest-ready state', async () => {
+    window.history.replaceState({}, '', '/');
+    vi.mocked(useStateGeolocation).mockReturnValue({ stateCode: 'nc', loading: false, error: null });
+    render(<App />);
+
+    await waitFor(() => expect(screen.getByTestId('zoom-level').textContent).toBe('state'));
+    expect(screen.getByTestId('focused-state').textContent).toBe('nc');
+    expect(window.location.pathname).toMatch(/\/state\/nc$/);
+  });
+
+  it('stays on the national view and highlights the user state when the state has no data', async () => {
+    window.history.replaceState({}, '', '/');
+    // TX is in the mock manifest as coming_soon — not ready.
+    vi.mocked(useStateGeolocation).mockReturnValue({ stateCode: 'tx', loading: false, error: null });
+    render(<App />);
+
+    // National view should still be rendered.
+    await waitFor(() => {
+      expect(screen.getByText('Click a state to explore')).toBeInTheDocument();
+    });
+
+    // Route stays on root.
+    expect(window.location.pathname).toBe('/');
+
+    // TX (FIPS 48) is handed to the map as the highlighted state. The actual
+    // halo rendering is covered by the e2e spec against the real map.
+    await waitFor(() => expect(screen.getByTestId('highlighted-fips').textContent).toBe('48'));
+    expect(screen.getByTestId('zoom-level').textContent).toBe('national');
+  });
+
+  it('ignores the geolocation result when the user already deep-linked to a state', async () => {
+    // The user landed on /state/nc directly (deep link / browser back).
+    // Geolocation resolves to TX, but we should NOT navigate them away
+    // from the page they intentionally opened.
+    window.history.replaceState({}, '', '/state/nc');
+    vi.mocked(useStateGeolocation).mockReturnValue({ stateCode: 'tx', loading: false, error: null });
+    render(<App />);
+
+    await waitFor(() => expect(screen.getByTestId('zoom-level').textContent).toBe('state'));
+    expect(screen.getByTestId('focused-state').textContent).toBe('nc');
+
+    // URL stays on /state/nc; the TX resolution is dropped.
+    expect(window.location.pathname).toMatch(/\/state\/nc$/);
   });
 });

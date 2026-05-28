@@ -1,8 +1,9 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useUnifiedMapData } from './hooks/useUnifiedMapData.js';
 import { useStateManifest } from './hooks/useStateManifest.js';
 import { useGeolocation } from './hooks/useGeolocation.js';
-import { getStateConfig } from './config/states.js';
+import { useStateGeolocation } from './hooks/useStateGeolocation.js';
+import { getStateConfig, normalizeFips } from './config/states.js';
 import Header from './components/Header/Header.jsx';
 import UnifiedMap from './components/Map/UnifiedMap.jsx';
 import Sidebar from './components/Sidebar/Sidebar.jsx';
@@ -60,15 +61,30 @@ export default function App() {
   const [selectedSchool, setSelectedSchool] = useState(null);
   const [currentView, setCurrentView] = useState('coverage');
   const [toastState, setToastState] = useState(null);
+  const [highlightedFips, setHighlightedFips] = useState(null);
+
+  // Geolocation only ever affects the *initial* national view. Snapshot the
+  // first-paint route and track the first manual navigation so a late
+  // geolocation result never yanks the user off a page they chose. (issue #16)
+  const initialRouteRef = useRef(route);
+  const userNavigatedRef = useRef(false);
+  const geoActedRef = useRef(false);
 
   const map = useUnifiedMapData();
   const manifest = useStateManifest();
   const { userCountyName, userCoords, setGeoCounty } = useGeolocation(route.stateCode);
+  // State-level geolocation: point-in-polygon against the already-loaded
+  // national state polygons → the visitor's USPS code (issue #16). No extra
+  // fetch — it reuses map.stateFeatures.
+  const stateGeo = useStateGeolocation(map.stateFeatures);
 
   // ── URL ↔ zoom sync ──
   useEffect(() => {
     if (typeof window === 'undefined') return undefined;
-    const onPop = () => setRoute(parseRoute());
+    const onPop = () => {
+      userNavigatedRef.current = true;
+      setRoute(parseRoute());
+    };
     window.addEventListener('popstate', onPop);
     window.addEventListener('hashchange', onPop);
     return () => {
@@ -108,6 +124,7 @@ export default function App() {
       setToastState(manifest.getStateName(code) || code.toUpperCase());
       return;
     }
+    userNavigatedRef.current = true;
     pushUrl(`/state/${code}`);
     setRoute({ zoomLevel: 'state', stateCode: code });
     setSelectedSchool(null);
@@ -115,12 +132,14 @@ export default function App() {
 
   const handleZoomToCounty = useCallback((countyName) => {
     if (!route.stateCode || !countyName) return;
+    userNavigatedRef.current = true;
     pushUrl(`/state/${route.stateCode}/${slugify(countyName)}`);
     setRoute({ zoomLevel: 'county', stateCode: route.stateCode, countySlug: slugify(countyName) });
     setSelectedSchool(null);
   }, [route.stateCode]);
 
   const handleZoomOut = useCallback(() => {
+    userNavigatedRef.current = true;
     if (route.zoomLevel === 'county') {
       pushUrl(`/state/${route.stateCode}`);
       setRoute({ zoomLevel: 'state', stateCode: route.stateCode });
@@ -131,6 +150,27 @@ export default function App() {
       setSelectedSchool(null);
     }
   }, [route]);
+
+  // Default the initial view to the visitor's state from browser geolocation
+  // (issue #16): a manifest-ready state zooms in; a no-data state stays on the
+  // national map with that state highlighted; denied / outside-US / error all
+  // fall back silently. Fires once, and only while the user is still on the
+  // initial national view (never overrides a navigation they made themselves).
+  useEffect(() => {
+    if (geoActedRef.current) return;
+    if (stateGeo.loading || manifest.loading) return;
+    geoActedRef.current = true;
+    const code = stateGeo.stateCode;
+    if (!code) return;
+    if (userNavigatedRef.current) return;
+    if (initialRouteRef.current.zoomLevel !== 'national') return;
+    if (manifest.isReady(code)) {
+      handleZoomToState(code);
+    } else {
+      const fips = manifest.getFips(code);
+      if (fips) setHighlightedFips(normalizeFips(fips));
+    }
+  }, [stateGeo.loading, stateGeo.stateCode, manifest, handleZoomToState]);
 
   // Escape zooms out one level at a time (preserves the legacy state→county
   // Escape behaviour but extends it across the whole map).
@@ -196,6 +236,7 @@ export default function App() {
           userCountyName={userCountyName}
           userCoords={userCoords}
           onGeoCountyDetected={setGeoCounty}
+          highlightedFips={highlightedFips}
         />
         {/* Sidebar lives in the DOM throughout state + county zooms so its
             slide-in / slide-out transition can ease, and a11y tests can find
