@@ -397,6 +397,21 @@ export default function UnifiedMap({
       });
     statePathsRef.current = statePaths;
 
+    // Hover-effect overlay: a single empty path appended last in #state-g,
+    // so it renders on top of every state. On mouseenter we set its `d` to
+    // the hovered state's geometry and show it; mouseleave hides it. This
+    // keeps the dark hover border drawn above all neighbors without having
+    // to .raise() the source state (which used to leave previously-hovered
+    // states floating on top forever — #44 phantom white highlight).
+    const stateHoverOverlay = stateG.append('path')
+      .attr('id', 'state-hover-overlay')
+      .attr('fill', 'none')
+      .style('stroke', 'rgba(0,0,0,0.55)')
+      .style('stroke-width', '1.6px')
+      .style('vector-effect', 'non-scaling-stroke')
+      .style('pointer-events', 'none')
+      .style('display', 'none');
+
     // Inset callout for AK / HI / PR. These project off-canvas through the
     // main contiguous-48 fit, so we render them again in a fixed corner box
     // (outside the d3-zoom transform group #map-g, so they stay put as the
@@ -483,12 +498,15 @@ export default function UnifiedMap({
     function hideTT() { if (tt) tt.classList.remove('show'); }
 
     statePaths
-      .on('mouseenter', function () {
+      .on('mouseenter', function (e, d) {
         if (zoomLevelRef.current !== 'national' || isMobile()) return;
-        d3.select(this).raise()
-          .style('filter', 'brightness(1.12)')
-          .style('stroke', 'rgba(0,0,0,0.55)')
-          .style('stroke-width', '1.6px');
+        // Brighten the source state's fill; draw the dark border via the
+        // dedicated overlay so it sits above every neighbor instead of
+        // being clipped by their 0.7px white strokes. (#44)
+        d3.select(this).style('filter', 'brightness(1.12)');
+        stateHoverOverlay
+          .attr('d', pathGen(d))
+          .style('display', null);
       })
       .on('mousemove', function (e, d) {
         if (zoomLevelRef.current !== 'national' || isMobile()) return;
@@ -499,10 +517,8 @@ export default function UnifiedMap({
         showTT(e.offsetX, e.offsetY);
       })
       .on('mouseleave', function () {
-        d3.select(this)
-          .style('filter', null)
-          .style('stroke', 'rgba(255,255,255,0.5)')
-          .style('stroke-width', '0.7px');
+        d3.select(this).style('filter', null);
+        stateHoverOverlay.style('display', 'none');
         hideTT();
       })
       .on('click', function (e, d) {
