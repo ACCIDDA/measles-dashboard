@@ -68,7 +68,7 @@ header{flex-shrink:0;height:var(--header-h);background:var(--surface);border-bot
 
 /* ── Body ── */
 #body-row{flex:1;display:flex;overflow:hidden;position:relative}
-#map-wrap{flex:1;position:relative;overflow:hidden}
+#map-wrap{flex:1;position:relative;overflow:hidden;background:var(--water)}
 #map-svg{width:100%;height:100%;display:block}
 
 .county-path{cursor:pointer;vector-effect:non-scaling-stroke}
