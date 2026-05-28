@@ -976,7 +976,12 @@ export default function UnifiedMap({
       sel.attr('transform', `translate(${x},${y}) scale(${sc})`).attr('opacity', active ? 1 : 0.9);
       sel.select('.school-shape')
         .attr('stroke', active ? '#fff' : 'rgba(245,240,232,0.7)')
-        .attr('stroke-width', (active ? 2.5 : 0.8) / sc);
+        // stroke-width is already in viewport px via the
+        // `.school-shape { vector-effect: non-scaling-stroke }` rule, so
+        // don't divide by sc. The old `/ sc` was a leftover that produced
+        // k× too-thick halos on every dot whenever the selection changed
+        // (issue #45). Values match the zoom handler + creation code.
+        .attr('stroke-width', active ? 2.5 : 1.2);
     });
   }, [selectedSchool]);
 
