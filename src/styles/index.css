@@ -27,8 +27,8 @@ header{flex-shrink:0;height:var(--header-h);background:var(--surface);border-bot
 .hsi-wrap{display:flex;align-items:center;background:var(--faint);border:1px solid var(--border2);border-radius:8px;padding:0 8px;gap:5px;height:34px}
 .hsi-wrap:focus-within{border-color:var(--focus);box-shadow:0 0 0 3px #005fcc22}
 .hsi-wrap svg{color:var(--muted);flex-shrink:0}
-#county-search-main{width:185px;font-family:var(--sans);font-size:13px;background:transparent;border:none;color:var(--text);outline:none;-webkit-appearance:none}
-#county-search-main::placeholder{color:#a8a29e}
+#county-search-main,#state-search-main{width:185px;font-family:var(--sans);font-size:13px;background:transparent;border:none;color:var(--text);outline:none;-webkit-appearance:none}
+#county-search-main::placeholder,#state-search-main::placeholder{color:#a8a29e}
 #main-dropdown{position:absolute;top:calc(100%+6px);left:0;right:0;background:var(--surface);border:1px solid var(--border2);border-radius:10px;box-shadow:0 8px 28px rgba(0,0,0,.14);overflow:hidden;z-index:200;display:none}
 #main-dropdown.show{display:block}
 
