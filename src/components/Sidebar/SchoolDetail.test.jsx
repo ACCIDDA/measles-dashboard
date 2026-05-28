@@ -54,7 +54,7 @@ describe('SchoolDetail', () => {
 
   it('displays overall coverage percentage', () => {
     render(<SchoolDetail school={mockSchool} onClose={() => {}} />);
-    expect(screen.getByText('Overall Coverage')).toBeInTheDocument();
+    expect(screen.getByText('Avg. Coverage')).toBeInTheDocument();
   });
 
   it('displays tier badge', () => {
