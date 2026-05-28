@@ -149,7 +149,7 @@ function buildStateTooltip(container, name, entry) {
   const pct = toPercent(entry.coverage);
   const tier = covTier(pct);
   const rows = [
-    ['Coverage', pct.toFixed(1) + '%'],
+    ['Avg. Coverage', pct.toFixed(1) + '%'],
     ['Tier', TL[tier]],
   ];
   rows.forEach(([label, val], i) => {
@@ -176,7 +176,7 @@ function buildCountyTooltip(container, name, cd, tier, schoolCount) {
   nameDiv.textContent = name;
   container.appendChild(nameDiv);
   const rows = [
-    ['Avg coverage', cd.mean.toFixed(1) + '%'],
+    ['Avg. Coverage', cd.mean.toFixed(1) + '%'],
     ['Tier', TL[tier]],
     ['Schools', String(schoolCount)],
   ];
@@ -207,7 +207,7 @@ function buildSchoolTooltip(container, school) {
   const row = document.createElement('div');
   row.className = 'tt-row';
   const sp1 = document.createElement('span');
-  sp1.textContent = 'Coverage';
+  sp1.textContent = 'Avg. Coverage';
   const sp2 = document.createElement('span');
   sp2.textContent = school.coverage.toFixed(1) + '%';
   row.appendChild(sp1);

@@ -68,7 +68,7 @@ export default function SchoolDetail({ school, onClose }) {
             <div id="sd-cov-val" style={{ color: TIER_COLORS[tier] }}>
               {overall.toFixed(1)}%
             </div>
-            <div className="sd-ov-sub">Overall Coverage</div>
+            <div className="sd-ov-sub">Avg. Coverage</div>
           </div>
           <span
             id="sd-badge"
