@@ -31,6 +31,12 @@ export function useGeolocation(stateCode = DEFAULT_STATE_CODE) {
   return {
     userCountyName,
     userCoords,
-    setGeoCounty: (name) => localStorage.setItem(storageKey, name),
+    // Update both localStorage (for next session's cache) and React state
+    // (so App's userCountyName reflects a freshly-detected county within
+    // the same session, not just after a reload).
+    setGeoCounty: (name) => {
+      localStorage.setItem(storageKey, name);
+      setUserCountyName(name);
+    },
   };
 }

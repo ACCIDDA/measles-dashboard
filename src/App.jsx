@@ -151,6 +151,24 @@ export default function App() {
     }
   }, [route]);
 
+  // "Go to my detected home" — wired to the loc-pill click. Navigates straight
+  // to the visitor's state + county regardless of current zoom, so the pill
+  // works at national zoom too (handleZoomToCounty alone no-ops there because
+  // it needs route.stateCode, which isn't set at national).
+  const handleGoToHome = useCallback(() => {
+    const sc = stateGeo.stateCode;
+    if (!sc) return;
+    userNavigatedRef.current = true;
+    if (userCountyName) {
+      const slug = slugify(userCountyName);
+      pushUrl(`/state/${sc}/${slug}`);
+      setRoute({ zoomLevel: 'county', stateCode: sc, countySlug: slug });
+      setSelectedSchool(null);
+    } else {
+      handleZoomToState(sc);
+    }
+  }, [stateGeo.stateCode, userCountyName, handleZoomToState]);
+
   // Default the initial view to the visitor's state from browser geolocation
   // (issue #16): a manifest-ready state zooms in; a no-data state stays on the
   // national map with that state highlighted; denied / outside-US / error all
@@ -236,6 +254,7 @@ export default function App() {
           userCountyName={userCountyName}
           userCoords={userCoords}
           onGeoCountyDetected={setGeoCounty}
+          onGoToHome={handleGoToHome}
           highlightedFips={highlightedFips}
         />
         {/* Sidebar lives in the DOM throughout state + county zooms so its
