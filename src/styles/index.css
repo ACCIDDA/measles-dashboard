@@ -72,7 +72,7 @@ header{flex-shrink:0;height:var(--header-h);background:var(--surface);border-bot
 #map-svg{width:100%;height:100%;display:block}
 
 .county-path{cursor:pointer;vector-effect:non-scaling-stroke}
-.county-path.county-focal{fill-opacity:.4}
+.school-shape{vector-effect:non-scaling-stroke}
 .state-path{cursor:pointer;vector-effect:non-scaling-stroke;transition:filter .15s ease}
 .state-path.no-data{cursor:default}
 .state-path.no-data:focus{outline:none}
