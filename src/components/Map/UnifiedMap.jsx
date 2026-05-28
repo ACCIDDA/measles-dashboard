@@ -76,6 +76,24 @@ function appendTierShape(parentSel, tier, r = 5.5) {
     .attr('cx', 0).attr('cy', 0).attr('r', r);
 }
 
+// `fitExtent` sizes the contiguous-48 to fill the viewport edge-to-edge, which
+// reads as "zoomed in" at the national level. Pull the projection in around
+// the viewport center so the whole country sits with comfortable margin.
+// State/county zoom transforms are derived from projected bounds, so they
+// adapt to this base scale.
+const NATIONAL_FIT_SCALE = 0.6;
+// Nudge the national map within the viewport (fractions of width / height).
+const NATIONAL_X_OFFSET = 0.1;
+const NATIONAL_Y_OFFSET = 0.1;
+function zoomOutNational(proj, w, h) {
+  const [tx, ty] = proj.translate();
+  return proj.scale(proj.scale() * NATIONAL_FIT_SCALE)
+    .translate([
+      w / 2 + (tx - w / 2) * NATIONAL_FIT_SCALE - w * NATIONAL_X_OFFSET,
+      h / 2 + (ty - h / 2) * NATIONAL_FIT_SCALE - h * NATIONAL_Y_OFFSET,
+    ]);
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Fill helpers
 // ─────────────────────────────────────────────────────────────────────────────
@@ -307,6 +325,7 @@ export default function UnifiedMap({
     // in northern latitudes (acceptable for a US map; AK is in the inset).
     const proj = d3.geoMercator()
       .fitExtent([[pad, pad], [W - pad, H - pad]], fitFC);
+    zoomOutNational(proj, W, H);
     const pathGen = d3.geoPath().projection(proj);
     projRef.current = proj;
     pathGenRef.current = pathGen;
@@ -568,6 +587,7 @@ export default function UnifiedMap({
       const nH = wrap.clientHeight || H;
       const nPad = isMobile() ? 12 : 24;
       proj.fitExtent([[nPad, nPad], [nW - nPad, nH - nPad]], fitFC);
+      zoomOutNational(proj, nW, nH);
       statePaths.attr('d', pathGen);
       if (countriesFeatures && countriesFeatures.length) {
         worldG.selectAll('path.world-path').attr('d', pathGen);
