@@ -700,6 +700,22 @@ export default function UnifiedMap({
       .call(s0);
     countyPathsRef.current = countyPaths;
 
+    // Hover-effect overlay: a single empty path appended last in #county-g
+    // so it renders above every county. On mouseenter we set its `d` to the
+    // hovered county's geometry and show it; mouseleave hides it. Mirrors
+    // the state-hover-overlay pattern from #44, fixing the same two bugs at
+    // county zoom: the dark hover border no longer clips against neighbors,
+    // and we no longer .raise() counties (which used to leave previously-
+    // hovered counties floating above un-touched neighbors forever).
+    const countyHoverOverlay = countyG.append('path')
+      .attr('id', 'county-hover-overlay')
+      .attr('fill', 'none')
+      .style('stroke', 'rgba(0,0,0,0.5)')
+      .style('stroke-width', '1.8px')
+      .style('vector-effect', 'non-scaling-stroke')
+      .style('pointer-events', 'none')
+      .style('display', 'none');
+
     // County interaction — hover / click → select.
     const tt = document.getElementById('tooltip');
     const wrap = wrapRef.current;
@@ -712,12 +728,16 @@ export default function UnifiedMap({
     function hideTT() { if (tt) tt.classList.remove('show'); }
 
     countyPaths
-      .on('mouseenter', function () {
+      .on('mouseenter', function (e, d) {
         if (focusedCountyRef.current || isMobile()) return;
-        d3.select(this).raise()
-          .style('filter', 'brightness(1.15)')
-          .style('stroke', 'rgba(0,0,0,0.5)')
-          .style('stroke-width', '1.8px');
+        // Brighten the source county's fill; draw the dark border via the
+        // dedicated overlay so it sits above every neighbor instead of
+        // being clipped by them. Avoids .raise()-ing the source (which
+        // caused the same "phantom highlight" pattern as #44).
+        d3.select(this).style('filter', 'brightness(1.15)');
+        countyHoverOverlay
+          .attr('d', pathGen(d))
+          .style('display', null);
       })
       .on('mousemove', function (e, d) {
         if (focusedCountyRef.current || isMobile()) return;
@@ -729,9 +749,13 @@ export default function UnifiedMap({
         showTT(e.offsetX, e.offsetY);
       })
       .on('mouseleave', function () {
-        if (!focusedCountyRef.current) {
-          d3.select(this).style('filter', null).call(s0);
-        }
+        // Always clear the source filter and hide the overlay, regardless
+        // of whether a county got focused mid-hover. The focusedCounty
+        // effect re-applies focal/non-focal styling immediately after, so
+        // the click-then-zoom path doesn't leave the clicked county
+        // stuck at brightness(1.15) anymore.
+        d3.select(this).style('filter', null);
+        countyHoverOverlay.style('display', 'none');
         hideTT();
       })
       .on('click', function (e, d) {
@@ -908,6 +932,10 @@ export default function UnifiedMap({
       const el = d3.select(this);
       const focal = dd.id === feature.id;
       el.classed('county-focal', focal);
+      // Clear any leftover hover brightness — covers the case where the
+      // user clicked a county while still hovering it, so the mouseleave
+      // didn't fire before the focusedCounty effect ran.
+      el.style('filter', null);
       if (focal) el.style('opacity', '1').attr('fill-opacity', null).call(sSel);
       else el.style('opacity', '0.3').attr('fill-opacity', null).call(sDim);
     });
