@@ -283,6 +283,11 @@ export default function UnifiedMap({
   const focusedStateCodeRef = useRef(focusedStateCode);
   const focusedCountyRef = useRef(focusedCounty);
   const activeSchoolRef = useRef(null);
+  // True once geolocation has resolved a real user county — used to gate the
+  // loc-pill restore in the county-zoom-exit branch. The default loc-text
+  // span ships with placeholder text, so a textContent-based check is too
+  // eager and would pop the pill before geo actually resolves.
+  const geoResolvedRef = useRef(false);
   const currentViewRef = useRef(currentView);
   const onStateSelectRef = useRef(onStateSelect);
   const onCountySelectRef = useRef(onCountySelect);
@@ -870,10 +875,11 @@ export default function UnifiedMap({
       schoolsG.selectAll('g.school-dot').transition().duration(160).attr('opacity', 0).remove();
       adjSchoolsG.selectAll('*').remove();
       // Restore the geolocation beacon + loc-pill we hid on county-zoom enter.
+      // Gate on geoResolvedRef (not loc-text content) so the pill doesn't pop
+      // up with placeholder text before geolocation actually resolves.
       if (locHighlightGRef.current) locHighlightGRef.current.style('display', null);
       const locPillEl = document.getElementById('loc-pill');
-      const locTextEl = document.getElementById('loc-text');
-      if (locPillEl && locTextEl && locTextEl.textContent) locPillEl.classList.add('show');
+      if (locPillEl && geoResolvedRef.current) locPillEl.classList.add('show');
       return;
     }
 
@@ -987,7 +993,10 @@ export default function UnifiedMap({
     const locPill = document.getElementById('loc-pill');
     const locText = document.getElementById('loc-text');
     if (locText) locText.textContent = feature.properties.name + ' Co.';
-    if (locPill) locPill.classList.add('show');
+    geoResolvedRef.current = true;
+    // Don't pop the pill while a county is in focus — the focusedCounty
+    // effect hides it on enter; respect that until the user backs out.
+    if (locPill && !focusedCountyRef.current) locPill.classList.add('show');
 
     locHighlightG.selectAll('*').remove();
     countyPaths.each(function (d) {
