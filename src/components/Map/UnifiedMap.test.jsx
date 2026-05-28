@@ -246,7 +246,7 @@ describe('UnifiedMap — county zoom', () => {
     expect(schoolDots[0].querySelector('.school-shape')).not.toBeNull();
   });
 
-  it('marks the focused county with .county-focal and a muted fill (#29)', () => {
+  it('marks the focused county with .county-focal at full color and dims non-focal counties', () => {
     const { container } = render(
       <UnifiedMap
         {...sharedProps}
@@ -258,7 +258,12 @@ describe('UnifiedMap — county zoom', () => {
     );
     const focal = container.querySelectorAll('path.county-path.county-focal');
     expect(focal.length).toBe(1);
-    expect(parseFloat(focal[0].getAttribute('fill-opacity'))).toBeLessThan(1);
+    // Focal renders at full tier color (NCMap parity — muted fill-opacity removed).
+    expect(focal[0].getAttribute('fill-opacity')).toBeNull();
+    expect(focal[0].style.opacity).toBe('1');
+    // Visual separation now comes from dimming the non-focal counties.
+    const nonFocal = container.querySelector('path.county-path:not(.county-focal)');
+    expect(nonFocal.style.opacity).toBe('0.3');
   });
 
   it('back button shows the "All Counties" label at county zoom', () => {

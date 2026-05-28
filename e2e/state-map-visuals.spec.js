@@ -39,33 +39,33 @@ test.describe('State map visuals (focal county + per-tier shapes)', () => {
     expect(shapeCount).toBe(dotCount);
   });
 
-  test('focal county uses a muted fill so school dots stand out (#29)', async ({ page }) => {
-    // The selected county is marked .county-focal and gets fill-opacity < 1
-    // so the school-tier shapes pop instead of disappearing into a saturated
-    // background of the same color.
+  test('focal county is full color; non-focal counties are dimmed (#29)', async ({ page }) => {
+    // NCMap parity: the focal county renders at full tier color (no muted
+    // fill); visual separation from neighbours now comes from a parent-
+    // opacity drop on non-focal counties. The school dots' opaque cream
+    // halos give the per-dot legibility the muted-fill approach used to.
     const focal = page.locator('path.county-path.county-focal');
     await expect(focal).toHaveCount(1);
 
-    const focalOpacity = await focal.evaluate((el) => {
+    // No muted fill-opacity (attribute unset; CSS rule removed).
+    const focalFillOpacity = await focal.evaluate((el) => {
       const cs = window.getComputedStyle(el);
-      // Prefer the attribute the component sets directly; fall back to the
-      // CSS rule we added in src/styles/index.css.
       const attr = el.getAttribute('fill-opacity');
       return attr != null ? parseFloat(attr) : parseFloat(cs.fillOpacity);
     });
-    expect(focalOpacity).toBeGreaterThan(0);
-    expect(focalOpacity).toBeLessThan(1);
+    expect(focalFillOpacity).toBeCloseTo(1, 5);
 
-    // A non-focal county keeps a full-strength fill (fill-opacity is unset
-    // or 1) — verifies the muted treatment is scoped to the focal county.
-    const nonFocal = page.locator('path.county-path:not(.county-focal)').first();
-    const nonFocalOpacity = await nonFocal.evaluate((el) => {
-      const cs = window.getComputedStyle(el);
-      const attr = el.getAttribute('fill-opacity');
-      if (attr != null) return parseFloat(attr);
-      return parseFloat(cs.fillOpacity);
-    });
-    expect(nonFocalOpacity).toBeGreaterThanOrEqual(0.99);
+    // Focal at full parent-opacity; non-focal counties dimmed.
+    const focalOpacity = await focal.evaluate(
+      (el) => parseFloat(window.getComputedStyle(el).opacity)
+    );
+    expect(focalOpacity).toBeCloseTo(1, 5);
+
+    const nonFocalOpacity = await page
+      .locator('path.county-path:not(.county-focal)')
+      .first()
+      .evaluate((el) => parseFloat(window.getComputedStyle(el).opacity));
+    expect(nonFocalOpacity).toBeLessThan(0.5);
   });
 
   test('returning to the overview clears the focal class', async ({ page }) => {
