@@ -230,7 +230,7 @@ describe('UnifiedMap — state zoom', () => {
 });
 
 describe('UnifiedMap — county zoom', () => {
-  it('renders school dots for the focused county', () => {
+  it('renders school dots as per-tier shape <g> wrappers for the focused county (#28)', () => {
     const { container } = render(
       <UnifiedMap
         {...sharedProps}
@@ -240,8 +240,25 @@ describe('UnifiedMap — county zoom', () => {
         stateData={makeStateData()}
       />
     );
-    const schoolDots = container.querySelectorAll('circle.school-dot');
+    const schoolDots = container.querySelectorAll('g.school-dot');
     expect(schoolDots.length).toBe(1);
+    // Each dot wraps exactly one tier shape (circle / rect / polygon).
+    expect(schoolDots[0].querySelector('.school-shape')).not.toBeNull();
+  });
+
+  it('marks the focused county with .county-focal and a muted fill (#29)', () => {
+    const { container } = render(
+      <UnifiedMap
+        {...sharedProps}
+        zoomLevel="county"
+        focusedStateCode="nc"
+        focusedCounty="Wake County"
+        stateData={makeStateData()}
+      />
+    );
+    const focal = container.querySelectorAll('path.county-path.county-focal');
+    expect(focal.length).toBe(1);
+    expect(parseFloat(focal[0].getAttribute('fill-opacity'))).toBeLessThan(1);
   });
 
   it('back button shows the "All Counties" label at county zoom', () => {

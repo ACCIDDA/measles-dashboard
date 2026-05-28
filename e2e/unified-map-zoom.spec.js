@@ -48,7 +48,7 @@ test.describe('Unified map zoom transitions', () => {
     await page.locator('.cd-item').first().click();
     await expect(page.locator('#sidebar.open')).toBeVisible({ timeout: 3000 });
     await page.waitForURL('**/state/nc/wake', { timeout: 5000 });
-    await page.waitForSelector('circle.school-dot', { timeout: 5000 });
+    await page.waitForSelector('g.school-dot', { timeout: 5000 });
   });
 
   test('Escape zooms out one level (county → state → national)', async ({ page }) => {
