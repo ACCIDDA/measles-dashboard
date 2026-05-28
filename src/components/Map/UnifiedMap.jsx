@@ -255,6 +255,7 @@ export default function UnifiedMap({
   userCountyName,
   userCoords,
   onGeoCountyDetected,
+  onGoToHome,
   highlightedFips = null,
   // labels
   focusedStateName = '',
@@ -1059,8 +1060,15 @@ export default function UnifiedMap({
 
   const geoCounty = userCountyName || detectedCounty;
   const handleLocPillClick = useCallback(() => {
-    if (geoCounty && typeof onCountySelect === 'function') onCountySelect(geoCounty);
-  }, [geoCounty, onCountySelect]);
+    // Prefer the App-supplied "go home" handler — it knows the visitor's
+    // detected state too, so it works at national zoom where the existing
+    // onCountySelect path can't (it needs a focused state code).
+    if (typeof onGoToHome === 'function') {
+      onGoToHome();
+    } else if (geoCounty && typeof onCountySelect === 'function') {
+      onCountySelect(geoCounty);
+    }
+  }, [onGoToHome, geoCounty, onCountySelect]);
 
   const variant = zoomLevel === 'national' ? 'national' : 'state';
   const stateZoomActive = zoomLevel === 'state' || zoomLevel === 'county';
