@@ -85,6 +85,13 @@ const NATIONAL_FIT_SCALE = 0.6;
 // Nudge the national map within the viewport (fractions of width / height).
 const NATIONAL_X_OFFSET = 0.1;
 const NATIONAL_Y_OFFSET = 0.1;
+
+// Fixed coordinate space the map is drawn in. The <svg viewBox> scales this to
+// the container automatically (preserveAspectRatio), so the map is responsive
+// with zero JS — no ResizeObserver, no re-fitting on window resize. Aspect is
+// chosen to match a typical desktop map area to minimize letterboxing.
+const VBW = 1000;
+const VBH = 540;
 function zoomOutNational(proj, w, h) {
   const [tx, ty] = proj.translate();
   return proj.scale(proj.scale() * NATIONAL_FIT_SCALE)
@@ -300,8 +307,10 @@ export default function UnifiedMap({
     const g = svg.select('#map-g');
     g.selectAll('*').remove();
 
-    const W = wrap.clientWidth || 800;
-    const H = wrap.clientHeight || 600;
+    // Draw in the fixed viewBox coordinate space; the browser scales the SVG
+    // to the actual container, so we never read pixel dimensions here.
+    const W = VBW;
+    const H = VBH;
     const pad = isMobile() ? 12 : 24;
 
     // The us-atlas counties-10m topology is in WGS84 lat/lon despite the
@@ -581,27 +590,9 @@ export default function UnifiedMap({
         }
       });
 
-    // ResizeObserver: re-fit projection + recompute path generators.
-    const ro = new ResizeObserver(() => {
-      const nW = wrap.clientWidth || W;
-      const nH = wrap.clientHeight || H;
-      const nPad = isMobile() ? 12 : 24;
-      proj.fitExtent([[nPad, nPad], [nW - nPad, nH - nPad]], fitFC);
-      zoomOutNational(proj, nW, nH);
-      statePaths.attr('d', pathGen);
-      if (countriesFeatures && countriesFeatures.length) {
-        worldG.selectAll('path.world-path').attr('d', pathGen);
-      }
-      if (countyPathsRef.current) countyPathsRef.current.attr('d', pathGen);
-      if (neighborGRef.current) neighborGRef.current.selectAll('path.neighbor-county').attr('d', pathGen);
-      if (meshPathRef.current) meshPathRef.current.attr('d', pathGen);
-    });
-    ro.observe(wrap);
-
     setLoaded(true);
 
     return () => {
-      ro.disconnect();
       hideTT();
       svg.on('.zoom', null);
       svg.on('pointerdown', null).on('pointermove', null).on('pointerup', null);
@@ -771,8 +762,12 @@ export default function UnifiedMap({
     const wrap = wrapRef.current;
     if (!pathGen || !zoomBehavior || !wrap) return;
 
-    const nW = wrap.clientWidth || 800;
-    const nH = wrap.clientHeight || 600;
+    // Zoom math runs in viewBox units (the projection is fit to VBW×VBH).
+    const nW = VBW;
+    const nH = VBH;
+    // The sidebar is a fixed 300px overlay; convert it to viewBox units via the
+    // live SVG-to-container scale so county centering still clears it.
+    const svgScale = Math.min((wrap.clientWidth || VBW) / VBW, (wrap.clientHeight || VBH) / VBH) || 1;
 
     // Apply a zoom transform, either instantly (first paint or
     // prefers-reduced-motion) or via a smooth transition. Marks the
@@ -822,7 +817,7 @@ export default function UnifiedMap({
     if (!stateData || !stateData.stateFeatures || !focusedCounty) return;
     const feat = stateData.stateFeatures.find(f => f.properties.name + ' County' === focusedCounty);
     if (!feat) return;
-    const sidebarW = isMobile() ? 0 : 300;
+    const sidebarW = isMobile() ? 0 : 300 / svgScale;
     const visW = nW - sidebarW;
     const visH = isMobile() ? nH * 0.52 : nH;
     const [[x0, y0], [x1, y1]] = pathGen.bounds(feat);
@@ -1029,6 +1024,8 @@ export default function UnifiedMap({
       <svg
         id="map-svg"
         ref={svgRef}
+        viewBox={`0 0 ${VBW} ${VBH}`}
+        preserveAspectRatio="xMidYMid meet"
         role="application"
         aria-label={
           zoomLevel === 'national'
