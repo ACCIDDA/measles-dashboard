@@ -49,11 +49,12 @@ function scatterCoord(school) {
   return d3.geoCentroid(feature);
 }
 
-// Per-tier school-dot shape, centered on (0,0), sized for an unscaled
-// half-extent of `r`px so callers rescale via the parent <g> transform.
-// Tier mapping matches MapLegend / TierMarker / Sidebar: H → circle,
-// M → square, L → triangle. Returns the appended selection. (issue #28)
-function appendTierShape(parentSel, tier, r = 5.5) {
+// Per-tier school-dot shape — matches MapLegend / TierMarker / Sidebar
+// (H → circle, M → square, L → triangle, issue #28). Centered on (0,0),
+// sized for an unscaled half-extent of `r`px so callers rescale via the
+// parent <g> transform. Stroke uses `vector-effect: non-scaling-stroke`
+// (see index.css) so borders stay 1.2px at d3-zoom's k×30 scale-up.
+function appendTierShape(parentSel, tier, r = 4) {
   if (tier === 'M') {
     const side = r * 2;
     return parentSel.append('rect')
@@ -74,6 +75,33 @@ function appendTierShape(parentSel, tier, r = 5.5) {
   return parentSel.append('circle')
     .attr('class', 'school-shape school-shape-circle')
     .attr('cx', 0).attr('cy', 0).attr('r', r);
+}
+
+// `fitExtent` sizes the contiguous-48 to fill the viewport edge-to-edge, which
+// reads as "zoomed in" at the national level. Pull the projection in around
+// the viewport center so the whole country sits with comfortable margin.
+// State/county zoom transforms are derived from projected bounds, so they
+// adapt to this base scale.
+const NATIONAL_FIT_SCALE = 0.85;
+// Nudge the national map within the viewport (fractions of width / height).
+// 0 = centered on the contiguous-US bbox (what `fitExtent` fits to); positive
+// values shift the map left / up.
+const NATIONAL_X_OFFSET = 0;
+const NATIONAL_Y_OFFSET = 0;
+
+// Fixed coordinate space the map is drawn in. The <svg viewBox> scales this to
+// the container automatically (preserveAspectRatio), so the map is responsive
+// with zero JS — no ResizeObserver, no re-fitting on window resize. Aspect is
+// chosen to match a typical desktop map area to minimize letterboxing.
+const VBW = 1000;
+const VBH = 540;
+function zoomOutNational(proj, w, h) {
+  const [tx, ty] = proj.translate();
+  return proj.scale(proj.scale() * NATIONAL_FIT_SCALE)
+    .translate([
+      w / 2 + (tx - w / 2) * NATIONAL_FIT_SCALE - w * NATIONAL_X_OFFSET,
+      h / 2 + (ty - h / 2) * NATIONAL_FIT_SCALE - h * NATIONAL_Y_OFFSET,
+    ]);
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -282,8 +310,10 @@ export default function UnifiedMap({
     const g = svg.select('#map-g');
     g.selectAll('*').remove();
 
-    const W = wrap.clientWidth || 800;
-    const H = wrap.clientHeight || 600;
+    // Draw in the fixed viewBox coordinate space; the browser scales the SVG
+    // to the actual container, so we never read pixel dimensions here.
+    const W = VBW;
+    const H = VBH;
     const pad = isMobile() ? 12 : 24;
 
     // The us-atlas counties-10m topology is in WGS84 lat/lon despite the
@@ -307,6 +337,7 @@ export default function UnifiedMap({
     // in northern latitudes (acceptable for a US map; AK is in the inset).
     const proj = d3.geoMercator()
       .fitExtent([[pad, pad], [W - pad, H - pad]], fitFC);
+    zoomOutNational(proj, W, H);
     const pathGen = d3.geoPath().projection(proj);
     projRef.current = proj;
     pathGenRef.current = pathGen;
@@ -377,11 +408,15 @@ export default function UnifiedMap({
     ];
     const INSET_H = 70;
     const INSET_GAP = 8;
+    // Uniform scale on the whole inset group. Cells/labels/border all shrink
+    // together; click targets stay correct because the scale lives on the
+    // parent transform, not on the geometry. Tune this knob to resize.
+    const INSET_SCALE = 0.7;
     const insetTotalW = INSET_CELLS.reduce((acc, c) => acc + c.w, 0)
       + (INSET_CELLS.length - 1) * INSET_GAP;
     const insetX0 = 24;
     const insetY0 = 44; // top-left, below the page header
-    insetSel.attr('transform', `translate(${insetX0},${insetY0})`);
+    insetSel.attr('transform', `translate(${insetX0},${insetY0}) scale(${INSET_SCALE})`);
     insetSel.append('rect')
       .attr('x', -8).attr('y', -22)
       .attr('width', insetTotalW + 16).attr('height', INSET_H + 30)
@@ -506,13 +541,13 @@ export default function UnifiedMap({
     // ─────────────────────────────────────────────────────────────────────
     const zoomBehavior = d3.zoom()
       .scaleExtent([1, 40])
-      .filter(e => {
-        // Only allow user-initiated pan/wheel zoom once we've zoomed in past
-        // the national level. At national zoom we still want clicks to fire
-        // on state paths, so suppress drag-pan there.
-        if (e.type === 'click') return false;
-        return zoomLevelRef.current !== 'national' && currentScaleRef.current > 1.05;
-      })
+      // Disable all user-initiated pan/wheel/pinch at every level. Zoom is
+      // driven entirely by the route-effect's programmatic transitions
+      // (national → state → county), so users can't wheel themselves into a
+      // weird position once a state or county is selected. State/county
+      // paths still receive clicks because d3-zoom's filter doesn't gate
+      // them — clicks go straight to the element handlers.
+      .filter(() => false)
       .on('zoom', e => {
         g.attr('transform', e.transform);
         currentScaleRef.current = e.transform.k;
@@ -525,7 +560,8 @@ export default function UnifiedMap({
             const active = d === activeSchoolRef.current;
             const sc = (active ? 1.45 : 1) / k;
             sel.attr('transform', `translate(${x},${y}) scale(${sc})`);
-            sel.select('.school-shape').attr('stroke-width', (active ? 2 : 0.8) / sc);
+            // stroke-width is in viewport px (vector-effect: non-scaling-stroke).
+            sel.select('.school-shape').attr('stroke-width', active ? 2.5 : 1.2);
           });
         }
         if (adjSchoolsGRef.current) {
@@ -537,7 +573,16 @@ export default function UnifiedMap({
           });
         }
         if (locHighlightGRef.current) {
-          locHighlightGRef.current.selectAll('circle[fill="white"]').attr('r', 5 / k).attr('stroke-width', 1.5 / k);
+          // Counter-scale the beacon (rings + dot) by 1/k so it stays a
+          // constant visual size as the user zooms in/out. Replaces the
+          // old per-attribute rescale, which couldn't beat the ring's
+          // running transition on `r`.
+          const inner = locHighlightGRef.current.select('g.loc-inner');
+          if (!inner.empty()) {
+            const lcx = +inner.attr('data-cx');
+            const lcy = +inner.attr('data-cy');
+            inner.attr('transform', `translate(${lcx},${lcy}) scale(${1 / k})`);
+          }
           const strokeEl = document.getElementById('loc-county-stroke');
           if (strokeEl) d3.select(strokeEl).attr('stroke-width', 3 / k + 'px');
         }
@@ -562,26 +607,9 @@ export default function UnifiedMap({
         }
       });
 
-    // ResizeObserver: re-fit projection + recompute path generators.
-    const ro = new ResizeObserver(() => {
-      const nW = wrap.clientWidth || W;
-      const nH = wrap.clientHeight || H;
-      const nPad = isMobile() ? 12 : 24;
-      proj.fitExtent([[nPad, nPad], [nW - nPad, nH - nPad]], fitFC);
-      statePaths.attr('d', pathGen);
-      if (countriesFeatures && countriesFeatures.length) {
-        worldG.selectAll('path.world-path').attr('d', pathGen);
-      }
-      if (countyPathsRef.current) countyPathsRef.current.attr('d', pathGen);
-      if (neighborGRef.current) neighborGRef.current.selectAll('path.neighbor-county').attr('d', pathGen);
-      if (meshPathRef.current) meshPathRef.current.attr('d', pathGen);
-    });
-    ro.observe(wrap);
-
     setLoaded(true);
 
     return () => {
-      ro.disconnect();
       hideTT();
       svg.on('.zoom', null);
       svg.on('pointerdown', null).on('pointermove', null).on('pointerup', null);
@@ -751,8 +779,12 @@ export default function UnifiedMap({
     const wrap = wrapRef.current;
     if (!pathGen || !zoomBehavior || !wrap) return;
 
-    const nW = wrap.clientWidth || 800;
-    const nH = wrap.clientHeight || 600;
+    // Zoom math runs in viewBox units (the projection is fit to VBW×VBH).
+    const nW = VBW;
+    const nH = VBH;
+    // The sidebar is a fixed 300px overlay; convert it to viewBox units via the
+    // live SVG-to-container scale so county centering still clears it.
+    const svgScale = Math.min((wrap.clientWidth || VBW) / VBW, (wrap.clientHeight || VBH) / VBH) || 1;
 
     // Apply a zoom transform, either instantly (first paint or
     // prefers-reduced-motion) or via a smooth transition. Marks the
@@ -802,13 +834,14 @@ export default function UnifiedMap({
     if (!stateData || !stateData.stateFeatures || !focusedCounty) return;
     const feat = stateData.stateFeatures.find(f => f.properties.name + ' County' === focusedCounty);
     if (!feat) return;
-    const sidebarW = isMobile() ? 0 : 300;
+    const sidebarW = isMobile() ? 0 : 300 / svgScale;
     const visW = nW - sidebarW;
     const visH = isMobile() ? nH * 0.52 : nH;
     const [[x0, y0], [x1, y1]] = pathGen.bounds(feat);
-    // ~0.9 fills most of the viewport with the focused county so schools
-    // are easy to click. Tight by design; the sidebar takes the rest.
-    const scale = Math.min(12, 0.9 / Math.max((x1 - x0) / visW, (y1 - y0) / visH));
+    // Factor >1 deliberately overshoots the fit so the focused county fills
+    // (and slightly overflows) the visible area — schools become big and
+    // easy to click. Cap raised so small/urban counties also zoom hard.
+    const scale = Math.min(30, 1.8 / Math.max((x1 - x0) / visW, (y1 - y0) / visH));
     const tx = visW / 2 - scale * (x0 + x1) / 2;
     const ty = visH / 2 - scale * (y0 + y1) / 2;
     applyTransform(d3.zoomIdentity.translate(tx, ty).scale(scale), 800);
@@ -836,6 +869,11 @@ export default function UnifiedMap({
       });
       schoolsG.selectAll('g.school-dot').transition().duration(160).attr('opacity', 0).remove();
       adjSchoolsG.selectAll('*').remove();
+      // Restore the geolocation beacon + loc-pill we hid on county-zoom enter.
+      if (locHighlightGRef.current) locHighlightGRef.current.style('display', null);
+      const locPillEl = document.getElementById('loc-pill');
+      const locTextEl = document.getElementById('loc-text');
+      if (locPillEl && locTextEl && locTextEl.textContent) locPillEl.classList.add('show');
       return;
     }
 
@@ -847,9 +885,16 @@ export default function UnifiedMap({
       const el = d3.select(this);
       const focal = dd.id === feature.id;
       el.classed('county-focal', focal);
-      if (focal) el.style('opacity', '1').attr('fill-opacity', 0.6).call(sSel);
+      if (focal) el.style('opacity', '1').attr('fill-opacity', null).call(sSel);
       else el.style('opacity', '0.3').attr('fill-opacity', null).call(sDim);
     });
+
+    // Hide the geolocation beacon + loc-pill while a county is in focus (the
+    // pulse clutters the zoomed-in view). NCMap did the same; we restore both
+    // in the `!focusedCounty` branch above.
+    if (locHighlightGRef.current) locHighlightGRef.current.style('display', 'none');
+    const locPillEl = document.getElementById('loc-pill');
+    if (locPillEl) locPillEl.classList.remove('show');
 
     // Adjacent county ghost schools (desktop only) — small per-tier shapes.
     adjSchoolsG.selectAll('*').remove();
@@ -865,7 +910,8 @@ export default function UnifiedMap({
           d3.select(this).attr('data-x', px).attr('data-y', py)
             .attr('transform', `translate(${px},${py}) scale(${3 / 5.5})`)
             .attr('opacity', 0.18).style('pointer-events', 'none');
-          appendTierShape(d3.select(this), d.tier, 5.5).attr('fill', TC[d.tier]).attr('stroke', 'none');
+          appendTierShape(d3.select(this), d.tier, 5.5)
+            .attr('fill', TC[d.tier]).attr('stroke', 'none');
         });
     }
 
@@ -882,8 +928,10 @@ export default function UnifiedMap({
         const k0 = currentScaleRef.current || 1;
         d3.select(this).attr('data-x', px).attr('data-y', py)
           .attr('transform', `translate(${px},${py}) scale(${1 / k0})`).attr('opacity', 0.9);
-        appendTierShape(d3.select(this), s.tier, 5.5)
-          .attr('fill', TC[s.tier]).attr('stroke', 'none').attr('stroke-width', 0);
+        appendTierShape(d3.select(this), s.tier, 4)
+          .attr('fill', TC[s.tier])
+          .attr('stroke', 'rgba(245,240,232,1)')
+          .attr('stroke-width', 1.2);
       })
       .style('cursor', 'pointer')
       .on('mousemove', function (e, s) {
@@ -954,9 +1002,18 @@ export default function UnifiedMap({
           .transition().duration(400).attr('opacity', '1');
       }
     });
+    // Wrap rings + center dot in an inner group anchored at the centroid so
+    // we can counter-scale the whole beacon by 1/k as the user zooms in. The
+    // ring transition keeps interpolating r=0→38 in local coords; the parent
+    // scale converts that to a constant viewport size.
+    const k0 = currentScaleRef.current || 1;
+    const inner = locHighlightG.append('g')
+      .attr('class', 'loc-inner')
+      .attr('data-cx', cx).attr('data-cy', cy)
+      .attr('transform', `translate(${cx},${cy}) scale(${1 / k0})`);
     [0, 600, 1200].forEach((delay, i) => {
-      const ring = locHighlightG.append('circle')
-        .attr('cx', cx).attr('cy', cy).attr('r', 0)
+      const ring = inner.append('circle')
+        .attr('cx', 0).attr('cy', 0).attr('r', 0)
         .attr('fill', 'none').attr('stroke', '#222')
         .attr('stroke-width', 2 - i * 0.4).attr('opacity', 0);
       function pulse() {
@@ -967,8 +1024,8 @@ export default function UnifiedMap({
       }
       pulse();
     });
-    locHighlightG.append('circle')
-      .attr('cx', cx).attr('cy', cy).attr('r', 5)
+    inner.append('circle')
+      .attr('cx', 0).attr('cy', 0).attr('r', 5)
       .attr('fill', 'white').attr('stroke', '#222').attr('stroke-width', 1.5);
   }
 
@@ -1009,6 +1066,8 @@ export default function UnifiedMap({
       <svg
         id="map-svg"
         ref={svgRef}
+        viewBox={`0 0 ${VBW} ${VBH}`}
+        preserveAspectRatio="xMidYMid meet"
         role="application"
         aria-label={
           zoomLevel === 'national'
