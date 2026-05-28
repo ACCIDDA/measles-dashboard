@@ -3,7 +3,7 @@ import { useUnifiedMapData } from './hooks/useUnifiedMapData.js';
 import { useStateManifest } from './hooks/useStateManifest.js';
 import { useGeolocation } from './hooks/useGeolocation.js';
 import { useStateGeolocation } from './hooks/useStateGeolocation.js';
-import { getStateConfig, normalizeFips } from './config/states.js';
+import { getStateConfig, normalizeFips, DEFAULT_STATE_CODE } from './config/states.js';
 import Header from './components/Header/Header.jsx';
 import UnifiedMap from './components/Map/UnifiedMap.jsx';
 import Sidebar from './components/Sidebar/Sidebar.jsx';
@@ -156,7 +156,11 @@ export default function App() {
   // works at national zoom too (handleZoomToCounty alone no-ops there because
   // it needs route.stateCode, which isn't set at national).
   const handleGoToHome = useCallback(() => {
-    const sc = stateGeo.stateCode;
+    // Prefer fresh geo (stateGeo); fall back to the default state when geo
+    // is denied or still loading but we have a cached userCountyName — that
+    // cache lives under `geo_county_<DEFAULT_STATE_CODE>` per useGeolocation,
+    // so DEFAULT_STATE_CODE is the right home-state pair for that county.
+    const sc = stateGeo.stateCode || (userCountyName ? DEFAULT_STATE_CODE : null);
     if (!sc) return;
     userNavigatedRef.current = true;
     if (userCountyName) {
