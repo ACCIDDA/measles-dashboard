@@ -1,0 +1,8 @@
+school_id,school_name,enrollment,coverage,coverage_ci_low,coverage_ci_high,coverage_K,coverage_1,coverage_2,coverage_3,coverage_4,coverage_5,coverage_ci_low_K,coverage_ci_low_1,coverage_ci_low_2,coverage_ci_low_3,coverage_ci_low_4,coverage_ci_low_5,coverage_ci_high_K,coverage_ci_high_1,coverage_ci_high_2,coverage_ci_high_3,coverage_ci_high_4,coverage_ci_high_5,is_estimated_K,is_estimated_1,is_estimated_2,is_estimated_3,is_estimated_4,is_estimated_5,prob_below_95,tier
+667,Cooleemee Elementary,76,0.9636,,,0.9618,1,0.9211,0.9138,0.9853,1,0.9429,0.9424,0.9437,0.9466,0.9506,0.955,0.9775,0.9773,0.9779,0.9791,0.9807,0.9825,1,0,0,0,0,0,,H
+668,Cornatzer Elementary,75,0.9895,,,0.9873,0.9692,1,1,1,0.9796,0.9762,0.976,0.9766,0.9779,0.9796,0.9815,0.9948,0.9947,0.9949,0.9952,0.9955,0.9959,1,0,0,0,0,0,,H
+669,Mocksville Elementary,89,0.9607,,,0.9632,1,0.9756,0.8916,0.9684,0.9713,0.9452,0.9446,0.9461,0.9491,0.9529,0.9571,0.9779,0.9777,0.9783,0.9795,0.9811,0.9828,1,0,0,0,1,1,,H
+670,Pinebrook Elementary,77,0.9698,,,0.9716,0.9737,0.9437,0.9733,0.961,1,0.9564,0.956,0.9573,0.9596,0.9626,0.966,0.984,0.9839,0.9842,0.985,0.9862,0.9875,1,0,0,0,0,0,,H
+671,Shady Grove Elementary,83,0.9552,,,0.9614,0.9531,0.9733,0.9036,0.9669,0.9841,0.9422,0.9418,0.9433,0.9463,0.9503,0.9548,0.9769,0.9767,0.9774,0.9786,0.9803,0.9821,1,0,0,0,1,0,,H
+672,Trinity Baptist Academy,10,0.7408,,,0.7951,0.6,0.7982,1,0.5556,0.8333,0.6615,0.66,0.666,0.6789,0.6967,0.7173,0.902,0.9012,0.9035,0.9083,0.915,0.9225,1,0,1,0,0,1,,L
+673,William R Davie Elementary,67,0.9206,,,0.93,1,0.9821,0.9701,1,0.5962,0.9036,0.903,0.9053,0.9101,0.9166,0.9239,0.9527,0.9521,0.9533,0.9557,0.959,0.9627,1,0,0,0,0,0,,M

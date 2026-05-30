@@ -48,32 +48,33 @@ function mockWorldAtlas() {
   };
 }
 
-function mockDashboard() {
-  return {
-    counties: [
-      {
-        name: 'Wake',
-        coverage: 94,
-        herd_immunity: 0.9,
-        schools: [
-          {
-            name: 'Test Elementary',
-            stats: {
-              Coverage: 95,
-              Size: 100,
-              coverage_breakdown: ['95', '94', '96', '93', '97', '95'],
-              Estimated: [false, false, false, false, false, false],
-            },
-          },
-        ],
-      },
-    ],
-  };
+// #20 CSV bundle fixtures. Coverage is a proportion in [0,1]; the loader
+// converts to percent. One county (Wake) with one school.
+const COV_COLS =
+  'coverage,coverage_ci_low,coverage_ci_high,' +
+  'coverage_K,coverage_1,coverage_2,coverage_3,coverage_4,coverage_5,' +
+  'coverage_ci_low_K,coverage_ci_low_1,coverage_ci_low_2,coverage_ci_low_3,coverage_ci_low_4,coverage_ci_low_5,' +
+  'coverage_ci_high_K,coverage_ci_high_1,coverage_ci_high_2,coverage_ci_high_3,coverage_ci_high_4,coverage_ci_high_5,' +
+  'is_estimated_K,is_estimated_1,is_estimated_2,is_estimated_3,is_estimated_4,is_estimated_5,prob_below_95,tier';
+const COV_VALS =
+  '0.94,0.93,0.95,' +
+  '0.95,0.94,0.96,0.93,0.97,0.95,' +
+  '0.93,0.92,0.94,0.91,0.95,0.93,' +
+  '0.97,0.96,0.98,0.95,0.99,0.97,' +
+  '0,0,0,0,0,0,0.1,M';
+function mockCountyCsv() {
+  return 'county,county_fips,n_schools,pct_schools_below_95,' + COV_COLS + '\n' +
+    'Wake,37183,1,0.0,' + COV_VALS + '\n';
+}
+function mockSchoolCsv() {
+  // combined per-state schools.csv carries a `county` column
+  return 'school_id,school_name,county,enrollment,' + COV_COLS + '\n' +
+    '1,Test Elementary,Wake,100,' + COV_VALS + '\n';
 }
 
 function mockManifest() {
   return {
-    nc: { fips: '37', name: 'North Carolina', status: 'ready', data_url: '/NC/json/dashboard.json' },
+    nc: { fips: '37', name: 'North Carolina', status: 'ready', data_url: '/data/states/nc.csv' },
     tx: { fips: '48', name: 'Texas', status: 'coming_soon' },
   };
 }
@@ -96,14 +97,15 @@ function buildFetchMock(captured, { dashboardOk = true } = {}) {
     if (url.endsWith('data/states.json')) {
       return Promise.resolve({ ok: true, json: () => Promise.resolve(mockManifest()) });
     }
-    if (url.endsWith('dashboard.json')) {
-      if (!dashboardOk) return Promise.resolve({ ok: false, json: () => Promise.resolve({}) });
-      return Promise.resolve({ ok: true, json: () => Promise.resolve(mockDashboard()) });
+    // #20 per-state CSV bundle: county summary + combined schools file.
+    if (url.endsWith('data/states/nc.csv')) {
+      if (!dashboardOk) return Promise.resolve({ ok: false, text: () => Promise.resolve('') });
+      return Promise.resolve({ ok: true, text: () => Promise.resolve(mockCountyCsv()) });
     }
-    if (url.endsWith('school_coords.json')) {
-      return Promise.resolve({ ok: true, json: () => Promise.resolve({ 'Test Elementary|Wake County': [-78.6, 35.8] }) });
+    if (url.endsWith('data/states/nc/schools.csv')) {
+      return Promise.resolve({ ok: true, text: () => Promise.resolve(mockSchoolCsv()) });
     }
-    return Promise.resolve({ ok: false, json: () => Promise.resolve({}) });
+    return Promise.resolve({ ok: false, text: () => Promise.resolve('') });
   });
 }
 
@@ -150,12 +152,12 @@ describe('useUnifiedMapData', () => {
     await waitFor(() => expect(result.current.loading).toBe(false));
 
     // No per-state fetch yet.
-    expect(captured.some(u => u.endsWith('NC/json/dashboard.json'))).toBe(false);
+    expect(captured.some(u => u.endsWith('data/states/nc.csv'))).toBe(false);
 
     await act(async () => { await result.current.focusState('nc'); });
 
-    expect(captured.some(u => u.endsWith('NC/json/dashboard.json'))).toBe(true);
-    expect(captured.some(u => u.endsWith('NC/json/school_coords.json'))).toBe(true);
+    expect(captured.some(u => u.endsWith('data/states/nc.csv'))).toBe(true);
+    expect(captured.some(u => u.endsWith('data/states/nc/schools.csv'))).toBe(true);
 
     const nc = result.current.stateData.nc;
     expect(nc).toBeDefined();
@@ -164,7 +166,13 @@ describe('useUnifiedMapData', () => {
     expect(nc.countyData['Wake County']).toBeDefined();
     expect(nc.countyData['Wake County'].mean).toBe(94);
     expect(nc.allSchools).toHaveLength(1);
-    expect(nc.allSchools[0].coords).toEqual([-78.6, 35.8]);
+    // CSV overall coverage 0.94 (proportion) → 94 (percent) in-memory.
+    expect(nc.allSchools[0].coverage).toBe(94);
+    expect(nc.allSchools[0].size).toBe(100);
+    // coverage_K = 0.95 → 95; reported grades (is_estimated_*=0) populate reported[].
+    expect(nc.allSchools[0].grades.reported[0]).toBe(95);
+    // No lon/lat columns in the fixture → coords null (map uses fallback).
+    expect(nc.allSchools[0].coords).toBeNull();
   });
 
   it('caches per-state data: refocusing the same state does not re-fetch', async () => {
@@ -172,11 +180,11 @@ describe('useUnifiedMapData', () => {
     await waitFor(() => expect(result.current.loading).toBe(false));
 
     await act(async () => { await result.current.focusState('nc'); });
-    const fetchesAfterFirst = captured.filter(u => u.endsWith('NC/json/dashboard.json')).length;
+    const fetchesAfterFirst = captured.filter(u => u.endsWith('data/states/nc.csv')).length;
     expect(fetchesAfterFirst).toBe(1);
 
     await act(async () => { await result.current.focusState('nc'); });
-    const fetchesAfterSecond = captured.filter(u => u.endsWith('NC/json/dashboard.json')).length;
+    const fetchesAfterSecond = captured.filter(u => u.endsWith('data/states/nc.csv')).length;
     expect(fetchesAfterSecond).toBe(1);
   });
 
@@ -186,7 +194,7 @@ describe('useUnifiedMapData', () => {
 
     await act(async () => { await result.current.focusState('tx'); });
 
-    expect(captured.some(u => u.endsWith('TX/json/dashboard.json'))).toBe(false);
+    expect(captured.some(u => u.endsWith('data/states/tx.csv'))).toBe(false);
     expect(result.current.stateData.tx).toBeUndefined();
     expect(result.current.stateError.tx).toBe('not_ready');
   });
@@ -208,7 +216,7 @@ describe('useUnifiedMapData', () => {
 
     await act(async () => { await result.current.focusState('nc'); });
 
-    expect(result.current.stateError.nc).toMatch(/dashboard/i);
+    expect(result.current.stateError.nc).toMatch(/failed to load/i);
     expect(result.current.stateData.nc).toBeUndefined();
   });
 
@@ -221,7 +229,7 @@ describe('useUnifiedMapData', () => {
       const b = result.current.focusState('nc');
       await Promise.all([a, b]);
     });
-    const fetches = captured.filter(u => u.endsWith('NC/json/dashboard.json')).length;
+    const fetches = captured.filter(u => u.endsWith('data/states/nc.csv')).length;
     expect(fetches).toBe(1);
   });
 });
