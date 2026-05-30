@@ -2,14 +2,16 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { renderHook, waitFor, act } from '@testing-library/react';
 import { useUnifiedMapData } from './useUnifiedMapData.js';
 
-// Tiny us-atlas fixture: two synthetic states (37 = NC, 99 = "Other") with
-// one county apiece so we can verify the per-state filter works.
+// Tiny us-atlas fixture: NC (37) with two counties — "Wake" and the multi-word
+// "New Hanover" (guards the producer's title-casing contract: the CSV `county`
+// must match these atlas names exactly) — plus a throwaway "Other" state (99).
 function mockUsAtlas() {
   return {
     type: 'Topology',
     arcs: [
       [[0, 0], [1, 0], [1, 1], [0, 1], [0, 0]],
       [[2, 2], [3, 2], [3, 3], [2, 3], [2, 2]],
+      [[4, 4], [5, 4], [5, 5], [4, 5], [4, 4]],
     ],
     transform: { scale: [1, 1], translate: [0, 0] },
     objects: {
@@ -17,6 +19,7 @@ function mockUsAtlas() {
         type: 'GeometryCollection',
         geometries: [
           { type: 'Polygon', id: '37001', arcs: [[0]], properties: { name: 'Wake' } },
+          { type: 'Polygon', id: '37002', arcs: [[2]], properties: { name: 'New Hanover' } },
           { type: 'Polygon', id: '99001', arcs: [[1]], properties: { name: 'Other' } },
         ],
       },
@@ -62,14 +65,27 @@ const COV_VALS =
   '0.93,0.92,0.94,0.91,0.95,0.93,' +
   '0.97,0.96,0.98,0.95,0.99,0.97,' +
   '0,0,0,0,0,0,0.1,M';
+// A second coverage row where kindergarten is model-estimated (is_estimated_K=1)
+// rather than reported — used to assert reported[0] becomes null.
+const COV_VALS_ESTK =
+  '0.91,0.90,0.92,' +
+  '0.90,0.91,0.92,0.93,0.94,0.95,' +
+  '0.89,0.90,0.91,0.92,0.93,0.94,' +
+  '0.92,0.93,0.94,0.95,0.96,0.97,' +
+  '1,0,0,0,0,0,0.4,M';
 function mockCountyCsv() {
   return 'county,county_fips,n_schools,pct_schools_below_95,' + COV_COLS + '\n' +
-    'Wake,37183,1,0.0,' + COV_VALS + '\n';
+    'Wake,37183,1,0.0,' + COV_VALS + '\n' +
+    // multi-word county must round-trip to the atlas name exactly
+    'New Hanover,37129,1,1.0,' + COV_VALS_ESTK + '\n';
 }
 function mockSchoolCsv() {
-  // combined per-state schools.csv carries a `county` column
-  return 'school_id,school_name,county,enrollment,' + COV_COLS + '\n' +
-    '1,Test Elementary,Wake,100,' + COV_VALS + '\n';
+  // combined per-state schools.csv carries a `county` column. schools.csv also
+  // carries lon/lat; the Wake school omits them (null-coords fallback), the
+  // New Hanover school includes them and has a model-estimated kindergarten.
+  return 'school_id,school_name,county,enrollment,lon,lat,' + COV_COLS + '\n' +
+    '1,Test Elementary,Wake,100,,,' + COV_VALS + '\n' +
+    '2,Coastal Elementary,New Hanover,80,-77.9,34.2,' + COV_VALS_ESTK + '\n';
 }
 
 function mockManifest() {
@@ -161,18 +177,54 @@ describe('useUnifiedMapData', () => {
 
     const nc = result.current.stateData.nc;
     expect(nc).toBeDefined();
-    expect(nc.stateFeatures).toHaveLength(1);
-    expect(nc.stateFeatures[0].id).toBe('37001');
+    // NC fixture has two counties (Wake + New Hanover) under FIPS 37.
+    expect(nc.stateFeatures).toHaveLength(2);
+    expect(nc.stateFeatures.map(f => f.id).sort()).toEqual(['37001', '37002']);
     expect(nc.countyData['Wake County']).toBeDefined();
     expect(nc.countyData['Wake County'].mean).toBe(94);
-    expect(nc.allSchools).toHaveLength(1);
+
+    const wakeSchool = nc.allSchools.find(s => s.name === 'Test Elementary');
     // CSV overall coverage 0.94 (proportion) → 94 (percent) in-memory.
-    expect(nc.allSchools[0].coverage).toBe(94);
-    expect(nc.allSchools[0].size).toBe(100);
+    expect(wakeSchool.coverage).toBe(94);
+    expect(wakeSchool.size).toBe(100);
     // coverage_K = 0.95 → 95; reported grades (is_estimated_*=0) populate reported[].
-    expect(nc.allSchools[0].grades.reported[0]).toBe(95);
-    // No lon/lat columns in the fixture → coords null (map uses fallback).
-    expect(nc.allSchools[0].coords).toBeNull();
+    expect(wakeSchool.grades.reported[0]).toBe(95);
+    // No lon/lat columns for this row → coords null (map uses fallback).
+    expect(wakeSchool.coords).toBeNull();
+  });
+
+  it('matches multi-word county names to the atlas and groups their schools', async () => {
+    // Guards the producer title-casing contract: a CSV county like "New Hanover"
+    // must resolve to its atlas feature (fips set) and own its schools. Before
+    // title-casing, lowercased names ("new hanover") silently dropped to 0 schools.
+    const { result } = renderHook(() => useUnifiedMapData());
+    await waitFor(() => expect(result.current.loading).toBe(false));
+    await act(async () => { await result.current.focusState('nc'); });
+
+    const nc = result.current.stateData.nc;
+    expect(nc.countyData['New Hanover County']).toBeDefined();
+    expect(nc.countyData['New Hanover County'].fips).toBe('37002');
+
+    const coastal = nc.allSchools.find(s => s.name === 'Coastal Elementary');
+    expect(coastal).toBeDefined();
+    // school.county is keyed as "<County> County" so the map can group it.
+    expect(coastal.county).toBe('New Hanover County');
+  });
+
+  it('parses per-grade estimated/reported flags and lon/lat coords', async () => {
+    const { result } = renderHook(() => useUnifiedMapData());
+    await waitFor(() => expect(result.current.loading).toBe(false));
+    await act(async () => { await result.current.focusState('nc'); });
+
+    const nc = result.current.stateData.nc;
+    const coastal = nc.allSchools.find(s => s.name === 'Coastal Elementary');
+    // is_estimated_K=1 → kindergarten is model-only, so reported[0] is null;
+    // grade 1 (is_estimated_1=0) is reported and populated.
+    expect(coastal.grades.estimated[0]).toBe(90);   // coverage_K 0.90 → 90
+    expect(coastal.grades.reported[0]).toBeNull();
+    expect(coastal.grades.reported[1]).toBe(91);    // coverage_1 0.91 → 91
+    // lon/lat present → [lon, lat] coords.
+    expect(coastal.coords).toEqual([-77.9, 34.2]);
   });
 
   it('caches per-state data: refocusing the same state does not re-fetch', async () => {

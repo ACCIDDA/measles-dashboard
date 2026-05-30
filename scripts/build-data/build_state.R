@@ -125,6 +125,18 @@ assemble <- function(cov, cleaned, linkage, state_meta, county_fips_map = NULL) 
   schools[, coverage := rowMeans(.SD), .SDcols = paste0("coverage_", glab)] # overall reflects override
   schools[, tier := covtier(coverage)]
 
+  # Surface schools present in the linkage/cleaned data but absent from the fit
+  # (their school_loc_id is beyond the model's node range, so predict produced
+  # no coverage). These silently drop; warn so the gap is visible per state.
+  modeled <- unique(schools$county_name)
+  all_cty <- unique(linkage$county_name)
+  dropped <- setdiff(all_cty, modeled)
+  dropped <- dropped[!is.na(dropped)]   # NA county_name is missing data, not a real county
+  if (length(dropped)) {
+    message(sprintf("WARNING: %d county(ies) have schools in the linkage data but none in the fit (no coverage, omitted from school files): %s",
+                    length(dropped), paste(sort(dropped), collapse = ", ")))
+  }
+
   # ---- per-school below-threshold -> county / state aggregates ----
   below <- schools[, .(school_id, county_name, below = coverage < THRESHOLD)]
   cty_stat <- below[, .(n_schools = .N, pct_schools_below_95 = mean(below)), by = county_name]
