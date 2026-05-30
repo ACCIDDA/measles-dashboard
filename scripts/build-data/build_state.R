@@ -28,23 +28,33 @@ norm_name <- function(x) {
   x <- gsub("\\b(school|schools)\\b", "", x); gsub("\\s+", " ", trimws(x))
 }
 nm_key <- function(name, county) paste(norm_name(name), norm_name(county), sep = "|")
-covtier  <- function(v) ifelse(is.na(v), NA_character_,
-                               ifelse(v >= 0.95, "H", ifelse(v >= 0.90, "M", "L")))
+covtier  <- function(v) fifelse(is.na(v), NA_character_,
+                                fifelse(v >= 0.95, "H", fifelse(v >= 0.90, "M", "L")))
 # Title-case county names so they match the us-atlas polygon names the dashboard
 # joins on (linkage_key ships them lowercased, e.g. "los angeles" -> "Los Angeles").
 title_case <- function(x) gsub("\\b([a-z])", "\\U\\1", tolower(x), perl = TRUE)
 
-# --- 1. predict coverage at every node, per grade + overall (from the same draws)
-# Batched: predicting all ~7936 nodes x 6 grades in one gqs() call exhausts RAM
-# (4000 draws x 47616 obs). We chunk the node list, predict each chunk, and
-# reduce to per-(loc_id, grade) + per-(loc_id) summaries immediately so only
-# summaries (not draws) accumulate. Each loc_id lives wholly in one chunk, so
-# overall-coverage CI and prob_below_95 (per-node reductions over draws) stay exact.
+#' Predict coverage at every location node, per grade and overall
+#'
+#' Batched because predicting all ~7936 nodes x 6 grades in one `gqs()` call
+#' exhausts RAM (4000 draws x 47616 obs). The node list is chunked, each chunk
+#' predicted, and reduced to per-(loc_id, grade) + per-(loc_id) summaries
+#' immediately so only summaries (not raw draws) accumulate. Each loc_id lives
+#' wholly within one chunk, so the overall-coverage CI and `prob_below_95`
+#' (per-node reductions over draws) remain exact.
+#'
+#' @param fit a fitted `imugap_fit` object.
+#' @param grade_ages integer ages mapped to grades K-5 (default 5:10).
+#' @param dose integer dose to predict (default 2L).
+#' @param grade_lab character labels for `grade_ages` (default K,1..5).
+#' @param ref_cohort reference cohort for the snapshot; derived from the fit if NULL.
+#' @param chunk_nodes nodes predicted per `gqs()` call (default env CHUNK_NODES or 800).
+#' @return list(per_grade, overall, grade_lab) of coverage summaries by loc_id.
 predict_coverage <- function(fit, grade_ages = GRADE_AGES, dose = 2L,
                              grade_lab = GRADE_LAB, ref_cohort = NULL,
                              chunk_nodes = as.integer(Sys.getenv("CHUNK_NODES", "800"))) {
   if (is.null(ref_cohort)) {
-    ref_cohort <- fit$data$n_cohort - (max(grade_ages) - min(grade_ages))
+    ref_cohort <- fit$data$n_cohort - diff(range(grade_ages))
   }
   loc <- as.data.table(fit$locations)
   glab_map <- setNames(grade_lab, as.character(grade_ages))
@@ -70,13 +80,17 @@ predict_coverage <- function(fit, grade_ages = GRADE_AGES, dose = 2L,
 # shared by real + stub paths: turn long (loc_id, grade, sample_id, p_obs) draws
 # into per-grade + overall summaries keyed by loc_id, tagged with level.
 build_cov_tables <- function(pred, loc, grade_lab = GRADE_LAB) {
-  pred <- copy(as.data.table(pred)); pred[, loc_id := as.character(loc_id)]
-  loc  <- copy(as.data.table(loc));  loc[,  loc_id := as.character(loc_id)]
-  per_grade <- pred[, .(coverage = mean(p_obs),
+  # loc_id is coerced to character because it is used as a join key across
+  # several tables whose id columns arrive with inconsistent types (integer
+  # loc_ids from the fit vs. linkage's school_loc_id/county_loc_id); a single
+  # consistent type avoids data.table join-type errors downstream.
+  pred <- as.data.table(pred)[, loc_id := as.character(loc_id)]
+  loc  <- as.data.table(loc)[,  loc_id := as.character(loc_id)]
+  per_grade <- pred[, .(coverage = median(p_obs),
                         ci_low   = quantile(p_obs, .025),
                         ci_high  = quantile(p_obs, .975)), by = .(loc_id, grade)]
   overall_draws <- pred[, .(p = mean(p_obs)), by = .(loc_id, sample_id)]
-  overall <- overall_draws[, .(coverage = mean(p),
+  overall <- overall_draws[, .(coverage = median(p),
                                ci_low = quantile(p, .025),
                                ci_high = quantile(p, .975),
                                prob_below_95 = mean(p < THRESHOLD)), by = loc_id]
