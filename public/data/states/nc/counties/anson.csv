@@ -1,0 +1,6 @@
+school_id,school_name,enrollment,coverage,coverage_ci_low,coverage_ci_high,coverage_K,coverage_1,coverage_2,coverage_3,coverage_4,coverage_5,coverage_ci_low_K,coverage_ci_low_1,coverage_ci_low_2,coverage_ci_low_3,coverage_ci_low_4,coverage_ci_low_5,coverage_ci_high_K,coverage_ci_high_1,coverage_ci_high_2,coverage_ci_high_3,coverage_ci_high_4,coverage_ci_high_5,is_estimated_K,is_estimated_1,is_estimated_2,is_estimated_3,is_estimated_4,is_estimated_5,prob_below_95,tier
+151,Ansonville Elementary,29,0.9953,,,0.9557,1,1,1,1,1,0.9344,0.9338,0.9355,0.9388,0.9434,0.9484,0.9732,0.973,0.9737,0.9751,0.9771,0.9792,1,0,0,0,0,0,,H
+154,Lilesville Elementary,47,0.9683,,,0.9587,0.9744,0.9118,0.9574,1,1,0.942,0.9418,0.9434,0.9465,0.9505,0.955,0.9724,0.972,0.9727,0.9743,0.9762,0.9784,1,0,0,0,0,0,,H
+155,Morven Elementary,31,0.9618,,,0.9519,0.9677,1,0.875,0.9587,1,0.9307,0.9301,0.932,0.9354,0.9402,0.9455,0.9685,0.9681,0.9689,0.9705,0.9728,0.9753,1,0,0,0,1,0,,H
+156,Peachland-Polkton Elem,93,0.9818,,,0.9674,0.9892,0.9733,0.9886,0.9865,0.9863,0.9562,0.956,0.957,0.9594,0.9625,0.9659,0.9763,0.9762,0.9768,0.9781,0.9798,0.9816,1,0,0,0,0,0,,H
+157,Wadesboro Primary,77,0.9455,,,0.9534,0.9296,0.9508,0.96,0.974,0.8889,0.9365,0.9362,0.9378,0.941,0.9454,0.9503,0.9682,0.9679,0.9687,0.9705,0.9728,0.9753,1,0,0,0,0,0,,M

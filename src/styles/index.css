@@ -27,8 +27,8 @@ header{flex-shrink:0;height:var(--header-h);background:var(--surface);border-bot
 .hsi-wrap{display:flex;align-items:center;background:var(--faint);border:1px solid var(--border2);border-radius:8px;padding:0 8px;gap:5px;height:34px}
 .hsi-wrap:focus-within{border-color:var(--focus);box-shadow:0 0 0 3px #005fcc22}
 .hsi-wrap svg{color:var(--muted);flex-shrink:0}
-#county-search-main{width:185px;font-family:var(--sans);font-size:13px;background:transparent;border:none;color:var(--text);outline:none;-webkit-appearance:none}
-#county-search-main::placeholder{color:#a8a29e}
+#county-search-main,#state-search-main{width:185px;font-family:var(--sans);font-size:13px;background:transparent;border:none;color:var(--text);outline:none;-webkit-appearance:none}
+#county-search-main::placeholder,#state-search-main::placeholder{color:#a8a29e}
 #main-dropdown{position:absolute;top:calc(100%+6px);left:0;right:0;background:var(--surface);border:1px solid var(--border2);border-radius:10px;box-shadow:0 8px 28px rgba(0,0,0,.14);overflow:hidden;z-index:200;display:none}
 #main-dropdown.show{display:block}
 
@@ -50,6 +50,14 @@ header{flex-shrink:0;height:var(--header-h);background:var(--surface);border-bot
 .cd-marker{width:14px;height:14px;flex-shrink:0}
 .cd-name{flex:1;color:var(--text)}
 .cd-cov{font-family:var(--mono);font-size:11px;color:var(--muted)}
+/* Disabled dropdown row — used by StateSearch for states whose manifest
+   status !== "ready". Visual language matches .state-path.state-coming-soon
+   on the choropleth: muted text, not-allowed cursor, no hover background.
+   The row is rendered but cannot be selected (click + Enter are no-ops on
+   the JS side). */
+.cd-item.cd-item-disabled{cursor:not-allowed;opacity:.7}
+.cd-item.cd-item-disabled:hover,.cd-item.cd-item-disabled:active{background:transparent}
+.cd-item.cd-item-disabled .cd-name{color:var(--muted)}
 
 /* View toggle */
 .view-toggle{display:flex;border:1px solid var(--border2);border-radius:6px;overflow:hidden;flex-shrink:0}
@@ -60,13 +68,19 @@ header{flex-shrink:0;height:var(--header-h);background:var(--surface);border-bot
 
 /* ── Body ── */
 #body-row{flex:1;display:flex;overflow:hidden;position:relative}
-#map-wrap{flex:1;position:relative;overflow:hidden}
+#map-wrap{flex:1;position:relative;overflow:hidden;background:var(--water)}
 #map-svg{width:100%;height:100%;display:block}
 
 .county-path{cursor:pointer;vector-effect:non-scaling-stroke}
+.school-shape{vector-effect:non-scaling-stroke}
+.state-path{cursor:pointer;vector-effect:non-scaling-stroke;transition:filter .15s ease}
+.state-path.no-data{cursor:default}
+.state-path.no-data:focus{outline:none}
+.state-path:focus-visible{outline:none;stroke:var(--focus);stroke-width:2.5px}
 .neighbor-county{fill:var(--land);stroke:#bdb5a8;stroke-width:.4px;vector-effect:non-scaling-stroke;pointer-events:none}
 .neighbor-state-line{fill:none;stroke:#9c9085;stroke-width:.9px;vector-effect:non-scaling-stroke;pointer-events:none}
 .school-dot{cursor:pointer}
+.school-dot .school-shape{vector-effect:non-scaling-stroke}
 
 /* Floating controls */
 #map-controls{position:absolute;top:10px;left:10px;display:flex;flex-direction:column;gap:6px;z-index:10}
@@ -86,6 +100,13 @@ header{flex-shrink:0;height:var(--header-h);background:var(--surface);border-bot
 @keyframes locpulse{0%{box-shadow:0 0 0 0 rgba(0,95,204,.55)}70%{box-shadow:0 0 0 8px rgba(0,95,204,0)}100%{box-shadow:0 0 0 0 rgba(0,95,204,0)}}
 /* County highlight ring (SVG) */
 @keyframes ringpulse{0%,100%{opacity:.9;r:0}50%{opacity:.4}}
+
+/* User-location halo: applied to a state on the national map when we
+   resolved the visitor's location to a US state that doesn't yet have
+   coverage data. The dashed pulsing outline tells them "we know where
+   you are; we just don't have data for it yet". */
+@keyframes statehalo{0%,100%{stroke-opacity:.95;stroke-width:2.4px}50%{stroke-opacity:.55;stroke-width:1.6px}}
+.state-path.state-user-location{stroke:var(--focus,#005fcc);stroke-dasharray:6 4;stroke-width:2.4px;animation:statehalo 2.2s ease-in-out infinite;filter:drop-shadow(0 0 4px rgba(0,95,204,.45))}
 
 /* Legend — flush left, hugging the map edge */
 #map-legend{position:absolute;bottom:10px;left:0;background:rgba(250,247,242,.97);border:1px solid var(--border);border-left:3px solid var(--high);border-radius:0 8px 8px 0;padding:9px 12px 9px 10px;box-shadow:2px 2px 8px rgba(0,0,0,.08);transition:opacity .25s}
@@ -219,3 +240,103 @@ label[for="sb-search"]{display:block;font-size:10px;text-transform:uppercase;let
   #tour-help-btn{bottom:12px;right:8px;width:36px;height:36px}
   #tour-tip{width:calc(100vw - 24px);left:12px!important;right:12px}
 }
+
+/* Toast surfaced when a user activates a state without data. Positioned
+   above the map so it does not obstruct the legend. Auto-dismisses; see
+   NoDataToast.jsx. */
+.no-data-toast{
+  position:fixed;
+  top:calc(var(--header-h, 56px) + 16px);
+  left:50%;
+  transform:translateX(-50%);
+  z-index:60;
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  padding:10px 14px;
+  border-radius:8px;
+  background:rgba(31,41,55,.95);
+  color:#fff;
+  font-size:14px;
+  font-weight:500;
+  box-shadow:0 4px 16px rgba(0,0,0,.18);
+  max-width:min(90vw,420px);
+}
+.no-data-toast-close{
+  background:transparent;
+  border:none;
+  color:inherit;
+  font-size:18px;
+  line-height:1;
+  cursor:pointer;
+  padding:0 2px;
+}
+.no-data-toast-close:focus{outline:2px solid #fff;outline-offset:2px}
+
+/* Greyed state styling — applied by national-map renderers (e.g. NationalMap)
+   for states whose manifest entry status !== "ready". Defined here so the
+   visual treatment is consistent regardless of which component renders the
+   national choropleth. */
+.state-path.state-coming-soon{
+  fill:#d1d5db;
+  cursor:not-allowed;
+  opacity:.85;
+}
+.state-path.state-coming-soon:hover{
+  fill:#bcc1c9;
+}
+.state-path.state-ready{
+  cursor:pointer;
+}
+
+/* Lightweight fallback national view used until NationalMap (issue #14)
+   lands. Lists every state from the manifest with ready states clickable
+   and coming_soon states greyed. */
+.national-view{
+  padding:24px clamp(16px,4vw,32px);
+  max-width:1100px;
+  margin:0 auto;
+}
+.national-view-title{
+  font-size:20px;
+  font-weight:600;
+  margin:0 0 4px;
+}
+.national-view-subtitle{
+  color:#4b5563;
+  margin:0 0 16px;
+}
+.national-view-list{
+  list-style:none;
+  padding:0;
+  margin:0;
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
+  gap:8px;
+}
+.national-view-item button.state-path{
+  width:100%;
+  text-align:left;
+  padding:10px 12px;
+  border:1px solid #e5e7eb;
+  border-radius:6px;
+  background:#fff;
+  font-size:14px;
+  font-weight:500;
+  color:#111827;
+  cursor:pointer;
+}
+.national-view-item button.state-path.state-ready{
+  background:#eff6ff;
+  border-color:#bfdbfe;
+  color:#1e3a8a;
+}
+.national-view-item button.state-path.state-ready:hover{
+  background:#dbeafe;
+}
+.national-view-item button.state-path.state-coming-soon{
+  background:#f3f4f6;
+  color:#6b7280;
+  fill:#d1d5db; /* keeps visual parity with SVG paths */
+}
+

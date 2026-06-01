@@ -68,7 +68,9 @@ describe('Sidebar', () => {
 
   it('renders SchoolDetail when selectedSchool is set', () => {
     render(<Sidebar {...defaultProps} selectedSchool={mockSchools[0]} />);
-    expect(screen.getByText('Overall Coverage')).toBeInTheDocument();
+    // SchoolDetail renders its own 'Avg. Coverage' label, distinct from the
+    // identically-worded county-stats label above — assert both are present.
+    expect(screen.getAllByText('Avg. Coverage')).toHaveLength(2);
     expect(screen.getByRole('button', { name: 'Close school detail' })).toBeInTheDocument();
   });
 });

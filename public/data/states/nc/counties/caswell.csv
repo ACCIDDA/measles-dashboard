@@ -1,0 +1,5 @@
+school_id,school_name,enrollment,coverage,coverage_ci_low,coverage_ci_high,coverage_K,coverage_1,coverage_2,coverage_3,coverage_4,coverage_5,coverage_ci_low_K,coverage_ci_low_1,coverage_ci_low_2,coverage_ci_low_3,coverage_ci_low_4,coverage_ci_low_5,coverage_ci_high_K,coverage_ci_high_1,coverage_ci_high_2,coverage_ci_high_3,coverage_ci_high_4,coverage_ci_high_5,is_estimated_K,is_estimated_1,is_estimated_2,is_estimated_3,is_estimated_4,is_estimated_5,prob_below_95,tier
+383,North Elementary,59,0.9364,,,0.9459,0.9487,0.9583,0.8305,1,0.9762,0.9203,0.9198,0.9217,0.9257,0.9312,0.9373,0.9672,0.967,0.9679,0.9696,0.9719,0.9745,1,0,0,0,0,0,,M
+384,Oakwood Elementary,61,0.9482,,,0.9378,0.96,0.9672,0.8667,1,0.96,0.9111,0.9107,0.913,0.9173,0.9232,0.9299,0.9594,0.9591,0.9603,0.9625,0.9654,0.9685,1,0,0,0,0,0,,M
+385,South Elementary,54,0.9583,,,0.9659,0.9815,0.9143,0.9535,1,0.925,0.9443,0.9439,0.9453,0.9481,0.9521,0.9564,0.9821,0.982,0.9825,0.9834,0.9847,0.9861,1,0,0,0,0,0,,H
+386,Stoney Creek Elementary,32,0.9402,,,0.9444,0.9231,0.9,0.9375,0.963,0.963,0.9098,0.9094,0.9118,0.9163,0.9223,0.9292,0.9706,0.9703,0.9711,0.9728,0.9748,0.9771,1,0,0,0,0,0,,M

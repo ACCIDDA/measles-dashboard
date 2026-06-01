@@ -1,14 +1,34 @@
 import { useState } from 'react';
 import CountySearch from './CountySearch.jsx';
+import StateSearch from './StateSearch.jsx';
 
-export default function Header({ currentView, onViewChange, ncFeatures, countyData, onCountySelect }) {
+export default function Header({
+  currentView,
+  onViewChange,
+  stateFeatures,
+  countyData,
+  onCountySelect,
+  onStateSelect,
+  stateName = 'NC',
+  // 'national' shows the state search and national landing copy.
+  // 'state' (default) keeps the existing county search + "Click a county to
+  // explore" copy. The view toggle is national-irrelevant (no undervax
+  // aggregation exists at the state level yet) so it is suppressed on the
+  // national view.
+  view = 'state',
+}) {
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
+  const isNational = view === 'national';
 
   const handleCountySelect = (feature) => {
     const name = feature.properties.name + ' County';
     onCountySelect(name);
     setMobileSearchOpen(false);
   };
+
+  const searchPlaceholder = `Search ${stateName} counties…`;
+  const searchAriaLabel = `Search for a ${stateName} county`;
+  const searchRegionLabel = `Find a ${stateName} county`;
 
   return (
     <header role="banner">
@@ -21,65 +41,84 @@ export default function Header({ currentView, onViewChange, ncFeatures, countyDa
       />
 
       <div className="hd-title">
-        <h1>NC Measles (MMR) Coverage</h1>
-        <p>K&ndash;5 schools &middot; Click a county to explore</p>
+        <h1>Measles Vaccination (MMR) Coverage</h1>
+        <p>{isNational ? 'Click a state to explore' : 'K–5 schools · Click a county to explore'}</p>
       </div>
 
-      {/* Desktop: always-visible search */}
-      <div className="hd-search-inline" role="search" aria-label="Find an NC county">
-        <CountySearch
-          ncFeatures={ncFeatures}
-          countyData={countyData}
-          onSelect={handleCountySelect}
-          inputId="county-search-main"
-          dropdownId="main-dropdown"
-          placeholder="Search NC counties…"
-        />
-      </div>
+      {/* On the national view, render the zoom-scoped state search. The
+          county search is state-scoped and only appears at the state view. */}
+      {isNational && (
+        <div className="hd-search-inline" role="search" aria-label="Find a state">
+          <StateSearch
+            onSelect={onStateSelect}
+            inputId="state-search-main"
+            dropdownId="state-search-dropdown"
+          />
+        </div>
+      )}
+      {!isNational && (
+        <>
+          {/* Desktop: always-visible search */}
+          <div className="hd-search-inline" role="search" aria-label={searchRegionLabel}>
+            <CountySearch
+              stateFeatures={stateFeatures}
+              countyData={countyData}
+              onSelect={handleCountySelect}
+              inputId="county-search-main"
+              dropdownId="main-dropdown"
+              placeholder={searchPlaceholder}
+              ariaLabel={searchAriaLabel}
+            />
+          </div>
 
-      {/* Mobile: icon -> panel */}
-      <button
-        id="hd-search-btn"
-        aria-label="Search NC counties"
-        aria-expanded={mobileSearchOpen}
-        aria-controls="hd-search-expanded"
-        onClick={() => setMobileSearchOpen(prev => !prev)}
-      >
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-          <circle cx="11" cy="11" r="8" />
-          <path d="m21 21-4.35-4.35" />
-        </svg>
-      </button>
-      <div id="hd-search-expanded" className={mobileSearchOpen ? 'show' : ''} role="dialog" aria-label="County search">
-        <CountySearch
-          ncFeatures={ncFeatures}
-          countyData={countyData}
-          onSelect={handleCountySelect}
-          inputId="county-search-mobile"
-          dropdownId="mobile-dropdown"
-          placeholder="Search NC counties…"
-          isMobile
-        />
-      </div>
+          {/* Mobile: icon -> panel */}
+          <button
+            id="hd-search-btn"
+            aria-label={`Search ${stateName} counties`}
+            aria-expanded={mobileSearchOpen}
+            aria-controls="hd-search-expanded"
+            onClick={() => setMobileSearchOpen(prev => !prev)}
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+              <circle cx="11" cy="11" r="8" />
+              <path d="m21 21-4.35-4.35" />
+            </svg>
+          </button>
+          <div id="hd-search-expanded" className={mobileSearchOpen ? 'show' : ''} role="dialog" aria-label="County search">
+            <CountySearch
+              stateFeatures={stateFeatures}
+              countyData={countyData}
+              onSelect={handleCountySelect}
+              inputId="county-search-mobile"
+              dropdownId="mobile-dropdown"
+              placeholder={searchPlaceholder}
+              ariaLabel={searchAriaLabel}
+              isMobile
+            />
+          </div>
+        </>
+      )}
 
-      <div className="view-toggle" role="group" aria-label="Map view">
-        <button
-          className={`vt-btn${currentView === 'coverage' ? ' active' : ''}`}
-          data-view="coverage"
-          aria-pressed={currentView === 'coverage'}
-          onClick={() => onViewChange('coverage')}
-        >
-          Coverage
-        </button>
-        <button
-          className={`vt-btn${currentView === 'undervax' ? ' active' : ''}`}
-          data-view="undervax"
-          aria-pressed={currentView === 'undervax'}
-          onClick={() => onViewChange('undervax')}
-        >
-          Below 95%
-        </button>
-      </div>
+      {!isNational && (
+        <div className="view-toggle" role="group" aria-label="Map view">
+          <button
+            className={`vt-btn${currentView === 'coverage' ? ' active' : ''}`}
+            data-view="coverage"
+            aria-pressed={currentView === 'coverage'}
+            onClick={() => onViewChange('coverage')}
+          >
+            Coverage
+          </button>
+          <button
+            className={`vt-btn${currentView === 'undervax' ? ' active' : ''}`}
+            data-view="undervax"
+            aria-pressed={currentView === 'undervax'}
+            onClick={() => onViewChange('undervax')}
+          >
+            Below 95%
+          </button>
+        </div>
+      )}
     </header>
   );
 }

@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 
 test.describe('County search', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/measles-dashboard/state/nc');
     await page.evaluate(() => localStorage.setItem('nc_measles_tour_done', '1'));
     await page.reload();
     await page.waitForSelector('.county-path', { timeout: 15000 });

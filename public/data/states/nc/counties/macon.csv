@@ -1,0 +1,7 @@
+school_id,school_name,enrollment,coverage,coverage_ci_low,coverage_ci_high,coverage_K,coverage_1,coverage_2,coverage_3,coverage_4,coverage_5,coverage_ci_low_K,coverage_ci_low_1,coverage_ci_low_2,coverage_ci_low_3,coverage_ci_low_4,coverage_ci_low_5,coverage_ci_high_K,coverage_ci_high_1,coverage_ci_high_2,coverage_ci_high_3,coverage_ci_high_4,coverage_ci_high_5,is_estimated_K,is_estimated_1,is_estimated_2,is_estimated_3,is_estimated_4,is_estimated_5,prob_below_95,tier
+1306,Cartoogechaye Elementary,77,0.9351,,,0.9433,0.8406,1,0.8961,0.9851,0.9565,0.9204,0.9199,0.9218,0.926,0.9313,0.9374,0.9625,0.9622,0.9633,0.9653,0.9679,0.9708,1,0,0,0,0,0,,M
+1307,East Franklin Elementary,78,0.9517,,,0.9566,0.963,0.9259,0.9677,0.9627,0.9359,0.9345,0.9339,0.9357,0.939,0.9436,0.9486,0.9744,0.9742,0.9749,0.9763,0.9781,0.9801,1,0,0,0,1,0,,H
+1308,Highlands School,29,0.9323,,,0.9366,0.8621,0.8148,1,1,1,0.8969,0.8966,0.8993,0.9042,0.911,0.9188,0.9666,0.9663,0.9671,0.9689,0.9712,0.9739,1,0,0,0,0,0,,M
+1309,Iotla Valley Elementary,93,0.894,,,0.9111,0.7761,0.8356,0.9785,0.9683,0.875,0.8869,0.8861,0.889,0.8947,0.9022,0.9105,0.9332,0.9326,0.9342,0.9376,0.9422,0.9473,1,0,0,0,0,0,,L
+1310,Nantahala School,10,0.9182,,,0.9149,1,1,0.9,0.75,1,0.8385,0.8374,0.8416,0.8493,0.8594,0.8708,0.9668,0.9665,0.9674,0.9693,0.9716,0.9743,1,0,0,0,0,0,,M
+1311,South Macon Elementary,124,0.9662,,,0.9672,0.925,0.9759,0.9647,0.9677,0.9899,0.9529,0.9525,0.9537,0.9562,0.9595,0.9632,0.9791,0.9789,0.9794,0.9806,0.9821,0.9837,1,0,0,0,0,0,,H

@@ -18,7 +18,7 @@ const mockCountyData = {
 };
 
 const defaultProps = {
-  ncFeatures: mockFeatures,
+  stateFeatures: mockFeatures,
   countyData: mockCountyData,
   onSelect: () => {},
   inputId: 'test-search',
@@ -79,7 +79,7 @@ describe('CountySearch', () => {
     const manyData = Object.fromEntries(
       manyFeatures.map(f => [`${f.properties.name} County`, { mean: 90 }])
     );
-    render(<CountySearch {...defaultProps} ncFeatures={manyFeatures} countyData={manyData} />);
+    render(<CountySearch {...defaultProps} stateFeatures={manyFeatures} countyData={manyData} />);
     await user.type(screen.getByPlaceholderText('Search NC counties…'), 'County');
     const options = screen.getAllByRole('option');
     expect(options.length).toBeLessThanOrEqual(8);
