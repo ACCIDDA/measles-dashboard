@@ -44,6 +44,9 @@ Page chrome is React; the interactive map is [D3](https://d3js.org) over
 [us-atlas](https://github.com/topojson/us-atlas) TopoJSON. Deployed as a static
 site on GitHub Pages under the `/measles-dashboard/` base path.
 
+How it all fits together is documented in
+[`docs/ARCHITECTURE.md`](./docs/ARCHITECTURE.md).
+
 ## Quick start
 
 Built and tested against **Node 20** (pinned in [`.nvmrc`](./.nvmrc); what CI
