@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import * as topojson from 'topojson-client';
+import { csvParse } from 'd3-dsv';
 import { covTier } from '../config/index.js';
 import { getStateConfig, normalizeFips } from '../config/states.js';
 
@@ -14,18 +15,27 @@ const WORLD_ATLAS_URL = 'https://cdn.jsdelivr.net/npm/world-atlas@2/countries-11
 // on the national zoom; states missing from the stub render greyed.
 const NATIONAL_STUB_PATH = 'data/national.json';
 
+// Grade columns in the #20 CSV schema, K→5 order. The in-memory model the map +
+// sidebar consume expects 6 per-grade values per school.
+const GRADE_KEYS = ['K', '1', '2', '3', '4', '5'];
+
 function withBase(path) {
   const base = (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL) || '/';
   return `${base}${path}`;
 }
 
-// Build the per-state derived structures from a freshly-fetched
-// `dashboard.json` + `school_coords.json` + the shared us-atlas topology.
-//
-// Returns the same shape the legacy `useDashboardData` produced
-// (countyData, allSchools, stateFeatures, neighborStates, stateMesh,
-// adjacencyMap) so the map component and sidebar code don't have to change.
-function buildStatePayload({ stateCode, dashboard, schoolCoordsLookup, us }) {
+// Coverage in the CSVs is a proportion in [0,1]; the existing UI works in
+// percent (covTier(95), `coverage < 95`, `.toFixed(1)+'%'`). Convert on load.
+function toPct(v) {
+  if (v == null || v === '') return null;
+  const n = Number(v);
+  if (Number.isNaN(n)) return null;
+  return n <= 1 ? n * 100 : n;
+}
+
+// Shared per-state topology structures (county features, neighbor states, mesh,
+// adjacency, name→feature) derived from the us-atlas, independent of data source.
+function buildTopology({ stateCode, us }) {
   const cfg = getStateConfig(stateCode);
 
   const stateFeatures = topojson
@@ -58,45 +68,50 @@ function buildStatePayload({ stateCode, dashboard, schoolCoordsLookup, us }) {
   const featureByName = {};
   stateFeatures.forEach(f => { featureByName[f.properties.name] = f; });
 
+  return { stateFeatures, neighborStates, stateMesh, adjacencyMap, featureByName };
+}
+
+// Build the per-state derived structures from the #20 CSV bundle:
+//   countyRows — parsed rows from states/<code>.csv        (one per county)
+//   schoolRows — parsed rows from states/<code>/schools.csv (one per school,
+//                carrying a `county` column)
+// plus the shared us-atlas topology. Returns the same shape the legacy
+// dashboard.json path produced, so the map + sidebar are unchanged.
+function buildStatePayloadFromCsv({ stateCode, countyRows, schoolRows, us }) {
+  const { stateFeatures, neighborStates, stateMesh, adjacencyMap, featureByName } =
+    buildTopology({ stateCode, us });
+
   const countyData = {};
-  (dashboard.counties || []).forEach(c => {
-    const key = c.name + ' County';
-    countyData[key] = {
-      mean: c.coverage,
-      herd_immunity: c.herd_immunity,
-      fips: featureByName[c.name] ? featureByName[c.name].id : null,
+  countyRows.forEach(c => {
+    const name = c.county;
+    countyData[name + ' County'] = {
+      mean: toPct(c.coverage),
+      herd_immunity: c.pct_schools_below_95 != null && c.pct_schools_below_95 !== ''
+        ? Number(c.pct_schools_below_95) : null,
+      fips: featureByName[name] ? featureByName[name].id : null,
     };
   });
 
-  const allSchools = [];
-  (dashboard.counties || []).forEach(c => {
-    const countyKey = c.name + ' County';
-    const feature = featureByName[c.name];
-    (c.schools || []).forEach(school => {
-      const rawKey = school.name + '|' + countyKey;
-      const coords = schoolCoordsLookup[rawKey] || null;
-      const breakdown = (school.stats && school.stats.coverage_breakdown) || [];
-      const estimatedFlags = (school.stats && school.stats.Estimated) || [];
-      const estimated = breakdown.map(v => {
-        const n = parseFloat(v);
-        return isNaN(n) ? null : n;
-      });
-      const reported = breakdown.map((v, i) => {
-        if (estimatedFlags[i] === true) return null;
-        const n = parseFloat(v);
-        return isNaN(n) ? null : n;
-      });
-      allSchools.push({
-        county: countyKey,
-        coords,
-        feature,
-        coverage: school.stats.Coverage,
-        tier: covTier(school.stats.Coverage),
-        name: school.name,
-        size: school.stats.Size,
-        grades: { estimated, reported },
-      });
-    });
+  const allSchools = schoolRows.map(s => {
+    // estimated[] is always the model/coverage value; reported[] is that value
+    // only where is_estimated_<g> === 0 (raw reported), else null.
+    const estimated = GRADE_KEYS.map(g => toPct(s['coverage_' + g]));
+    const reported = GRADE_KEYS.map((g, i) =>
+      String(s['is_estimated_' + g]) === '0' ? estimated[i] : null);
+    const coverage = toPct(s.coverage);
+    const lon = s.lon != null && s.lon !== '' ? Number(s.lon) : null;
+    const lat = s.lat != null && s.lat !== '' ? Number(s.lat) : null;
+    return {
+      county: s.county + ' County',
+      coords: lon != null && lat != null && !Number.isNaN(lon) && !Number.isNaN(lat)
+        ? [lon, lat] : null,
+      feature: featureByName[s.county],
+      coverage,
+      tier: covTier(coverage),
+      name: s.school_name,
+      size: s.enrollment != null && s.enrollment !== '' ? Number(s.enrollment) : null,
+      grades: { estimated, reported },
+    };
   });
 
   return { countyData, allSchools, stateFeatures, neighborStates, stateMesh, adjacencyMap };
@@ -108,9 +123,9 @@ function buildStatePayload({ stateCode, dashboard, schoolCoordsLookup, us }) {
  *
  * - Loads the shared us-atlas, world-atlas, national stub, and per-state
  *   manifest exactly once at mount.
- * - Lazy-loads each state's `dashboard.json` + `school_coords.json` on
- *   demand via `focusState(code)`. Re-focusing a previously loaded state is
- *   a cache hit; no extra fetches occur.
+ * - Lazy-loads each state's #20 CSV bundle (states/<code>.csv +
+ *   states/<code>/schools.csv) on demand via `focusState(code)`. Re-focusing a
+ *   previously loaded state is a cache hit; no extra fetches occur.
  * - Returns a stable `focusState` callback and a `stateData` map keyed by
  *   lowercase state code, so the consumer can render whichever state's
  *   counties + schools are currently in focus.
@@ -218,7 +233,7 @@ export function useUnifiedMapData() {
     return () => { cancelled = true; };
   }, []);
 
-  // Lazy-load a single state's dashboard + school coords on demand.
+  // Lazy-load a single state's #20 CSV bundle on demand.
   const focusState = useCallback((rawCode) => {
     const code = String(rawCode || '').toLowerCase();
     if (!code) return Promise.resolve(null);
@@ -242,17 +257,19 @@ export function useUnifiedMapData() {
       return Promise.resolve(null);
     }
 
-    const cfg = getStateConfig(code);
     const promise = (async () => {
       try {
-        const [dashRes, coordsRes] = await Promise.all([
-          fetch(withBase(`${cfg.dataDir}/json/dashboard.json`)),
-          fetch(withBase(`${cfg.dataDir}/json/school_coords.json`)),
+        // #20 CSV bundle: the county summary + the combined per-state schools
+        // file. (Per-county files under counties/ are the canonical download/API
+        // unit (#21/#22); the app reads schools.csv to avoid an N+1 fan-out.)
+        const [countyRes, schoolRes] = await Promise.all([
+          fetch(withBase(`data/states/${code}.csv`)),
+          fetch(withBase(`data/states/${code}/schools.csv`)),
         ]);
-        if (!dashRes.ok) throw new Error(`Failed to load ${code.toUpperCase()} dashboard`);
-        const dashboard = await dashRes.json();
-        const schoolCoordsLookup = coordsRes.ok ? await coordsRes.json() : {};
-        const payload = buildStatePayload({ stateCode: code, dashboard, schoolCoordsLookup, us });
+        if (!countyRes.ok) throw new Error(`Failed to load ${code.toUpperCase()} data`);
+        const countyRows = csvParse(await countyRes.text());
+        const schoolRows = schoolRes.ok ? csvParse(await schoolRes.text()) : [];
+        const payload = buildStatePayloadFromCsv({ stateCode: code, countyRows, schoolRows, us });
         stateCacheRef.current[code] = payload;
         setStateData(prev => ({ ...prev, [code]: payload }));
         setStateError(prev => {

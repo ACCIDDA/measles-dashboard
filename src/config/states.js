@@ -20,6 +20,15 @@ export const STATES = {
     sourceUrl: 'https://www.dph.ncdhhs.gov/programs/epidemiology/immunization/data/kindergarten-dashboard',
     sourceLabel: 'NC DHHS',
   },
+  ca: {
+    code: 'ca',
+    name: 'CA',
+    fullName: 'California',
+    dataDir: 'CA',
+    fips: '06',
+    sourceUrl: 'https://www.cdph.ca.gov/Programs/CID/DCDC/Pages/Immunization/School/2023-2024-Kindergarten-Data.aspx',
+    sourceLabel: 'CA CDPH',
+  },
 };
 
 export const DEFAULT_STATE_CODE = 'nc';

@@ -3,3 +3,9 @@ dist
 test-results
 playwright-report
 playwright/.cache
+
+# imuGAP producer artifacts (large; not committed)
+scripts/build-data/inputs/
+scripts/build-data/out/
+*.rds
+*.parquet
