@@ -26,17 +26,10 @@ test.describe('School detail', () => {
     await expect(grades).toHaveCount(6);
   });
 
-  test('Estimated tab is active by default', async ({ page }) => {
+  test('no estimated/reported tabs (removed in #58)', async ({ page }) => {
     await page.locator('.sb-school-item').first().click();
     await expect(page.locator('#sb-school-detail')).toBeVisible({ timeout: 2000 });
-    await expect(page.locator('.sd-tab[data-mode="estimated"]')).toHaveAttribute('aria-selected', 'true');
-  });
-
-  test('switching to Reported tab updates data', async ({ page }) => {
-    await page.locator('.sb-school-item').first().click();
-    await expect(page.locator('#sb-school-detail')).toBeVisible({ timeout: 2000 });
-    await page.locator('.sd-tab[data-mode="reported"]').click();
-    await expect(page.locator('.sd-tab[data-mode="reported"]')).toHaveAttribute('aria-selected', 'true');
+    await expect(page.locator('.sd-tab')).toHaveCount(0);
   });
 
   test('close button hides detail panel', async ({ page }) => {
