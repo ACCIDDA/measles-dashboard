@@ -4,7 +4,7 @@ Thanks for contributing to the Measles Vaccination (MMR) Coverage Dashboard. Thi
 
 ## Prerequisites
 
-- **Node 20** — pinned in [`.nvmrc`](./.nvmrc). Run `nvm use` before anything else.
+- **Node 20** — what CI runs, pinned in [`.nvmrc`](./.nvmrc). Run `nvm use` before anything else to match it.
 - **npm** — we commit `package-lock.json`; don't swap in yarn/pnpm.
 
 First-time setup:

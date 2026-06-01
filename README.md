@@ -48,7 +48,8 @@ site on GitHub Pages under the `/measles-dashboard/` base path.
 
 ## Quick start
 
-Requires **Node 20** (pinned in [`.nvmrc`](./.nvmrc)).
+Built and tested against **Node 20** (pinned in [`.nvmrc`](./.nvmrc); what CI
+runs). Run `nvm use` to match it.
 
 ```sh
 nvm use
@@ -61,6 +62,6 @@ Full command list and the contributor workflow are in
 
 ## Contributing
 
-See [`CONTRIBUTING.md`](./CONTRIBUTING.md). In short: Node 20, `npm install`,
-and the pre-commit hook runs lint + tests. Adding a new state needs data and a
-config entry, not code changes.
+See [`CONTRIBUTING.md`](./CONTRIBUTING.md). In short: `nvm use` (Node 20),
+`npm install`, and the pre-commit hook runs lint + tests. Adding a new state
+needs data and a config entry, not code changes.
