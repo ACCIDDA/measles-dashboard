@@ -4,120 +4,117 @@
 
 All dashboard data is published as static CSV files at predictable URLs on the
 deployed site. You can fetch them with `curl`, `wget`, a browser, or any HTTP
-client — there is no authentication, no API key, and no rate limit beyond
-whatever GitHub Pages applies to public traffic. The URL scheme *is* the API:
-the same files that power the in-app download buttons are what you get when you
-fetch them directly.
+client: there is no authentication, no API key, and no rate limit beyond
+whatever GitHub Pages applies to public traffic. The URL scheme *is* the API,
+the same files that drive the dashboard are what you get when you fetch them.
 
 The deployment base path is `/measles-dashboard/`, so every dataset path below
 is suffixed onto `https://accidda.github.io/measles-dashboard/`.
 
-Currently only North Carolina (`nc`) has data published. Additional states will
-be added incrementally as their source data lands; the URL scheme is stable.
+States with data published: North Carolina (`nc`) and California (`ca`). More
+states are added incrementally; the URL scheme is stable.
 
 ## URL scheme
 
-| Path | Description |
+| Path | Row granularity |
 | --- | --- |
-| `/data/states/{state}.csv` | County-aggregated coverage for one state |
-| `/data/states/{state}/counties/{county}.csv` | School-level breakdown for one county |
+| `/data/states.csv` | one row per state (national summary) |
+| `/data/states/{state}.csv` | one row per county in that state |
+| `/data/states/{state}/schools.csv` | one row per school in that state |
+| `/data/states/{state}/counties/{county}.csv` | one row per school in that county |
 
-`{state}` and `{county}` are slugs (see below).
+`{state}/schools.csv` and the per-`{county}` files carry the same school rows;
+the per-county files are a convenience split. The dashboard itself loads
+`{state}.csv` + `{state}/schools.csv`.
 
 ## Slug conventions
 
-- Lowercase ASCII.
-- Words separated by hyphens (kebab-case).
-- No punctuation other than the hyphen.
+- `{state}`: lowercase two-letter USPS abbreviation (`nc`, `ca`).
+- `{county}`: county name lowercased and kebab-cased (`los-angeles`,
+  `new-hanover`). Spaces and punctuation become single hyphens.
 
-Examples:
+## Columns
 
-- North Carolina → `nc`
-- New Hanover County → `new-hanover`
-- Los Angeles County → `los-angeles`
+Every file shares the same coverage block; the files differ only in their
+leading identity columns. Coverage values are **proportions in [0, 1]** (e.g.
+`0.9469` = 94.69%), rounded to 4 decimals. Grades `K`–`5` correspond to the
+model's age bands; `K` is kindergarten.
 
-State slugs use the standard two-letter USPS abbreviation in lowercase. County
-slugs drop the word "County" and kebab-case the remaining name.
+### Identity columns (per file)
 
-## CSV columns
+| File | Leading columns |
+| --- | --- |
+| `states.csv` | `state`, `state_fips`, `state_name`, `n_schools`, `pct_schools_below_95` |
+| `{state}.csv` | `county`, `county_fips`, `n_schools`, `pct_schools_below_95` |
+| `{state}/schools.csv` | `school_id`, `school_name`, `county`, `enrollment` |
+| `{state}/counties/{county}.csv` | `school_id`, `school_name`, `enrollment` |
 
-> The columns below describe the *intended* output of the build-time CSV
-> generator. The exact column set may evolve slightly as the generator lands and
-> additional states are onboarded; this document will be updated to match.
-
-### State CSV — `/data/states/{state}.csv`
-
-One row per county in the state.
-
-| Column | Type | Description |
-| --- | --- | --- |
-| `county` | string | County name as it appears in the source data |
-| `coverage` | number | MMR vaccination coverage for the county, as a percentage (0–100) |
-| `cov_low` | number | Lower bound of the coverage estimate (percentage) |
-| `cov_high` | number | Upper bound of the coverage estimate (percentage) |
-| `herd_immunity` | integer | Herd-immunity indicator value from the source dataset |
-
-### County CSV — `/data/states/{state}/counties/{county}.csv`
-
-One row per school in the county.
+### Shared coverage block (all files)
 
 | Column | Type | Description |
 | --- | --- | --- |
-| `school` | string | School name |
-| `coverage` | number | Overall MMR coverage for the school (percentage) |
-| `size` | integer | Reported student count used to compute coverage |
-| `coverage_5_6` | number \| `-` | Coverage for the 5–6 age band, as a percentage; `-` if not reported |
-| `coverage_6_7` | number \| `-` | Coverage for the 6–7 age band |
-| `coverage_7_8` | number \| `-` | Coverage for the 7–8 age band |
-| `coverage_8_9` | number \| `-` | Coverage for the 8–9 age band |
-| `coverage_9_10` | number \| `-` | Coverage for the 9–10 age band |
-| `coverage_10_11` | number \| `-` | Coverage for the 10–11 age band |
-| `estimated_5_6` | boolean | `true` if the 5–6 band's value is an estimate rather than reported |
-| `estimated_6_7` | boolean | `true` if the 6–7 band's value is an estimate |
-| `estimated_7_8` | boolean | `true` if the 7–8 band's value is an estimate |
-| `estimated_8_9` | boolean | `true` if the 8–9 band's value is an estimate |
-| `estimated_9_10` | boolean | `true` if the 9–10 band's value is an estimate |
-| `estimated_10_11` | boolean | `true` if the 10–11 band's value is an estimate |
+| `coverage` | number | Overall MMR coverage (proportion, 0–1) |
+| `coverage_ci_low` / `coverage_ci_high` | number | 95% credible interval for `coverage` |
+| `coverage_K` … `coverage_5` | number | Per-grade coverage (K through 5th grade) |
+| `coverage_ci_low_K` … `_5` | number | Per-grade CI lower bounds |
+| `coverage_ci_high_K` … `_5` | number | Per-grade CI upper bounds |
+| `is_estimated_K` … `_5` | 0/1 | `1` if that grade's value is model-estimated, `0` if reported |
+| `prob_below_95` | number | Posterior probability that coverage is below 95% |
+| `tier` | string | Coverage tier: `H` (≥95%), `M` (90–95%), `L` (<90%) |
 
-Risk classifications (`hirisk` / `mdrisk` / `lorisk`) in the source data are
-derived from the coverage percentage and are not included as separate columns;
-consumers can recompute them from `coverage_*` if needed.
+Identity-column meanings: `*_fips` are the 2- and 5-digit FIPS codes;
+`n_schools` is the school count aggregated into that row; `pct_schools_below_95`
+is the share of the level's schools under 95% coverage; `enrollment` is the
+school's student count.
+
+### A note on data completeness
+
+Coverage values come from the imuGAP model. Where a state's data is supplied
+pre-aggregated rather than as a full model fit, the aggregate (state/county)
+rows may have **blank** per-grade and credible-interval columns (only the
+overall `coverage` is populated). North Carolina is currently in this category;
+California, fit directly, has the full block at every level. Treat empty cells
+as "not available," not zero.
 
 ## Examples
 
-Fetch the county-aggregated CSV for North Carolina:
+Fetch the national state summary:
 
 ```sh
-curl -O https://accidda.github.io/measles-dashboard/data/states/nc.csv
+curl -O https://accidda.github.io/measles-dashboard/data/states.csv
 ```
 
-Fetch the school-level breakdown for Wake County, NC:
+Fetch California's county-level coverage:
 
 ```sh
-curl -O https://accidda.github.io/measles-dashboard/data/states/nc/counties/wake.csv
+curl -O https://accidda.github.io/measles-dashboard/data/states/ca.csv
 ```
 
-Pipe directly into another tool, for example to preview the first few rows with
-`head`:
+Fetch the school-level breakdown for Los Angeles County:
 
 ```sh
-curl -s https://accidda.github.io/measles-dashboard/data/states/nc.csv | head
+curl -O https://accidda.github.io/measles-dashboard/data/states/ca/counties/los-angeles.csv
 ```
 
-Or load straight into pandas:
+Preview the first rows without saving:
+
+```sh
+curl -s https://accidda.github.io/measles-dashboard/data/states/ca.csv | head
+```
+
+Load straight into pandas:
 
 ```python
 import pandas as pd
 
-url = "https://accidda.github.io/measles-dashboard/data/states/nc.csv"
+url = "https://accidda.github.io/measles-dashboard/data/states/ca/schools.csv"
 df = pd.read_csv(url)
 ```
 
 ## Versioning
 
 There is no explicit versioning today. The CSVs are regenerated and republished
-on every deploy to GitHub Pages, so the data reflects whatever the dashboard
-itself is currently showing. If a stable historical snapshot is needed, consider
-pinning to a specific Git commit via `raw.githubusercontent.com` against the
-`dev` or `main` branch — or open an issue if explicit versioned releases would
-be useful.
+when the underlying model output updates, so the data reflects whatever the
+dashboard is currently showing. For a stable snapshot, pin to a specific Git
+commit via `raw.githubusercontent.com` against the `main` branch, or open an
+issue if versioned releases would be useful.
