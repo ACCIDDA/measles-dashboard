@@ -58,7 +58,6 @@ model's age bands; `K` is kindergarten.
 | `coverage_K` … `coverage_5` | number | Per-grade coverage (K through 5th grade) |
 | `coverage_ci_low_K` … `_5` | number | Per-grade CI lower bounds |
 | `coverage_ci_high_K` … `_5` | number | Per-grade CI upper bounds |
-| `is_estimated_K` … `_5` | 0/1 | `1` if that grade's value is model-estimated, `0` if reported |
 | `prob_below_95` | number | Posterior probability that coverage is below 95% |
 | `tier` | string | Coverage tier: `H` (≥95%), `M` (90–95%), `L` (<90%) |
 
