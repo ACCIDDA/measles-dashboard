@@ -228,6 +228,10 @@ export default function App() {
   return (
     <div id="app">
       <div id="aria-live" aria-live="polite" aria-atomic="true"></div>
+      <div id="experimental-banner" role="note">
+        <strong>Experimental:</strong> this dashboard and its data are a work in
+        progress and may be incomplete or change without notice.
+      </div>
       <Header
         currentView={currentView}
         onViewChange={setCurrentView}
