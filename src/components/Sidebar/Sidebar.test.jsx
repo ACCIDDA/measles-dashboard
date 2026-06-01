@@ -4,8 +4,8 @@ import userEvent from '@testing-library/user-event';
 import Sidebar from './Sidebar.jsx';
 
 const mockSchools = [
-  { name: 'High School', coverage: 97, tier: 'H', grades: { estimated: [97, 96, 98, 97, 96, 95], reported: [97, 96, 98, 97, 96, 95] } },
-  { name: 'Low School', coverage: 88, tier: 'L', grades: { estimated: [88, 87, 89, 86, 90, 85], reported: [88, 87, 89, 86, 90, 85] } },
+  { name: 'High School', coverage: 97, tier: 'H', grades: [97, 96, 98, 97, 96, 95] },
+  { name: 'Low School', coverage: 88, tier: 'L', grades: [88, 87, 89, 86, 90, 85] },
 ];
 
 const defaultProps = {

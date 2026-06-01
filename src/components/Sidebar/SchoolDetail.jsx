@@ -1,12 +1,9 @@
-import { useState } from 'react';
 import { TIER_COLORS, TIER_LABELS, GRADES, covTier } from '../../config/index.js';
 
 export default function SchoolDetail({ school, onClose }) {
-  const [mode, setMode] = useState('estimated');
-
   if (!school) return null;
 
-  const values = school.grades[mode];
+  const values = school.grades;
   const nonNull = values.filter(v => v != null);
   const overall = nonNull.length > 0
     ? nonNull.reduce((a, b) => a + b, 0) / nonNull.length
@@ -39,27 +36,6 @@ export default function SchoolDetail({ school, onClose }) {
             <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
               <path d="M1 1l10 10M11 1L1 11" />
             </svg>
-          </button>
-        </div>
-
-        <div className="sd-tabs" role="tablist">
-          <button
-            className={`sd-tab${mode === 'estimated' ? ' active' : ''}`}
-            data-mode="estimated"
-            role="tab"
-            aria-selected={mode === 'estimated'}
-            onClick={() => setMode('estimated')}
-          >
-            Estimated
-          </button>
-          <button
-            className={`sd-tab${mode === 'reported' ? ' active' : ''}`}
-            data-mode="reported"
-            role="tab"
-            aria-selected={mode === 'reported'}
-            onClick={() => setMode('reported')}
-          >
-            Reported
           </button>
         </div>
 
@@ -113,8 +89,7 @@ export default function SchoolDetail({ school, onClose }) {
         </div>
 
         <div className="sd-footer">
-          <strong>Estimated</strong> &mdash; model-smoothed via imuGAP &middot;{' '}
-          <strong>Reported</strong> &mdash; raw survey data
+          Coverage estimated via the imuGAP model.
         </div>
       </div>
     </div>

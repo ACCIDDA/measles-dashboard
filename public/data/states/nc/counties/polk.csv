@@ -1,4 +1,4 @@
-school_id,school_name,enrollment,coverage,coverage_ci_low,coverage_ci_high,coverage_K,coverage_1,coverage_2,coverage_3,coverage_4,coverage_5,coverage_ci_low_K,coverage_ci_low_1,coverage_ci_low_2,coverage_ci_low_3,coverage_ci_low_4,coverage_ci_low_5,coverage_ci_high_K,coverage_ci_high_1,coverage_ci_high_2,coverage_ci_high_3,coverage_ci_high_4,coverage_ci_high_5,is_estimated_K,is_estimated_1,is_estimated_2,is_estimated_3,is_estimated_4,is_estimated_5,prob_below_95,tier
-1856,Foothills Academy,13,0.4378,,,0.5391,0.3077,0.5,,,,0.3377,0.3366,0.3422,,,,0.7294,0.7269,0.7326,,,,1,0,0,,,,,L
-1857,Polk Central Elementary School,56,0.9613,,,0.9622,0.9583,0.9286,0.9412,0.9815,1,0.9395,0.9388,0.9405,0.9437,0.948,0.9527,0.9801,0.9798,0.9804,0.9815,0.9829,0.9845,1,0,0,0,0,0,,H
-1860,Tryon Elementary School,60,0.902,,,0.8994,0.8824,0.9123,0.9,0.8644,0.95,0.8663,0.8653,0.8686,0.8755,0.884,0.8937,0.9273,0.9266,0.9284,0.9323,0.9374,0.9429,1,0,0,0,0,0,,M
+school_id,school_name,enrollment,coverage,coverage_ci_low,coverage_ci_high,coverage_K,coverage_1,coverage_2,coverage_3,coverage_4,coverage_5,coverage_ci_low_K,coverage_ci_low_1,coverage_ci_low_2,coverage_ci_low_3,coverage_ci_low_4,coverage_ci_low_5,coverage_ci_high_K,coverage_ci_high_1,coverage_ci_high_2,coverage_ci_high_3,coverage_ci_high_4,coverage_ci_high_5,prob_below_95,tier
+1856,Foothills Academy,13,0.4378,,,0.5391,0.3077,0.5,,,,0.3377,0.3366,0.3422,,,,0.7294,0.7269,0.7326,,,,,L
+1857,Polk Central Elementary School,56,0.9613,,,0.9622,0.9583,0.9286,0.9412,0.9815,1,0.9395,0.9388,0.9405,0.9437,0.948,0.9527,0.9801,0.9798,0.9804,0.9815,0.9829,0.9845,,H
+1860,Tryon Elementary School,60,0.902,,,0.8994,0.8824,0.9123,0.9,0.8644,0.95,0.8663,0.8653,0.8686,0.8755,0.884,0.8937,0.9273,0.9266,0.9284,0.9323,0.9374,0.9429,,M

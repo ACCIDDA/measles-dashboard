@@ -13,8 +13,7 @@ counties, and K–5 schools. Built by [ACCIDDA](https://github.com/ACCIDDA).
 - **State view**: click a state to zoom into its counties, each colored by
   coverage tier (high / medium / low) or by an under-vaccination lens.
 - **County view**: drill into a county to see its individual K–5 schools,
-  with a per-grade coverage breakdown and which grades are model-estimated
-  versus reported.
+  each with a per-grade coverage breakdown.
 
 Coverage estimates come from the [imuGAP](https://github.com/ACCIDDA/imuGAP)
 Bayesian model; school and county geography come from public sources.
@@ -31,8 +30,7 @@ files that drive the dashboard double as a downloadable, no-auth API:
 ```
 
 Each file carries the same coverage columns at every level: overall coverage
-with 95% credible intervals, a per-grade (K–5) breakdown, per-grade
-`is_estimated` flags (model vs. reported), and a coverage tier.
+with 95% credible intervals, a per-grade (K–5) breakdown, and a coverage tier.
 
 The CSVs are generated from model output by the scripts in `scripts/build-data/`
 and regenerated when the model updates, not on every deploy.

@@ -16,7 +16,6 @@ const COVERAGE_BLOCK = [
   'coverage_K', 'coverage_1', 'coverage_2', 'coverage_3', 'coverage_4', 'coverage_5',
   'coverage_ci_low_K', 'coverage_ci_low_1', 'coverage_ci_low_2', 'coverage_ci_low_3', 'coverage_ci_low_4', 'coverage_ci_low_5',
   'coverage_ci_high_K', 'coverage_ci_high_1', 'coverage_ci_high_2', 'coverage_ci_high_3', 'coverage_ci_high_4', 'coverage_ci_high_5',
-  'is_estimated_K', 'is_estimated_1', 'is_estimated_2', 'is_estimated_3', 'is_estimated_4', 'is_estimated_5',
   'prob_below_95', 'tier',
 ];
 

@@ -1,5 +1,5 @@
-school_id,school_name,enrollment,coverage,coverage_ci_low,coverage_ci_high,coverage_K,coverage_1,coverage_2,coverage_3,coverage_4,coverage_5,coverage_ci_low_K,coverage_ci_low_1,coverage_ci_low_2,coverage_ci_low_3,coverage_ci_low_4,coverage_ci_low_5,coverage_ci_high_K,coverage_ci_high_1,coverage_ci_high_2,coverage_ci_high_3,coverage_ci_high_4,coverage_ci_high_5,is_estimated_K,is_estimated_1,is_estimated_2,is_estimated_3,is_estimated_4,is_estimated_5,prob_below_95,tier
-2545,Blue Ridge Elementary,63,0.9582,,,0.9523,0.9091,1,0.9821,0.9683,0.9322,0.9265,0.926,0.928,0.9319,0.9368,0.9424,0.973,0.9726,0.9735,0.9749,0.9767,0.9788,1,0,0,0,0,0,,H
-2546,Burnsville Elementary,64,0.9791,,,0.9761,0.9531,0.9804,1,0.9792,1,0.959,0.9587,0.9599,0.9621,0.9649,0.9681,0.9887,0.9886,0.9888,0.9895,0.9903,0.9912,1,0,0,0,0,0,,H
-2550,Micaville Elementary,40,0.9925,,,0.9851,0.96,1,1,1,1,0.968,0.9678,0.9686,0.9703,0.9726,0.9752,0.9955,0.9954,0.9955,0.9958,0.9961,0.9965,1,0,0,0,0,0,,H
-2551,South Toe Elementary,19,0.9762,,,0.9695,0.9444,0.9333,1,1,1,0.9361,0.936,0.9378,0.941,0.9452,0.9501,0.9904,0.9903,0.9906,0.9911,0.9918,0.9925,1,0,0,0,0,0,,H
+school_id,school_name,enrollment,coverage,coverage_ci_low,coverage_ci_high,coverage_K,coverage_1,coverage_2,coverage_3,coverage_4,coverage_5,coverage_ci_low_K,coverage_ci_low_1,coverage_ci_low_2,coverage_ci_low_3,coverage_ci_low_4,coverage_ci_low_5,coverage_ci_high_K,coverage_ci_high_1,coverage_ci_high_2,coverage_ci_high_3,coverage_ci_high_4,coverage_ci_high_5,prob_below_95,tier
+2545,Blue Ridge Elementary,63,0.9582,,,0.9523,0.9091,1,0.9821,0.9683,0.9322,0.9265,0.926,0.928,0.9319,0.9368,0.9424,0.973,0.9726,0.9735,0.9749,0.9767,0.9788,,H
+2546,Burnsville Elementary,64,0.9791,,,0.9761,0.9531,0.9804,1,0.9792,1,0.959,0.9587,0.9599,0.9621,0.9649,0.9681,0.9887,0.9886,0.9888,0.9895,0.9903,0.9912,,H
+2550,Micaville Elementary,40,0.9925,,,0.9851,0.96,1,1,1,1,0.968,0.9678,0.9686,0.9703,0.9726,0.9752,0.9955,0.9954,0.9955,0.9958,0.9961,0.9965,,H
+2551,South Toe Elementary,19,0.9762,,,0.9695,0.9444,0.9333,1,1,1,0.9361,0.936,0.9378,0.941,0.9452,0.9501,0.9904,0.9903,0.9906,0.9911,0.9918,0.9925,,H
