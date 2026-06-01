@@ -32,12 +32,10 @@ files that drive the dashboard double as a downloadable, no-auth API:
 
 Each file carries the same coverage columns at every level: overall coverage
 with 95% credible intervals, a per-grade (K–5) breakdown, per-grade
-`is_estimated` flags (model vs. reported), and a coverage tier. A full column
-reference and `curl` examples will live in `docs/API.md` (tracked in #22).
+`is_estimated` flags (model vs. reported), and a coverage tier.
 
-The CSVs are generated from model output by the scripts in
-[`scripts/build-data/`](./scripts/build-data/) and regenerated when the model
-updates, not on every deploy.
+The CSVs are generated from model output by the scripts in `scripts/build-data/`
+and regenerated when the model updates, not on every deploy.
 
 ## Tech
 
