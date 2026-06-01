@@ -1,8 +1,6 @@
 # Contributing
 
-Thanks for contributing to the NC Measles Dashboard. This document covers the tooling that runs locally and in CI, and what you're expected to do when you add or change code.
-
-For architecture (how the map, data loading, and sidebar fit together) see [`CLAUDE.md`](./CLAUDE.md). This file is only about process and tooling.
+Thanks for contributing to the Measles Vaccination (MMR) Coverage Dashboard. This document covers the tooling that runs locally and in CI, and what you're expected to do when you add or change code.
 
 ## Prerequisites
 
@@ -132,4 +130,4 @@ On failure, the E2E job uploads `playwright-report/` and `test-results/` as arti
 
 ## Questions
 
-Open an issue or drop a comment on your PR. For architectural questions, skim [`CLAUDE.md`](./CLAUDE.md) first — it explains the map component, data flow, and the CSS/DOM-id contract that the tests rely on.
+Open an issue or drop a comment on your PR.
