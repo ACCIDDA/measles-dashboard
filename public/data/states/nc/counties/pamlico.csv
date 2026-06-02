@@ -1,4 +1,0 @@
-school_id,school_name,enrollment,coverage,coverage_ci_low,coverage_ci_high,coverage_K,coverage_1,coverage_2,coverage_3,coverage_4,coverage_5,coverage_ci_low_K,coverage_ci_low_1,coverage_ci_low_2,coverage_ci_low_3,coverage_ci_low_4,coverage_ci_low_5,coverage_ci_high_K,coverage_ci_high_1,coverage_ci_high_2,coverage_ci_high_3,coverage_ci_high_4,coverage_ci_high_5,prob_below_95,tier
-1777,Arapahoe Charter School,47,0.9765,,,0.9685,1,0.9643,0.95,0.9787,1,0.9435,0.943,0.9445,0.9475,0.9514,0.9558,0.9864,0.9863,0.9867,0.9874,0.9884,0.9895,,H
-1779,Pamlico Christian Academy,23,0.8287,,,0.8351,0.913,0.7273,0.7826,0.8557,0.8675,0.7546,0.7537,0.7591,0.7694,0.7837,0.8002,0.9028,0.9018,0.9042,0.909,0.9155,0.9228,,L
-1780,Pamlico County Primary,83,0.9663,,,0.9741,0.9688,1,0.8916,0.9778,1,0.9592,0.9589,0.96,0.9622,0.965,0.9682,0.9856,0.9854,0.9858,0.9866,0.9876,0.9887,,H

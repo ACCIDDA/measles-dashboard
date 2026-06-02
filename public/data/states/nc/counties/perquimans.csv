@@ -1,2 +1,0 @@
-school_id,school_name,enrollment,coverage,coverage_ci_low,coverage_ci_high,coverage_K,coverage_1,coverage_2,coverage_3,coverage_4,coverage_5,coverage_ci_low_K,coverage_ci_low_1,coverage_ci_low_2,coverage_ci_low_3,coverage_ci_low_4,coverage_ci_low_5,coverage_ci_high_K,coverage_ci_high_1,coverage_ci_high_2,coverage_ci_high_3,coverage_ci_high_4,coverage_ci_high_5,prob_below_95,tier
-1805,Perquimans Central,138,0.96,,,0.965,0.9275,0.9545,0.9626,0.9832,0.9725,0.9508,0.9504,0.9518,0.9545,0.9579,0.9617,0.9768,0.9766,0.9773,0.9786,0.9801,0.982,,H

@@ -5,6 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "derive-county-csvs": "node scripts/derive-county-csvs.mjs",
+    "prebuild": "node scripts/derive-county-csvs.mjs",
     "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint src/",

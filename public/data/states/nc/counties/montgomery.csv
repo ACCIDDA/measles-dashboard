@@ -1,7 +1,0 @@
-school_id,school_name,enrollment,coverage,coverage_ci_low,coverage_ci_high,coverage_K,coverage_1,coverage_2,coverage_3,coverage_4,coverage_5,coverage_ci_low_K,coverage_ci_low_1,coverage_ci_low_2,coverage_ci_low_3,coverage_ci_low_4,coverage_ci_low_5,coverage_ci_high_K,coverage_ci_high_1,coverage_ci_high_2,coverage_ci_high_3,coverage_ci_high_4,coverage_ci_high_5,prob_below_95,tier
-1583,Infinite Minds Academy,2,0.9862,,,0.9449,1,1,,,,0.8088,0.8064,0.8101,,,,0.9928,0.9928,0.993,,,,,H
-1584,Long Hill Christian School,3,0.8584,,,0.9115,0.6667,0.6667,1,1,1,0.7859,0.7847,0.7903,0.8006,0.8133,0.8278,0.9799,0.9796,0.9803,0.9813,0.9827,0.9843,,L
-1585,Mount Gilead Elementary,30,0.936,,,0.9486,1,0.9615,0.7778,0.9667,0.9667,0.9184,0.9179,0.9201,0.9244,0.9299,0.936,0.9718,0.9715,0.9723,0.9738,0.9758,0.978,,M
-1586,Star Elementary,46,0.9689,,,0.9741,1,0.9545,0.9762,1,0.8974,0.9537,0.9534,0.9545,0.957,0.9603,0.9639,0.9881,0.988,0.9883,0.989,0.9898,0.9907,,H
-1588,Troy Elementary,86,0.9667,,,0.9748,0.9884,0.9737,0.9302,0.9753,0.9577,0.9614,0.9612,0.9622,0.9642,0.9669,0.9699,0.9853,0.9851,0.9854,0.9862,0.9873,0.9884,,H
-1864,Bailey's Grove Baptist School,15,0.792,,,0.8246,0.6667,0.7143,0.8,0.8462,0.8889,0.7192,0.7168,0.7226,0.7339,0.7496,0.7675,0.9077,0.9073,0.9095,0.9139,0.9201,0.9271,,L

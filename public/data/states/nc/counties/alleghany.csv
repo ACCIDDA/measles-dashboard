@@ -1,3 +1,0 @@
-school_id,school_name,enrollment,coverage,coverage_ci_low,coverage_ci_high,coverage_K,coverage_1,coverage_2,coverage_3,coverage_4,coverage_5,coverage_ci_low_K,coverage_ci_low_1,coverage_ci_low_2,coverage_ci_low_3,coverage_ci_low_4,coverage_ci_low_5,coverage_ci_high_K,coverage_ci_high_1,coverage_ci_high_2,coverage_ci_high_3,coverage_ci_high_4,coverage_ci_high_5,prob_below_95,tier
-148,Glade Creek Elementary,30,0.9447,,,0.9497,0.9444,0.931,0.9333,0.931,1,0.9265,0.926,0.9279,0.9318,0.9369,0.9424,0.9677,0.9675,0.9684,0.97,0.9723,0.9749,,M
-150,Sparta Elementary,62,0.9651,,,0.9513,1,0.9231,0.9547,0.9581,1,0.9376,0.9372,0.9388,0.9421,0.9464,0.9512,0.9622,0.9619,0.963,0.965,0.9676,0.9706,,H

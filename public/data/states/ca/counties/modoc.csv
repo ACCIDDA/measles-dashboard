@@ -1,4 +1,0 @@
-school_id,school_name,enrollment,coverage,coverage_ci_low,coverage_ci_high,coverage_K,coverage_1,coverage_2,coverage_3,coverage_4,coverage_5,coverage_ci_low_K,coverage_ci_low_1,coverage_ci_low_2,coverage_ci_low_3,coverage_ci_low_4,coverage_ci_low_5,coverage_ci_high_K,coverage_ci_high_1,coverage_ci_high_2,coverage_ci_high_3,coverage_ci_high_4,coverage_ci_high_5,prob_below_95,tier
-16785,Alturas Elementary School,72,0.9972,0.9949,0.997,0.9861,0.9991,0.9995,0.9996,0.9996,0.9995,0.9797,0.9972,0.998,0.9982,0.9982,0.998,0.983,0.9996,0.9999,0.9999,0.9999,0.9999,0,H
-16821,Surprise Valley Elementary School,18,0.971,0.9907,0.997,0.8333,0.998,0.9986,0.9987,0.9987,0.9986,0.9734,0.9927,0.9943,0.9948,0.9947,0.9942,0.9828,0.9995,0.9998,0.9999,0.9999,0.9998,0,H
-38642,,,0.9941,0.9779,0.9969,0.9785,0.9964,0.9973,0.9975,0.9975,0.9973,0.9545,0.9788,0.9829,0.9843,0.9842,0.9827,0.9827,0.9995,0.9998,0.9998,0.9998,0.9998,5e-04,H
