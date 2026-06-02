@@ -1,6 +1,7 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeAll } from 'vitest';
 import { readFileSync, existsSync } from 'node:fs';
 import { resolve } from 'node:path';
+import { execFileSync } from 'node:child_process';
 
 // Contract test for the #20 CSV bundle under public/data. The loader
 // (useUnifiedMapData) reads these by exact column name, so a producer change
@@ -9,6 +10,14 @@ import { resolve } from 'node:path';
 
 const DATA = resolve(__dirname, '../../public/data');
 const READY_STATES = ['ca', 'nc'];
+
+// The per-county files are generated from schools.csv at build time (#65) and
+// not committed, so derive them before asserting on them (mirrors `prebuild`).
+beforeAll(() => {
+  execFileSync('node', [resolve(__dirname, '../../scripts/derive-county-csvs.mjs')], {
+    stdio: 'ignore',
+  });
+});
 
 // Shared coverage block, in the order the producers emit it.
 const COVERAGE_BLOCK = [

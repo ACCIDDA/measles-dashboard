@@ -1,7 +1,0 @@
-school_id,school_name,enrollment,coverage,coverage_ci_low,coverage_ci_high,coverage_K,coverage_1,coverage_2,coverage_3,coverage_4,coverage_5,coverage_ci_low_K,coverage_ci_low_1,coverage_ci_low_2,coverage_ci_low_3,coverage_ci_low_4,coverage_ci_low_5,coverage_ci_high_K,coverage_ci_high_1,coverage_ci_high_2,coverage_ci_high_3,coverage_ci_high_4,coverage_ci_high_5,prob_below_95,tier
-444,Andrews Elementary,63,0.8864,,,0.888,0.8824,0.8413,0.8491,0.9333,0.9259,0.8553,0.8542,0.8575,0.8644,0.8738,0.8844,0.9177,0.9173,0.9195,0.9236,0.9291,0.9354,,L
-448,Martins Creek Elementary/Mid,26,0.8071,,,0.8419,0.6538,0.7727,0.8182,0.875,1,0.7783,0.7767,0.7817,0.7915,0.8048,0.8199,0.8946,0.8936,0.8963,0.9015,0.9086,0.9166,,L
-450,Murphy Elementary,84,0.8874,,,0.9131,0.9155,0.8143,0.8333,0.9146,0.9756,0.8881,0.8873,0.8903,0.8958,0.9033,0.9116,0.9358,0.9353,0.9369,0.9403,0.9447,0.9497,,L
-451,Peachtree Elementary,33,0.9499,,,0.9555,0.9697,0.8966,0.9355,0.9643,1,0.9229,0.9225,0.9246,0.9287,0.9338,0.9396,0.9794,0.9794,0.98,0.9811,0.9825,0.9841,,M
-452,Ranger Elementary/Middle,40,0.9398,,,0.9227,0.9,0.9429,1,0.963,0.9259,0.8852,0.8844,0.8874,0.8931,0.9009,0.9094,0.953,0.9527,0.9539,0.9564,0.9596,0.9633,,M
-453,Shepherd Academy,4,0.9767,,,0.9595,1,0.9602,1,0.9651,0.9682,0.866,0.8651,0.8687,0.8751,0.8838,0.8936,0.9947,0.9947,0.9948,0.9951,0.9955,0.9959,,H

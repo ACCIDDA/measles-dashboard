@@ -1,2 +1,0 @@
-school_id,school_name,enrollment,coverage,coverage_ci_low,coverage_ci_high,coverage_K,coverage_1,coverage_2,coverage_3,coverage_4,coverage_5,coverage_ci_low_K,coverage_ci_low_1,coverage_ci_low_2,coverage_ci_low_3,coverage_ci_low_4,coverage_ci_low_5,coverage_ci_high_K,coverage_ci_high_1,coverage_ci_high_2,coverage_ci_high_3,coverage_ci_high_4,coverage_ci_high_5,prob_below_95,tier
-935,Snow Hill Primary,201,0.9917,,,0.9873,0.995,0.9848,0.9944,0.9948,0.9944,0.9811,0.981,0.9815,0.9825,0.9838,0.9853,0.9923,0.9922,0.9924,0.9928,0.9934,0.994,,H

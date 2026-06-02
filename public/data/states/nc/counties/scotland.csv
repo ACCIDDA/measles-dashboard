@@ -1,7 +1,0 @@
-school_id,school_name,enrollment,coverage,coverage_ci_low,coverage_ci_high,coverage_K,coverage_1,coverage_2,coverage_3,coverage_4,coverage_5,coverage_ci_low_K,coverage_ci_low_1,coverage_ci_low_2,coverage_ci_low_3,coverage_ci_low_4,coverage_ci_low_5,coverage_ci_high_K,coverage_ci_high_1,coverage_ci_high_2,coverage_ci_high_3,coverage_ci_high_4,coverage_ci_high_5,prob_below_95,tier
-2044,Christ the Cornerstone Academy,31,0.9599,,,0.9566,0.875,0.9524,0.9596,1,1,0.9171,0.9163,0.9185,0.9228,0.9284,0.9348,0.983,0.9828,0.9833,0.9842,0.9854,0.9868,,H
-2046,Laurel Hill Elementary,127,0.9817,,,0.9822,1,0.9528,1,0.9847,0.9764,0.9703,0.9701,0.9709,0.9725,0.9746,0.977,0.9911,0.991,0.9912,0.9917,0.9923,0.993,,H
-2048,Scotland Christian Academy,27,0.9937,,,0.9854,1,1,0.9865,1,0.9887,0.9616,0.9616,0.9626,0.9646,0.9672,0.9702,0.997,0.997,0.997,0.9972,0.9974,0.9976,,H
-2049,South Johnson Elementary,99,0.9727,,,0.9698,0.9888,0.9691,0.972,0.9785,0.9596,0.9488,0.9484,0.9498,0.9525,0.9561,0.9601,0.9846,0.9844,0.9848,0.9857,0.9868,0.988,,H
-2052,Sycamore Lane Primary,137,0.8753,,,0.87,0.9124,0.823,0.904,0.887,0.8372,0.8364,0.8354,0.8392,0.8469,0.8574,0.869,0.9008,0.9003,0.9027,0.9077,0.9143,0.9217,,L
-2053,Wagram Elementary,96,0.9279,,,0.9405,0.64,1,0.9896,0.9875,1,0.9187,0.9182,0.9204,0.9246,0.93,0.9362,0.9591,0.9585,0.9597,0.9618,0.9648,0.968,,M

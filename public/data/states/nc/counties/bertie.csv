@@ -1,3 +1,0 @@
-school_id,school_name,enrollment,coverage,coverage_ci_low,coverage_ci_high,coverage_K,coverage_1,coverage_2,coverage_3,coverage_4,coverage_5,coverage_ci_low_K,coverage_ci_low_1,coverage_ci_low_2,coverage_ci_low_3,coverage_ci_low_4,coverage_ci_low_5,coverage_ci_high_K,coverage_ci_high_1,coverage_ci_high_2,coverage_ci_high_3,coverage_ci_high_4,coverage_ci_high_5,prob_below_95,tier
-180,Bethel Assembly Christian Academy,20,0.9739,,,0.9539,1,1,0.9572,0.9604,0.964,0.9359,0.9354,0.937,0.9405,0.9448,0.9497,0.9687,0.9684,0.9693,0.9711,0.9733,0.9758,,H
-183,Lawrence Academy,23,0.955,,,0.935,1,0.913,0.8889,1,1,0.9104,0.9097,0.912,0.9166,0.9225,0.9293,0.9549,0.9544,0.9555,0.9579,0.9611,0.9646,,H

@@ -1,2 +1,0 @@
-school_id,school_name,enrollment,coverage,coverage_ci_low,coverage_ci_high,coverage_K,coverage_1,coverage_2,coverage_3,coverage_4,coverage_5,coverage_ci_low_K,coverage_ci_low_1,coverage_ci_low_2,coverage_ci_low_3,coverage_ci_low_4,coverage_ci_low_5,coverage_ci_high_K,coverage_ci_high_1,coverage_ci_high_2,coverage_ci_high_3,coverage_ci_high_4,coverage_ci_high_5,prob_below_95,tier
-916,Robbinsville Elementary,98,0.9565,,,0.9506,0.9359,0.931,0.9762,0.9694,0.974,0.9322,0.9317,0.9336,0.9371,0.9417,0.9469,0.9667,0.9663,0.9672,0.969,0.9713,0.974,,H

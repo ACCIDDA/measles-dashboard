@@ -1,5 +1,0 @@
-school_id,school_name,enrollment,coverage,coverage_ci_low,coverage_ci_high,coverage_K,coverage_1,coverage_2,coverage_3,coverage_4,coverage_5,coverage_ci_low_K,coverage_ci_low_1,coverage_ci_low_2,coverage_ci_low_3,coverage_ci_low_4,coverage_ci_low_5,coverage_ci_high_K,coverage_ci_high_1,coverage_ci_high_2,coverage_ci_high_3,coverage_ci_high_4,coverage_ci_high_5,prob_below_95,tier
-2108,Swain County East Elementary,74,0.9653,,,0.9611,0.9818,0.9565,0.9153,0.9865,0.9851,0.9419,0.9416,0.9432,0.9463,0.9503,0.9548,0.9765,0.9763,0.9769,0.9782,0.9799,0.9817,,H
-2109,Mountain Discovery,34,0.9498,,,0.9554,0.9412,0.9545,,,,0.8989,0.8985,0.9012,,,,0.9867,0.9866,0.987,,,,,M
-2111,New Kituwah Academy,11,0.996,,,0.9783,1,1,1,1,1,0.9435,0.943,0.9444,0.9472,0.9512,0.9557,0.9954,0.9953,0.9954,0.9956,0.996,0.9963,,H
-2112,Swain County West Elementary,72,0.9549,,,0.9556,0.9831,0.9143,0.9394,0.9692,0.9722,0.9344,0.934,0.9357,0.939,0.9436,0.9486,0.9727,0.9724,0.9732,0.9748,0.9767,0.9788,,H

@@ -9,3 +9,7 @@ scripts/build-data/inputs/
 scripts/build-data/out/
 *.rds
 *.parquet
+
+# Per-county CSVs are generated at build time from schools.csv (see
+# scripts/derive-county-csvs.mjs / npm prebuild); not committed (#65).
+public/data/states/*/counties/
