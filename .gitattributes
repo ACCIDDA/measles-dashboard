@@ -1,1 +1,8 @@
 package-lock.json linguist-generated=true
+
+# Generated data: the CSV bundle under public/data is produced by the R
+# scripts in scripts/build-data/ (and per-county files by scripts/derive-county-csvs.mjs).
+# Mark generated so GitHub collapses these large, mechanical diffs in PR review
+# and excludes them from language stats. They are still tracked and committed.
+public/data/**/*.csv linguist-generated=true
+public/data/states.csv linguist-generated=true
