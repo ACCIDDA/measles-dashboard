@@ -122,37 +122,61 @@ assemble <- function(cov, cleaned, linkage, state_meta, county_fips_map = NULL) 
 
   # ---- schools: identity (from linkage, by model loc_id) + enrollment/reported
   #      (from cleaned, bridged on normalized name+county since school_ids differ)
-  sch_key <- unique(linkage[, .(loc_id = as.character(school_loc_id), school_id,
-                                 school_name, county_name)])
+  # Build identity from linkage rows that have a loc_id (rows with NA loc_id are
+  # junk). Some fit schools have a loc_id + county but no school_name in the
+  # linkage; they're kept (valid coverage, just unlabeled / placed via fallback).
+  sch_key <- unique(linkage[!is.na(school_loc_id),
+                            .(loc_id = as.character(school_loc_id), school_id,
+                              school_name, county_name)])
   sch_key[, nm := nm_key(school_name, county_name)]
   cl <- copy(cleaned)[, nm := nm_key(school_name, county_name)]
-  enr <- cl[order(year), .SD[.N], by = nm][, .(nm, enrollment, current)]  # latest year
+  # latest year's row per school: enrollment, reported K, and lon/lat
+  enr <- cl[order(year), .SD[.N], by = nm][, .(nm, enrollment, current, lon, lat)]
   enr[, reported_K := fifelse(!is.na(enrollment) & enrollment > 0,
                               current / enrollment, NA_real_)]
   sch_key <- enr[sch_key, on = "nm"]
   sch_key[, nm := NULL]
-  schools <- sch_key[base[level == "school"], on = "loc_id", nomatch = 0]
+  # Keep ALL linkage schools, not just those with a coverage row (#60). Join is
+  # driven by the linkage roster (sch_key) so schools present in the location
+  # data but absent from the fit survive with NA coverage; they're flagged
+  # no_data and the UI renders a grey dot at their lon/lat instead of dropping
+  # them. (base is the per-loc_id coverage from predict.)
+  base_sch <- base[level == "school"]
+  fit_ids <- base_sch$loc_id                       # loc_ids the model actually produced
+  schools <- base_sch[sch_key, on = "loc_id"]
+  schools[, no_data := !(loc_id %in% fit_ids)]     # in linkage but not in the fit
 
-  # Use reported kindergarten coverage where available, else the model value.
-  # (#58: we no longer flag estimated-vs-reported, but still prefer reported K.)
-  schools[!is.na(reported_K), coverage_K := reported_K]
-  schools[, coverage := rowMeans(.SD), .SDcols = paste0("coverage_", glab)] # overall reflects override
+  # Use reported kindergarten coverage where available, else the model value
+  # (#58). Only for fit schools; no_data schools have no model coverage at all.
+  schools[no_data == FALSE & !is.na(reported_K), coverage_K := reported_K]
+  # overall = mean of per-grade where present; NA for no_data schools.
+  schools[, coverage := {
+    m <- rowMeans(as.matrix(.SD), na.rm = TRUE)
+    fifelse(is.nan(m), NA_real_, m)
+  }, .SDcols = paste0("coverage_", glab)]
+  schools[no_data == TRUE, coverage := NA_real_]   # belt-and-suspenders: no estimate
   schools[, tier := covtier(coverage)]
 
-  # Surface schools present in the linkage/cleaned data but absent from the fit
-  # (their school_loc_id is beyond the model's node range, so predict produced
-  # no coverage). These silently drop; warn so the gap is visible per state.
-  modeled <- unique(schools$county_name)
-  all_cty <- unique(linkage$county_name)
-  dropped <- setdiff(all_cty, modeled)
-  dropped <- dropped[!is.na(dropped)]   # NA county_name is missing data, not a real county
-  if (length(dropped)) {
-    message(sprintf("WARNING: %d county(ies) have schools in the linkage data but none in the fit (no coverage, omitted from school files): %s",
-                    length(dropped), paste(sort(dropped), collapse = ", ")))
+  # Integrity check (#60): a school in the fit but with no location record at all
+  # (no county to even associate it with) is a real data-sync problem -> fail the
+  # build. Schools that have a county but lack a name and/or lon/lat are kept:
+  # they have valid coverage and fall back to deterministic in-polygon placement.
+  in_fit_orphaned <- schools[!no_data & is.na(county_name)]
+  if (nrow(in_fit_orphaned)) {
+    stop(sprintf("%d school(s) are in the fit but absent from the location data (no county). loc_ids: %s",
+                 nrow(in_fit_orphaned),
+                 paste(utils::head(in_fit_orphaned$loc_id, 20), collapse = ", ")))
+  }
+  # Report the reverse (have location, not in fit) -> rendered as grey no-data dots.
+  nd <- sum(schools$no_data)
+  if (nd) {
+    message(sprintf("%d school(s) have location data but no fit coverage; emitting as no_data (grey dots): %s",
+                    nd, paste(sort(unique(schools[no_data == TRUE]$county_name)), collapse = ", ")))
   }
 
   # ---- per-school below-threshold -> county / state aggregates ----
-  below <- schools[, .(school_id, county_name, below = coverage < THRESHOLD)]
+  # no_data schools have no coverage, so they're excluded from aggregate stats.
+  below <- schools[no_data == FALSE, .(school_id, county_name, below = coverage < THRESHOLD)]
   cty_stat <- below[, .(n_schools = .N, pct_schools_below_95 = mean(below)), by = county_name]
   st_stat  <- below[, .(n_schools = .N, pct_schools_below_95 = mean(below))]
 
@@ -193,19 +217,16 @@ write_csvs <- function(tab, out_dir, state_meta) {
   cty[, county := title_case(county)]
   fwrite(rnd(cty), file.path(out_dir, "states", paste0(slug, ".csv")))
 
-  # school rows -> per-county files (canonical download/API unit, #21/#22) ...
-  for (cty_name in unique(tab$schools$county_name)) {
-    s <- tab$schools[county_name == cty_name,
-                     c("school_id", "school_name", "enrollment", cov_block), with = FALSE]
-    fwrite(rnd(s), file.path(out_dir, "states", slug, "counties",
-                             paste0(slugify(cty_name), ".csv")))
-  }
-  # ... plus one combined states/<slug>/schools.csv the app loader reads in a
-  # single request (carries a `county` column; avoids an N+1 fan-out).
-  schools_all <- tab$schools[!is.na(county_name),
-    c("school_id", "school_name", "county_name", "enrollment", cov_block), with = FALSE]
+  # combined states/<slug>/schools.csv: one row per school, the file the app
+  # loads. Carries county, lon/lat (for map dot placement), and a no_data flag
+  # for schools with location but no fit coverage (#60). The per-county download
+  # files are derived from this at build time (#65), not written here.
+  sch_cols <- c("school_id", "school_name", "county_name", "enrollment",
+                "lon", "lat", "no_data", cov_block)
+  schools_all <- tab$schools[!is.na(county_name), ..sch_cols]
   setnames(schools_all, "county_name", "county")
   schools_all[, county := title_case(county)]   # match atlas county names (loader joins on these)
+  schools_all[, no_data := as.integer(no_data)]  # emit 0/1 not TRUE/FALSE
   fwrite(rnd(schools_all), file.path(out_dir, "states", slug, "schools.csv"))
 
   # state row -> states.csv (create/replace this state's row)

@@ -209,7 +209,8 @@ function buildSchoolTooltip(container, school) {
   const sp1 = document.createElement('span');
   sp1.textContent = 'Avg. Coverage';
   const sp2 = document.createElement('span');
-  sp2.textContent = school.coverage.toFixed(1) + '%';
+  // no_data school (#60): no coverage estimate yet.
+  sp2.textContent = school.coverage == null ? 'Not yet estimated' : school.coverage.toFixed(1) + '%';
   row.appendChild(sp1);
   row.appendChild(sp2);
   container.appendChild(row);
@@ -962,7 +963,7 @@ export default function UnifiedMap({
             .attr('transform', `translate(${px},${py}) scale(${3 / 5.5})`)
             .attr('opacity', 0.18).style('pointer-events', 'none');
           appendTierShape(d3.select(this), d.tier, 5.5)
-            .attr('fill', TC[d.tier]).attr('stroke', 'none');
+            .attr('fill', d.noData ? '#bbb' : TC[d.tier]).attr('stroke', 'none');
         });
     }
 
@@ -979,8 +980,9 @@ export default function UnifiedMap({
         const k0 = currentScaleRef.current || 1;
         d3.select(this).attr('data-x', px).attr('data-y', py)
           .attr('transform', `translate(${px},${py}) scale(${1 / k0})`).attr('opacity', 0.9);
+        // no_data school (#60): neutral grey dot at its real location.
         appendTierShape(d3.select(this), s.tier, 4)
-          .attr('fill', TC[s.tier])
+          .attr('fill', s.noData ? '#bbb' : TC[s.tier])
           .attr('stroke', 'rgba(245,240,232,1)')
           .attr('stroke-width', 1.2);
       })

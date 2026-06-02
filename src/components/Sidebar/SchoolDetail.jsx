@@ -5,10 +5,12 @@ export default function SchoolDetail({ school, onClose }) {
 
   const values = school.grades;
   const nonNull = values.filter(v => v != null);
+  // no coverage estimate at all (#60): school has a location but wasn't in the fit.
+  const noData = school.noData || nonNull.length === 0;
   const overall = nonNull.length > 0
     ? nonNull.reduce((a, b) => a + b, 0) / nonNull.length
     : 0;
-  const tier = covTier(overall);
+  const tier = noData ? null : covTier(overall);
 
   return (
     <div id="sb-school-detail" className="open" aria-live="polite">
@@ -41,28 +43,30 @@ export default function SchoolDetail({ school, onClose }) {
 
         <div className="sd-overall">
           <div>
-            <div id="sd-cov-val" style={{ color: TIER_COLORS[tier] }}>
-              {overall.toFixed(1)}%
+            <div id="sd-cov-val" style={{ color: noData ? 'var(--muted)' : TIER_COLORS[tier] }}>
+              {noData ? 'Not yet estimated' : `${overall.toFixed(1)}%`}
             </div>
             <div className="sd-ov-sub">Avg. Coverage</div>
           </div>
-          <span
-            id="sd-badge"
-            style={{
-              marginLeft: 'auto',
-              background: TIER_COLORS[tier] + '18',
-              color: TIER_COLORS[tier],
-              fontSize: '11px',
-              fontWeight: 500,
-              padding: '3px 10px',
-              borderRadius: '99px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '4px',
-            }}
-          >
-            {TIER_LABELS[tier]}
-          </span>
+          {!noData && (
+            <span
+              id="sd-badge"
+              style={{
+                marginLeft: 'auto',
+                background: TIER_COLORS[tier] + '18',
+                color: TIER_COLORS[tier],
+                fontSize: '11px',
+                fontWeight: 500,
+                padding: '3px 10px',
+                borderRadius: '99px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '4px',
+              }}
+            >
+              {TIER_LABELS[tier]}
+            </span>
+          )}
         </div>
 
         <div className="sd-grades" id="sd-grades" role="list">

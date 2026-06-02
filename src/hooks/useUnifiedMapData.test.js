@@ -78,13 +78,16 @@ function mockCountyCsv() {
     // multi-word county must round-trip to the atlas name exactly
     'New Hanover,37129,1,1.0,' + COV_VALS_2 + '\n';
 }
+// empty coverage block for a no_data school (#60): location but no fit coverage.
+const COV_VALS_EMPTY = Array(COV_COLS.split(',').length).fill('').join(',');
 function mockSchoolCsv() {
-  // combined per-state schools.csv carries a `county` column. schools.csv also
-  // carries lon/lat; the Wake school omits them (null-coords fallback), the
-  // New Hanover school includes them.
-  return 'school_id,school_name,county,enrollment,lon,lat,' + COV_COLS + '\n' +
-    '1,Test Elementary,Wake,100,,,' + COV_VALS + '\n' +
-    '2,Coastal Elementary,New Hanover,80,-77.9,34.2,' + COV_VALS_2 + '\n';
+  // combined per-state schools.csv carries `county`, `lon`/`lat`, and `no_data`.
+  // Wake school: omits coords (null-coords fallback). New Hanover: has coords.
+  // No-Data school: has coords + no_data=1 + empty coverage (grey-dot case).
+  return 'school_id,school_name,county,enrollment,lon,lat,no_data,' + COV_COLS + '\n' +
+    '1,Test Elementary,Wake,100,,,0,' + COV_VALS + '\n' +
+    '2,Coastal Elementary,New Hanover,80,-77.9,34.2,0,' + COV_VALS_2 + '\n' +
+    '3,Ghost Elementary,Wake,50,-78.7,35.9,1,' + COV_VALS_EMPTY + '\n';
 }
 
 function mockManifest() {
@@ -222,6 +225,20 @@ describe('useUnifiedMapData', () => {
     expect(coastal.grades[1]).toBe(91);   // coverage_1 0.91 → 91
     // lon/lat present → [lon, lat] coords.
     expect(coastal.coords).toEqual([-77.9, 34.2]);
+  });
+
+  it('flags a no_data school (location but no fit coverage) for grey rendering', async () => {
+    const { result } = renderHook(() => useUnifiedMapData());
+    await waitFor(() => expect(result.current.loading).toBe(false));
+    await act(async () => { await result.current.focusState('nc'); });
+
+    const nc = result.current.stateData.nc;
+    const ghost = nc.allSchools.find(s => s.name === 'Ghost Elementary');
+    expect(ghost).toBeDefined();          // not dropped despite no coverage
+    expect(ghost.noData).toBe(true);
+    expect(ghost.coverage).toBeNull();    // no estimate
+    expect(ghost.tier).toBeNull();        // so no tier color
+    expect(ghost.coords).toEqual([-78.7, 35.9]);  // still placed at its location
   });
 
   it('caches per-state data: refocusing the same state does not re-fetch', async () => {

@@ -141,9 +141,16 @@ for (cn in unique(schools[!is.na(county_name)]$county_name)) {
   fwrite(rnd(s), file.path(OUT,"states",slug,"counties",paste0(slugify(cn),".csv")))
 }
 # combined states/<slug>/schools.csv (one fetch for the app loader; carries county)
+# NC comes pre-predicted with every school placed, so there are no fit-missing
+# schools: no_data is always 0. lon/lat are left blank (the geojson points are in
+# NC State Plane, not WGS84); the map falls back to deterministic in-polygon
+# placement for NC, as it did before. Columns included for schema parity with CA.
 schools_all <- schools[!is.na(county_name),
   c("id","school_name","county_name","enrollment",cov_block), with=FALSE]
 setnames(schools_all, c("id","county_name"), c("school_id","county"))
+schools_all[, `:=`(lon = NA_real_, lat = NA_real_, no_data = 0L)]
+setcolorder(schools_all, c("school_id","school_name","county","enrollment",
+                           "lon","lat","no_data", cov_block))
 fwrite(rnd(schools_all), file.path(OUT,"states",slug,"schools.csv"))
 states_csv <- file.path(OUT,"states.csv")
 st_row <- state_dt[, c("state","state_fips","state_name","n_schools","pct_schools_below_95",cov_block), with=FALSE]
