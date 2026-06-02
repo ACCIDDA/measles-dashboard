@@ -33,7 +33,8 @@ Each file carries the same coverage columns at every level: overall coverage
 with 95% credible intervals, a per-grade (K–5) breakdown, and a coverage tier.
 
 The CSVs are generated from model output by the scripts in `scripts/build-data/`
-and regenerated when the model updates, not on every deploy.
+and regenerated when the model updates, not on every deploy. The full URL scheme
+and column reference, with `curl` examples, are in [`docs/API.md`](docs/API.md).
 
 ## Tech
 
