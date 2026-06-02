@@ -13,3 +13,9 @@ scripts/build-data/out/
 # Per-county CSVs are generated at build time from schools.csv (see
 # scripts/derive-county-csvs.mjs / npm prebuild); not committed (#65).
 public/data/states/*/counties/
+
+# Download bundles, built at deploy time (scripts/build-data-zips.mjs); not
+# committed. Staging dir lives outside public/ so Vite never copies it.
+public/data/all-states.zip
+public/data/states/*-counties.zip
+.zip-staging/

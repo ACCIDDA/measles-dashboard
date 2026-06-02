@@ -7,16 +7,16 @@ const href = () => screen.getByRole('link').getAttribute('href');
 const dl = () => screen.getByRole('link').getAttribute('download');
 
 describe('DownloadButton (#21)', () => {
-  it('national view links to the all-states CSV', () => {
+  it('national view links to the all-states zip bundle', () => {
     render(<DownloadButton zoomLevel="national" />);
-    expect(href()).toBe('/data/states.csv');
-    expect(dl()).toBe('states.csv');
+    expect(href()).toBe('/data/all-states.zip');
+    expect(dl()).toBe('all-states.zip');
   });
 
-  it('state view links to that state\'s county-summary CSV', () => {
+  it('state view links to that state\'s counties zip bundle', () => {
     render(<DownloadButton zoomLevel="state" stateCode="ca" />);
-    expect(href()).toBe('/data/states/ca.csv');
-    expect(dl()).toBe('ca-counties.csv');
+    expect(href()).toBe('/data/states/ca-counties.zip');
+    expect(dl()).toBe('ca-counties.zip');
   });
 
   it('county view links to that county\'s school-breakdown CSV', () => {

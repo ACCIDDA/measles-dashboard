@@ -1,11 +1,12 @@
-// Download affordance (#21): an <a download> linking to the static CSV for the
-// user's current resolution. No JS-generated CSV — the deployed files are the
-// download. Hidden when there's nothing meaningful to download.
+// Download affordance (#21): an <a download> linking to the static file for the
+// user's current resolution. No JS-generated output — the deployed files are
+// the download. Hidden when there's nothing meaningful to download.
 //
-// Resolution -> file:
-//   national -> data/states.csv                                   (all states)
-//   state    -> data/states/<code>.csv                            (counties)
-//   county   -> data/states/<code>/counties/<county>.csv          (schools)
+// Each level hands back all the data at that level (bundles built at deploy
+// time by scripts/build-data-zips.mjs):
+//   national -> data/all-states.zip              every state, one folder each
+//   state    -> data/states/<code>-counties.zip  the state's county + school CSVs
+//   county   -> data/states/<code>/counties/<county>.csv   (single CSV)
 function withBase(path) {
   const base = (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL) || '/';
   return `${base}${path}`;
@@ -17,13 +18,13 @@ export default function DownloadButton({ zoomLevel, stateCode, countySlug }) {
   let label = null;
 
   if (zoomLevel === 'national') {
-    href = withBase('data/states.csv');
-    filename = 'states.csv';
-    label = 'Download all states (CSV)';
+    href = withBase('data/all-states.zip');
+    filename = 'all-states.zip';
+    label = 'Download all states (ZIP)';
   } else if (zoomLevel === 'state' && stateCode) {
-    href = withBase(`data/states/${stateCode}.csv`);
-    filename = `${stateCode}-counties.csv`;
-    label = `Download ${stateCode.toUpperCase()} counties (CSV)`;
+    href = withBase(`data/states/${stateCode}-counties.zip`);
+    filename = `${stateCode}-counties.zip`;
+    label = `Download ${stateCode.toUpperCase()} counties (ZIP)`;
   } else if (zoomLevel === 'county' && stateCode && countySlug) {
     href = withBase(`data/states/${stateCode}/counties/${countySlug}.csv`);
     filename = `${stateCode}-${countySlug}-schools.csv`;
