@@ -84,12 +84,11 @@ wide_val <- function(col, prefix) {
 pg  <- wide_val("est", "coverage_")
 plo <- wide_val("ci_low", "coverage_ci_low_")
 phi <- wide_val("ci_high", "coverage_ci_high_")
-pis <- dcast(est, id ~ grade, value.var = "is_est"); setnames(pis, GRADE_LAB, paste0("is_estimated_", GRADE_LAB))
 pen <- est[, .(enrollment = max(population, na.rm = TRUE)), by = id]   # enrollment = max across grades
 
-schools <- Reduce(function(a,b) merge(a,b,by="id",all=TRUE), list(pg,plo,phi,pis,pen))
-for (g in GRADE_LAB) set(schools, j=paste0("is_estimated_",g),
-                         value = as.integer(schools[[paste0("is_estimated_",g)]]))
+# #58: the upstream estimates carry an is_est flag, but the dashboard no longer
+# surfaces the estimated-vs-reported distinction, so it isn't carried through.
+schools <- Reduce(function(a,b) merge(a,b,by="id",all=TRUE), list(pg,plo,phi,pen))
 # attach identity + overall coverage from geojson points (join id == location_id)
 schools <- merge(sch[, .(id = location_id, school_name, county_name,
                          coverage, coverage_ci_low = ci_low, coverage_ci_high = ci_high)],
@@ -108,7 +107,6 @@ for (g in GRADE_LAB) {                       # county per-grade not provided -> 
   counties_dt[, (paste0("coverage_",g)) := NA_real_]
   counties_dt[, (paste0("coverage_ci_low_",g)) := NA_real_]
   counties_dt[, (paste0("coverage_ci_high_",g)) := NA_real_]
-  counties_dt[, (paste0("is_estimated_",g)) := 1L]
 }
 counties_dt[, prob_below_95 := NA_real_][, tier := covtier(coverage)]
 
@@ -123,14 +121,13 @@ for (g in GRADE_LAB) {
     schools[, weighted.mean(get(paste0("coverage_",g)), enrollment, na.rm=TRUE)]]
   state_dt[, (paste0("coverage_ci_low_",g)) := NA_real_]
   state_dt[, (paste0("coverage_ci_high_",g)) := NA_real_]
-  state_dt[, (paste0("is_estimated_",g)) := 1L]
 }
 state_dt[, prob_below_95 := NA_real_][, tier := covtier(coverage)]
 
 # ---- write #20 schema (shared column order with build_state.R) ----
 cov_block <- c("coverage","coverage_ci_low","coverage_ci_high",
   paste0("coverage_",GRADE_LAB), paste0("coverage_ci_low_",GRADE_LAB),
-  paste0("coverage_ci_high_",GRADE_LAB), paste0("is_estimated_",GRADE_LAB),
+  paste0("coverage_ci_high_",GRADE_LAB),
   "prob_below_95","tier")
 rnd <- function(d){for(c in names(d)) if(is.numeric(d[[c]])) d[[c]]<-round(d[[c]],4); d}
 slug <- "nc"

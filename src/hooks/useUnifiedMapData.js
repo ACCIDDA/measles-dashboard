@@ -93,11 +93,9 @@ function buildStatePayloadFromCsv({ stateCode, countyRows, schoolRows, us }) {
   });
 
   const allSchools = schoolRows.map(s => {
-    // estimated[] is always the model/coverage value; reported[] is that value
-    // only where is_estimated_<g> === 0 (raw reported), else null.
-    const estimated = GRADE_KEYS.map(g => toPct(s['coverage_' + g]));
-    const reported = GRADE_KEYS.map((g, i) =>
-      String(s['is_estimated_' + g]) === '0' ? estimated[i] : null);
+    // Per-grade coverage (K-5). The estimated-vs-reported distinction was
+    // dropped (#58): every value is the model's coverage for that grade.
+    const grades = GRADE_KEYS.map(g => toPct(s['coverage_' + g]));
     const coverage = toPct(s.coverage);
     const lon = s.lon != null && s.lon !== '' ? Number(s.lon) : null;
     const lat = s.lat != null && s.lat !== '' ? Number(s.lat) : null;
@@ -110,7 +108,7 @@ function buildStatePayloadFromCsv({ stateCode, countyRows, schoolRows, us }) {
       tier: covTier(coverage),
       name: s.school_name,
       size: s.enrollment != null && s.enrollment !== '' ? Number(s.enrollment) : null,
-      grades: { estimated, reported },
+      grades,
     };
   });
 

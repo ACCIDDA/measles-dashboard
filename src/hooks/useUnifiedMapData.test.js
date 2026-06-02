@@ -58,34 +58,33 @@ const COV_COLS =
   'coverage_K,coverage_1,coverage_2,coverage_3,coverage_4,coverage_5,' +
   'coverage_ci_low_K,coverage_ci_low_1,coverage_ci_low_2,coverage_ci_low_3,coverage_ci_low_4,coverage_ci_low_5,' +
   'coverage_ci_high_K,coverage_ci_high_1,coverage_ci_high_2,coverage_ci_high_3,coverage_ci_high_4,coverage_ci_high_5,' +
-  'is_estimated_K,is_estimated_1,is_estimated_2,is_estimated_3,is_estimated_4,is_estimated_5,prob_below_95,tier';
+  'prob_below_95,tier';
 const COV_VALS =
   '0.94,0.93,0.95,' +
   '0.95,0.94,0.96,0.93,0.97,0.95,' +
   '0.93,0.92,0.94,0.91,0.95,0.93,' +
   '0.97,0.96,0.98,0.95,0.99,0.97,' +
-  '0,0,0,0,0,0,0.1,M';
-// A second coverage row where kindergarten is model-estimated (is_estimated_K=1)
-// rather than reported — used to assert reported[0] becomes null.
-const COV_VALS_ESTK =
+  '0.1,M';
+// A second school in a multi-word county, with distinct per-grade values.
+const COV_VALS_2 =
   '0.91,0.90,0.92,' +
   '0.90,0.91,0.92,0.93,0.94,0.95,' +
   '0.89,0.90,0.91,0.92,0.93,0.94,' +
   '0.92,0.93,0.94,0.95,0.96,0.97,' +
-  '1,0,0,0,0,0,0.4,M';
+  '0.4,M';
 function mockCountyCsv() {
   return 'county,county_fips,n_schools,pct_schools_below_95,' + COV_COLS + '\n' +
     'Wake,37183,1,0.0,' + COV_VALS + '\n' +
     // multi-word county must round-trip to the atlas name exactly
-    'New Hanover,37129,1,1.0,' + COV_VALS_ESTK + '\n';
+    'New Hanover,37129,1,1.0,' + COV_VALS_2 + '\n';
 }
 function mockSchoolCsv() {
   // combined per-state schools.csv carries a `county` column. schools.csv also
   // carries lon/lat; the Wake school omits them (null-coords fallback), the
-  // New Hanover school includes them and has a model-estimated kindergarten.
+  // New Hanover school includes them.
   return 'school_id,school_name,county,enrollment,lon,lat,' + COV_COLS + '\n' +
     '1,Test Elementary,Wake,100,,,' + COV_VALS + '\n' +
-    '2,Coastal Elementary,New Hanover,80,-77.9,34.2,' + COV_VALS_ESTK + '\n';
+    '2,Coastal Elementary,New Hanover,80,-77.9,34.2,' + COV_VALS_2 + '\n';
 }
 
 function mockManifest() {
@@ -187,8 +186,8 @@ describe('useUnifiedMapData', () => {
     // CSV overall coverage 0.94 (proportion) → 94 (percent) in-memory.
     expect(wakeSchool.coverage).toBe(94);
     expect(wakeSchool.size).toBe(100);
-    // coverage_K = 0.95 → 95; reported grades (is_estimated_*=0) populate reported[].
-    expect(wakeSchool.grades.reported[0]).toBe(95);
+    // grades is a flat per-grade array; coverage_K = 0.95 → 95.
+    expect(wakeSchool.grades[0]).toBe(95);
     // No lon/lat columns for this row → coords null (map uses fallback).
     expect(wakeSchool.coords).toBeNull();
   });
@@ -211,18 +210,16 @@ describe('useUnifiedMapData', () => {
     expect(coastal.county).toBe('New Hanover County');
   });
 
-  it('parses per-grade estimated/reported flags and lon/lat coords', async () => {
+  it('parses the per-grade coverage array and lon/lat coords', async () => {
     const { result } = renderHook(() => useUnifiedMapData());
     await waitFor(() => expect(result.current.loading).toBe(false));
     await act(async () => { await result.current.focusState('nc'); });
 
     const nc = result.current.stateData.nc;
     const coastal = nc.allSchools.find(s => s.name === 'Coastal Elementary');
-    // is_estimated_K=1 → kindergarten is model-only, so reported[0] is null;
-    // grade 1 (is_estimated_1=0) is reported and populated.
-    expect(coastal.grades.estimated[0]).toBe(90);   // coverage_K 0.90 → 90
-    expect(coastal.grades.reported[0]).toBeNull();
-    expect(coastal.grades.reported[1]).toBe(91);    // coverage_1 0.91 → 91
+    // grades is a flat K-5 array of per-grade coverage (percent).
+    expect(coastal.grades[0]).toBe(90);   // coverage_K 0.90 → 90
+    expect(coastal.grades[1]).toBe(91);   // coverage_1 0.91 → 91
     // lon/lat present → [lon, lat] coords.
     expect(coastal.coords).toEqual([-77.9, 34.2]);
   });

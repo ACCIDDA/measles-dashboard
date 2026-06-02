@@ -8,10 +8,9 @@ const mockSchool = {
   coverage: 96.5,
   tier: 'H',
   size: 300,
-  grades: {
-    estimated: [96, 95, 97, 94, 98, 93],
-    reported: [null, 95, 97, 94, 98, 93],
-  },
+  // flat per-grade K-5 array (#58: no estimated/reported split); one null to
+  // exercise the N/A rendering.
+  grades: [null, 95, 97, 94, 98, 93],
 };
 
 describe('SchoolDetail', () => {
@@ -25,18 +24,9 @@ describe('SchoolDetail', () => {
     expect(screen.getByText('Test Elementary')).toBeInTheDocument();
   });
 
-  it('shows Estimated tab active by default', () => {
+  it('no longer renders Estimated/Reported tabs', () => {
     render(<SchoolDetail school={mockSchool} onClose={() => {}} />);
-    const tab = screen.getByRole('tab', { name: 'Estimated' });
-    expect(tab).toHaveAttribute('aria-selected', 'true');
-  });
-
-  it('switches to Reported tab on click', async () => {
-    const user = userEvent.setup();
-    render(<SchoolDetail school={mockSchool} onClose={() => {}} />);
-    await user.click(screen.getByRole('tab', { name: 'Reported' }));
-    expect(screen.getByRole('tab', { name: 'Reported' })).toHaveAttribute('aria-selected', 'true');
-    expect(screen.getByRole('tab', { name: 'Estimated' })).toHaveAttribute('aria-selected', 'false');
+    expect(screen.queryByRole('tab')).not.toBeInTheDocument();
   });
 
   it('renders all 6 grade rows', () => {
@@ -45,10 +35,8 @@ describe('SchoolDetail', () => {
     expect(items).toHaveLength(6);
   });
 
-  it('shows N/A for null grade values in reported mode', async () => {
-    const user = userEvent.setup();
+  it('shows N/A for null grade values', () => {
     render(<SchoolDetail school={mockSchool} onClose={() => {}} />);
-    await user.click(screen.getByRole('tab', { name: 'Reported' }));
     expect(screen.getByText('N/A')).toBeInTheDocument();
   });
 

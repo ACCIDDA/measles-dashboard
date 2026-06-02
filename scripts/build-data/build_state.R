@@ -133,9 +133,9 @@ assemble <- function(cov, cleaned, linkage, state_meta, county_fips_map = NULL) 
   sch_key[, nm := NULL]
   schools <- sch_key[base[level == "school"], on = "loc_id", nomatch = 0]
 
-  for (g in glab) schools[, (paste0("is_estimated_", g)) := 1L]   # grades 1-5 model
-  schools[, is_estimated_K := fifelse(!is.na(reported_K), 0L, 1L)] # K reported if available
-  schools[!is.na(reported_K), coverage_K := reported_K]            # override K with reported
+  # Use reported kindergarten coverage where available, else the model value.
+  # (#58: we no longer flag estimated-vs-reported, but still prefer reported K.)
+  schools[!is.na(reported_K), coverage_K := reported_K]
   schools[, coverage := rowMeans(.SD), .SDcols = paste0("coverage_", glab)] # overall reflects override
   schools[, tier := covtier(coverage)]
 
@@ -160,14 +160,12 @@ assemble <- function(cov, cleaned, linkage, state_meta, county_fips_map = NULL) 
   cty_key <- unique(linkage[, .(loc_id = county_loc_id, county_name)])
   counties <- cty_key[base[level == "county"], on = "loc_id", nomatch = 0]
   counties <- cty_stat[counties, on = "county_name"]
-  for (g in glab) counties[, (paste0("is_estimated_", g)) := 1L]  # aggregates are model-derived
   counties[, tier := covtier(coverage)]
   counties[, county_fips := if (!is.null(county_fips_map))
     county_fips_map[match(county_name, names(county_fips_map))] else NA_character_]
 
   # ---- state row ----
   state <- base[level == "state"]
-  for (g in glab) state[, (paste0("is_estimated_", g)) := 1L]
   state[, `:=`(state = state_meta$slug, state_fips = state_meta$fips,
                state_name = state_meta$name,
                n_schools = st_stat$n_schools,
@@ -183,7 +181,7 @@ write_csvs <- function(tab, out_dir, state_meta) {
   cov_block <- c("coverage", "coverage_ci_low", "coverage_ci_high",
                  paste0("coverage_", glab),
                  paste0("coverage_ci_low_", glab), paste0("coverage_ci_high_", glab),
-                 paste0("is_estimated_", glab), "prob_below_95", "tier")
+                 "prob_below_95", "tier")
   rnd <- function(d) { for (c in names(d)) if (is.numeric(d[[c]])) d[[c]] <- round(d[[c]], 4); d }
   slug <- state_meta$slug
   dir.create(file.path(out_dir, "states", slug, "counties"), recursive = TRUE, showWarnings = FALSE)

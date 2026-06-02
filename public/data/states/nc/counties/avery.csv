@@ -1,8 +1,8 @@
-school_id,school_name,enrollment,coverage,coverage_ci_low,coverage_ci_high,coverage_K,coverage_1,coverage_2,coverage_3,coverage_4,coverage_5,coverage_ci_low_K,coverage_ci_low_1,coverage_ci_low_2,coverage_ci_low_3,coverage_ci_low_4,coverage_ci_low_5,coverage_ci_high_K,coverage_ci_high_1,coverage_ci_high_2,coverage_ci_high_3,coverage_ci_high_4,coverage_ci_high_5,is_estimated_K,is_estimated_1,is_estimated_2,is_estimated_3,is_estimated_4,is_estimated_5,prob_below_95,tier
-161,Banner Elk Elementary,31,0.9797,,,0.9541,1,0.9615,1,0.9677,1,0.9479,0.9476,0.949,0.9518,0.9554,0.9594,0.9597,0.9594,0.9604,0.9626,0.9654,0.9686,1,0,0,0,0,0,,H
-162,Bethel Christian Academy,10,0.8124,,,0.8822,0.5,0.8842,0.8899,0.8976,0.9063,0.7993,0.7979,0.8024,0.8112,0.8232,0.8371,0.942,0.9413,0.9429,0.9459,0.95,0.9545,1,0,1,1,1,1,,L
-163,Crossnore Elementary,41,0.9821,,,0.9539,1,1,0.9688,0.9756,1,0.9323,0.932,0.9338,0.9373,0.9419,0.9472,0.9705,0.9701,0.9707,0.9723,0.9745,0.9769,1,0,0,0,0,0,,H
-164,Freedom Trail Elementary,35,0.9378,,,0.9442,0.9259,0.9062,0.9143,0.9677,1,0.9257,0.925,0.9269,0.9307,0.9358,0.9414,0.9596,0.9592,0.9603,0.9625,0.9653,0.9684,1,0,0,0,0,0,,M
-166,Marjorie Williams Academy,13,0.9889,,,0.9408,1,1,1,1,1,0.9182,0.9177,0.9197,0.9239,0.9295,0.9357,0.9585,0.9582,0.9593,0.9614,0.9644,0.9677,1,0,0,0,0,0,,H
-167,Newland Elementary,41,0.9843,,,0.9638,0.9744,1,1,0.9756,1,0.9537,0.9534,0.9546,0.957,0.9603,0.9639,0.9721,0.9718,0.9726,0.9742,0.9762,0.9784,1,0,0,0,0,0,,H
-168,Riverside Elementary,16,0.9828,,,0.9655,1,1,1,0.9375,1,0.9428,0.9423,0.9438,0.9468,0.9508,0.9552,0.9818,0.9816,0.9821,0.9831,0.9844,0.9859,1,0,0,0,0,0,,H
+school_id,school_name,enrollment,coverage,coverage_ci_low,coverage_ci_high,coverage_K,coverage_1,coverage_2,coverage_3,coverage_4,coverage_5,coverage_ci_low_K,coverage_ci_low_1,coverage_ci_low_2,coverage_ci_low_3,coverage_ci_low_4,coverage_ci_low_5,coverage_ci_high_K,coverage_ci_high_1,coverage_ci_high_2,coverage_ci_high_3,coverage_ci_high_4,coverage_ci_high_5,prob_below_95,tier
+161,Banner Elk Elementary,31,0.9797,,,0.9541,1,0.9615,1,0.9677,1,0.9479,0.9476,0.949,0.9518,0.9554,0.9594,0.9597,0.9594,0.9604,0.9626,0.9654,0.9686,,H
+162,Bethel Christian Academy,10,0.8124,,,0.8822,0.5,0.8842,0.8899,0.8976,0.9063,0.7993,0.7979,0.8024,0.8112,0.8232,0.8371,0.942,0.9413,0.9429,0.9459,0.95,0.9545,,L
+163,Crossnore Elementary,41,0.9821,,,0.9539,1,1,0.9688,0.9756,1,0.9323,0.932,0.9338,0.9373,0.9419,0.9472,0.9705,0.9701,0.9707,0.9723,0.9745,0.9769,,H
+164,Freedom Trail Elementary,35,0.9378,,,0.9442,0.9259,0.9062,0.9143,0.9677,1,0.9257,0.925,0.9269,0.9307,0.9358,0.9414,0.9596,0.9592,0.9603,0.9625,0.9653,0.9684,,M
+166,Marjorie Williams Academy,13,0.9889,,,0.9408,1,1,1,1,1,0.9182,0.9177,0.9197,0.9239,0.9295,0.9357,0.9585,0.9582,0.9593,0.9614,0.9644,0.9677,,H
+167,Newland Elementary,41,0.9843,,,0.9638,0.9744,1,1,0.9756,1,0.9537,0.9534,0.9546,0.957,0.9603,0.9639,0.9721,0.9718,0.9726,0.9742,0.9762,0.9784,,H
+168,Riverside Elementary,16,0.9828,,,0.9655,1,1,1,0.9375,1,0.9428,0.9423,0.9438,0.9468,0.9508,0.9552,0.9818,0.9816,0.9821,0.9831,0.9844,0.9859,,H
