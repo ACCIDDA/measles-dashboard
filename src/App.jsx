@@ -241,6 +241,9 @@ export default function App() {
         onStateSelect={handleZoomToState}
         stateName={focusedStateName || 'NC'}
         view={route.zoomLevel === 'national' ? 'national' : 'state'}
+        zoomLevel={route.zoomLevel}
+        stateCode={route.stateCode || null}
+        countySlug={route.countySlug || null}
       />
       <div id="body-row">
         <UnifiedMap

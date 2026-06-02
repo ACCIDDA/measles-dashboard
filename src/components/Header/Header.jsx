@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import CountySearch from './CountySearch.jsx';
 import StateSearch from './StateSearch.jsx';
+import DownloadButton from './DownloadButton.jsx';
 
 export default function Header({
   currentView,
@@ -10,6 +11,10 @@ export default function Header({
   onCountySelect,
   onStateSelect,
   stateName = 'NC',
+  // current resolution, for the data-download link (#21)
+  zoomLevel = 'national',
+  stateCode = null,
+  countySlug = null,
   // 'national' shows the state search and national landing copy.
   // 'state' (default) keeps the existing county search + "Click a county to
   // explore" copy. The view toggle is national-irrelevant (no undervax
@@ -119,6 +124,8 @@ export default function Header({
           </button>
         </div>
       )}
+
+      <DownloadButton zoomLevel={zoomLevel} stateCode={stateCode} countySlug={countySlug} />
     </header>
   );
 }
