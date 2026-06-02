@@ -210,7 +210,7 @@ function buildSchoolTooltip(container, school) {
   sp1.textContent = 'Avg. Coverage';
   const sp2 = document.createElement('span');
   // no_data school (#60): no coverage estimate yet.
-  sp2.textContent = school.coverage == null ? 'Not yet estimated' : school.coverage.toFixed(1) + '%';
+  sp2.textContent = school.coverage == null ? 'No data yet' : school.coverage.toFixed(1) + '%';
   row.appendChild(sp1);
   row.appendChild(sp2);
   container.appendChild(row);

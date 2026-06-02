@@ -52,7 +52,7 @@ export default function SchoolList({ schools, selectedSchool, onSchoolSelect }) 
                 <span
                   className="sb-school-cov"
                   style={{ color: noData ? 'var(--muted)' : TIER_COLORS[tier] }}
-                  title={noData ? 'Coverage not yet estimated for this school' : undefined}
+                  title={noData ? 'No data yet for this school' : undefined}
                 >
                   {noData ? '—' : `${school.coverage.toFixed(1)}%`}
                 </span>

@@ -44,7 +44,7 @@ export default function SchoolDetail({ school, onClose }) {
         <div className="sd-overall">
           <div>
             <div id="sd-cov-val" style={{ color: noData ? 'var(--muted)' : TIER_COLORS[tier] }}>
-              {noData ? 'Not yet estimated' : `${overall.toFixed(1)}%`}
+              {noData ? 'No data yet' : `${overall.toFixed(1)}%`}
             </div>
             <div className="sd-ov-sub">Avg. Coverage</div>
           </div>
