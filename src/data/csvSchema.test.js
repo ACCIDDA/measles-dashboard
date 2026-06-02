@@ -30,8 +30,11 @@ const COVERAGE_BLOCK = [
 
 const STATE_COLS = ['state', 'state_fips', 'state_name', 'n_schools', 'pct_schools_below_95', ...COVERAGE_BLOCK];
 const COUNTY_COLS = ['county', 'county_fips', 'n_schools', 'pct_schools_below_95', ...COVERAGE_BLOCK];
-const SCHOOLS_COLS = ['school_id', 'school_name', 'county', 'enrollment', ...COVERAGE_BLOCK];
-const PER_COUNTY_COLS = ['school_id', 'school_name', 'enrollment', ...COVERAGE_BLOCK];
+// School files carry location (lon/lat) and a no_data flag (#60) before the
+// coverage block. The combined schools.csv also has a county column; per-county
+// files drop it (the directory identifies the county).
+const SCHOOLS_COLS = ['school_id', 'school_name', 'county', 'enrollment', 'lon', 'lat', 'no_data', ...COVERAGE_BLOCK];
+const PER_COUNTY_COLS = ['school_id', 'school_name', 'enrollment', 'lon', 'lat', 'no_data', ...COVERAGE_BLOCK];
 
 const header = (path) => readFileSync(path, 'utf8').split('\n', 1)[0].trim().split(',');
 

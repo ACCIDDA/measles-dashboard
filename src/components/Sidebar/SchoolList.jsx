@@ -34,12 +34,13 @@ export default function SchoolList({ schools, selectedSchool, onSchoolSelect }) 
           <div className="sb-no-results">No schools match</div>
         ) : (
           filtered.map(school => {
-            const tier = school.tier || covTier(school.coverage);
+            const noData = school.noData || school.coverage == null;
+            const tier = noData ? null : (school.tier || covTier(school.coverage));
             const isActive = selectedSchool && selectedSchool.name === school.name;
             return (
               <div
                 key={school.name}
-                className={`sb-school-item${isActive ? ' active' : ''}`}
+                className={`sb-school-item${isActive ? ' active' : ''}${noData ? ' no-data' : ''}`}
                 role="option"
                 aria-selected={isActive}
                 onClick={() => onSchoolSelect(isActive ? null : school)}
@@ -48,8 +49,12 @@ export default function SchoolList({ schools, selectedSchool, onSchoolSelect }) 
                   <TierMarker tier={tier} />
                 </svg>
                 <span className="sb-school-name">{school.name}</span>
-                <span className="sb-school-cov" style={{ color: TIER_COLORS[tier] }}>
-                  {school.coverage.toFixed(1)}%
+                <span
+                  className="sb-school-cov"
+                  style={{ color: noData ? 'var(--muted)' : TIER_COLORS[tier] }}
+                  title={noData ? 'Coverage not yet estimated for this school' : undefined}
+                >
+                  {noData ? '—' : `${school.coverage.toFixed(1)}%`}
                 </span>
               </div>
             );

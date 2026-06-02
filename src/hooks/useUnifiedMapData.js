@@ -99,13 +99,17 @@ function buildStatePayloadFromCsv({ stateCode, countyRows, schoolRows, us }) {
     const coverage = toPct(s.coverage);
     const lon = s.lon != null && s.lon !== '' ? Number(s.lon) : null;
     const lat = s.lat != null && s.lat !== '' ? Number(s.lat) : null;
+    // no_data (#60): school has a location but no model coverage (it wasn't in
+    // the fit). coverage is null; the UI renders it as a grey, inert dot.
+    const noData = String(s.no_data) === '1' || coverage == null;
     return {
       county: s.county + ' County',
       coords: lon != null && lat != null && !Number.isNaN(lon) && !Number.isNaN(lat)
         ? [lon, lat] : null,
       feature: featureByName[s.county],
       coverage,
-      tier: covTier(coverage),
+      tier: noData ? null : covTier(coverage),
+      noData,
       name: s.school_name,
       size: s.enrollment != null && s.enrollment !== '' ? Number(s.enrollment) : null,
       grades,
