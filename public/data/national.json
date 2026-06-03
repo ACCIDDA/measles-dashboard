@@ -1,12 +1,12 @@
 {
-  "description": "Aggregate measles (MMR) vaccination coverage per state. Stub pending USImmunityProfiles output (see issue #14). Keys are 2-digit state FIPS codes. States missing from this object render as 'no data' (greyed) in the national view.",
+  "description": "Aggregate measles (MMR) vaccination coverage per state, keyed by 2-digit state FIPS. Generated from states.csv by scripts/derive-national-json.mjs (do not edit by hand). States missing from this object render as 'no data' (greyed) in the national view.",
   "states": {
     "37": {
-      "coverage": 0.951,
+      "coverage": 0.9469,
       "status": "ready"
     },
     "06": {
-      "coverage": 0.979,
+      "coverage": 0.9788,
       "status": "ready"
     }
   }

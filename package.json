@@ -4,10 +4,12 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "predev": "node scripts/derive-national-json.mjs",
     "dev": "vite",
     "derive-county-csvs": "node scripts/derive-county-csvs.mjs",
+    "derive-national-json": "node scripts/derive-national-json.mjs",
     "build-data-zips": "node scripts/build-data-zips.mjs",
-    "prebuild": "node scripts/derive-county-csvs.mjs && node scripts/build-data-zips.mjs",
+    "prebuild": "node scripts/derive-national-json.mjs && node scripts/derive-county-csvs.mjs && node scripts/build-data-zips.mjs",
     "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint src/",
