@@ -225,6 +225,11 @@ export default function App() {
       .sort((a, b) => a.name.localeCompare(b.name))
     : [];
 
+  // State-wide summary for the state-zoom sidebar panel (#50).
+  const stateSummary = route.stateCode && map.stateSummaryByCode
+    ? map.stateSummaryByCode[route.stateCode] || null
+    : null;
+
   return (
     <div id="app">
       <div id="aria-live" aria-live="polite" aria-atomic="true"></div>
@@ -281,7 +286,9 @@ export default function App() {
             onSchoolSelect={setSelectedSchool}
             onBack={handleZoomOut}
             onCloseSchool={() => setSelectedSchool(null)}
-            isOpen={!!focusedCounty}
+            stateSummary={stateSummary}
+            stateName={focusedStateName}
+            isOpen={!!focusedCounty || (route.zoomLevel === 'state' && !!stateSummary)}
           />
         )}
       </div>

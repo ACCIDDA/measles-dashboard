@@ -8,11 +8,13 @@ test.describe('Keyboard navigation and accessibility', () => {
     await page.waitForSelector('.county-path', { timeout: 15000 });
   });
 
-  test('Escape deselects county', async ({ page }) => {
+  test('Escape deselects county (returns to the state summary)', async ({ page }) => {
     await page.locator('.county-path').first().click();
-    await expect(page.locator('#sidebar.open')).toBeVisible({ timeout: 3000 });
+    await expect(page.locator('#sb-county-label')).toContainText('County');
     await page.keyboard.press('Escape');
-    await expect(page.locator('#sidebar.open')).not.toBeVisible({ timeout: 3000 });
+    // State zoom keeps the sidebar open with the state summary (#50).
+    await expect(page.locator('#sb-county-label')).toHaveText('North Carolina');
+    await expect(page.locator('#sidebar.open')).toBeVisible();
   });
 
   test('aria-live region exists', async ({ page }) => {

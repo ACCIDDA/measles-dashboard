@@ -97,6 +97,13 @@ function mockManifest() {
   };
 }
 
+// National states.csv: one row per ready state, carrying the state-level
+// aggregate the #50 summary panel reads. Reuses the shared coverage block.
+function mockStatesCsv() {
+  return 'state,state_fips,state_name,n_schools,pct_schools_below_95,' + COV_COLS + '\n' +
+    'nc,37,North Carolina,1825,0.3951,' + COV_VALS + '\n';
+}
+
 function buildFetchMock(captured, { dashboardOk = true } = {}) {
   return vi.fn((url) => {
     captured.push(url);
@@ -114,6 +121,9 @@ function buildFetchMock(captured, { dashboardOk = true } = {}) {
     }
     if (url.endsWith('data/states.json')) {
       return Promise.resolve({ ok: true, json: () => Promise.resolve(mockManifest()) });
+    }
+    if (url.endsWith('data/states.csv')) {
+      return Promise.resolve({ ok: true, text: () => Promise.resolve(mockStatesCsv()) });
     }
     // #20 per-state CSV bundle: county summary + combined schools file.
     if (url.endsWith('data/states/nc.csv')) {
@@ -157,6 +167,20 @@ describe('useUnifiedMapData', () => {
     expect(result.current.manifest.nc).toBeDefined();
   });
 
+  it('builds per-state summaries from states.csv for the #50 panel', async () => {
+    const { result } = renderHook(() => useUnifiedMapData());
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    expect(captured.some(u => u.endsWith('data/states.csv'))).toBe(true);
+    const nc = result.current.stateSummaryByCode.nc;
+    expect(nc).toBeDefined();
+    expect(nc.name).toBe('North Carolina');
+    expect(nc.coverage).toBe(94);        // 0.94 → 94
+    expect(nc.nSchools).toBe(1825);
+    expect(nc.pctBelow95).toBeCloseTo(39.51);  // 0.3951 → 39.51
+    expect(nc.grades).toEqual([95, 94, 96, 93, 97, 95]);  // coverage_K..5
+  });
+
   it('filters the US out of the world countries layer', async () => {
     const { result } = renderHook(() => useUnifiedMapData());
     await waitFor(() => expect(result.current.loading).toBe(false));
@@ -184,6 +208,9 @@ describe('useUnifiedMapData', () => {
     expect(nc.stateFeatures.map(f => f.id).sort()).toEqual(['37001', '37002']);
     expect(nc.countyData['Wake County']).toBeDefined();
     expect(nc.countyData['Wake County'].mean).toBe(94);
+    // Per-grade aggregate exposed for the county breakdown panel (#50);
+    // coverage_K = 0.95 → 95.
+    expect(nc.countyData['Wake County'].grades).toEqual([95, 94, 96, 93, 97, 95]);
 
     const wakeSchool = nc.allSchools.find(s => s.name === 'Test Elementary');
     // CSV overall coverage 0.94 (proportion) → 94 (percent) in-memory.

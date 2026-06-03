@@ -155,6 +155,10 @@ header{flex-shrink:0;height:var(--header-h);background:var(--surface);border-bot
 .sb-stat-val.h{color:var(--high)}.sb-stat-val.m{color:var(--med)}.sb-stat-val.l{color:var(--low)}
 .sb-stat-lbl{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em}
 
+/* Per-grade breakdown panel (#50): county/state K-5 bars below the stats. */
+.sb-grades-section{padding:12px 14px;border-bottom:1px solid var(--border);flex-shrink:0}
+.sb-grades-title{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px}
+
 #sb-search-wrap{padding:10px 12px 8px;border-bottom:1px solid var(--border);flex-shrink:0}
 label[for="sb-search"]{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:5px}
 #sb-search{width:100%;padding:8px 10px;font-family:var(--sans);font-size:15px;background:var(--faint);border:1px solid var(--border2);border-radius:7px;color:var(--text);outline:none;-webkit-appearance:none}

@@ -73,4 +73,43 @@ describe('Sidebar', () => {
     expect(screen.getAllByText('Avg. Coverage')).toHaveLength(2);
     expect(screen.getByRole('button', { name: 'Close school detail' })).toBeInTheDocument();
   });
+
+  // ── Per-grade breakdown panel (#50) ──
+  it('shows the county per-grade breakdown when the county has grades', () => {
+    const countyData = { 'Wake County': { grades: [94, 95, 96, 93, 97, 92] } };
+    const { container } = render(<Sidebar {...defaultProps} countyData={countyData} />);
+    expect(screen.getByText('Coverage by grade')).toBeInTheDocument();
+    expect(container.querySelectorAll('#sb-county-grades .sd-grade-row')).toHaveLength(6);
+  });
+
+  it('hides the breakdown for a county with no per-grade data (e.g. NC)', () => {
+    const countyData = { 'Wake County': { grades: [null, null, null, null, null, null] } };
+    render(<Sidebar {...defaultProps} countyData={countyData} />);
+    expect(screen.queryByText('Coverage by grade')).not.toBeInTheDocument();
+  });
+
+  describe('state-summary mode (no county focused)', () => {
+    const stateSummary = {
+      name: 'California', coverage: 97.9, pctBelow95: 17, nSchools: 7877,
+      grades: [95.6, 98, 98.4, 98.5, 98.5, 98.4],
+    };
+    const stateProps = {
+      ...defaultProps, county: null, schools: [], stateSummary,
+    };
+
+    it('renders the state name, stats, and per-grade breakdown', () => {
+      const { container } = render(<Sidebar {...stateProps} />);
+      expect(screen.getByText('California')).toBeInTheDocument();
+      expect(screen.getByText('97.9%')).toBeInTheDocument();
+      expect(screen.getByText('17%')).toBeInTheDocument();
+      expect(screen.getByText('7877')).toBeInTheDocument();
+      expect(container.querySelectorAll('#sb-state-grades .sd-grade-row')).toHaveLength(6);
+    });
+
+    it('does not render the school list and uses the national back label', () => {
+      const { container } = render(<Sidebar {...stateProps} />);
+      expect(container.querySelector('#sb-school-list')).toBeNull();
+      expect(screen.getByRole('button', { name: 'Return to national map' })).toBeInTheDocument();
+    });
+  });
 });

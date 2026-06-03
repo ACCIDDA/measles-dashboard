@@ -77,6 +77,28 @@ function buildTopology({ stateCode, us }) {
 //                carrying a `county` column)
 // plus the shared us-atlas topology. Returns the same shape the legacy
 // dashboard.json path produced, so the map + sidebar are unchanged.
+// Parse the national states.csv into a per-state summary keyed by lowercase
+// code (#50). Powers the state-level summary panel: overall coverage, % of
+// schools below 95, school count, and the K-5 per-grade breakdown — all taken
+// straight from the state row (no client-side aggregation).
+function buildStateSummaries(text) {
+  const out = {};
+  if (!text) return out;
+  csvParse(text).forEach(r => {
+    const code = String(r.state || '').toLowerCase();
+    if (!code) return;
+    out[code] = {
+      name: r.state_name || code.toUpperCase(),
+      coverage: toPct(r.coverage),
+      pctBelow95: r.pct_schools_below_95 != null && r.pct_schools_below_95 !== ''
+        ? Number(r.pct_schools_below_95) * 100 : null,
+      nSchools: r.n_schools != null && r.n_schools !== '' ? Number(r.n_schools) : null,
+      grades: GRADE_KEYS.map(g => toPct(r['coverage_' + g])),
+    };
+  });
+  return out;
+}
+
 function buildStatePayloadFromCsv({ stateCode, countyRows, schoolRows, us }) {
   const { stateFeatures, neighborStates, stateMesh, adjacencyMap, featureByName } =
     buildTopology({ stateCode, us });
@@ -86,6 +108,10 @@ function buildStatePayloadFromCsv({ stateCode, countyRows, schoolRows, us }) {
     const name = c.county;
     countyData[name + ' County'] = {
       mean: toPct(c.coverage),
+      // Per-grade aggregate (#50). Model node values straight from the CSV (not
+      // a client-side mean), so they track the producer's numbers as-is. Blank
+      // for states with no county-level breakdown (e.g. NC) → all null.
+      grades: GRADE_KEYS.map(g => toPct(c['coverage_' + g])),
       herd_immunity: c.pct_schools_below_95 != null && c.pct_schools_below_95 !== ''
         ? Number(c.pct_schools_below_95) : null,
       fips: featureByName[name] ? featureByName[name].id : null,
@@ -148,6 +174,7 @@ export function useUnifiedMapData() {
     coverageByFips: null,
     countriesFeatures: null,
     manifest: null,
+    stateSummaryByCode: {},
     loading: true,
     error: null,
   });
@@ -167,21 +194,24 @@ export function useUnifiedMapData() {
 
     async function load() {
       try {
-        const [usRes, worldRes, natRes, manifestRes] = await Promise.all([
+        const [usRes, worldRes, natRes, manifestRes, statesCsvRes] = await Promise.all([
           fetch(US_ATLAS_URL),
           fetch(WORLD_ATLAS_URL),
           fetch(withBase(NATIONAL_STUB_PATH)),
           fetch(withBase('data/states.json')),
+          fetch(withBase('data/states.csv')),
         ]);
 
         if (!usRes.ok) throw new Error('Failed to load US map data');
 
         const us = await usRes.json();
-        // world-atlas + national stub + manifest are optional; degrade rather
-        // than fail the whole app if any are missing.
+        // world-atlas + national stub + manifest + state summaries are optional;
+        // degrade rather than fail the whole app if any are missing.
         const world = worldRes.ok ? await worldRes.json() : null;
         const national = natRes.ok ? await natRes.json() : { states: {} };
         const manifest = manifestRes.ok ? await manifestRes.json() : {};
+        const stateSummaryByCode = statesCsvRes.ok
+          ? buildStateSummaries(await statesCsvRes.text()) : {};
 
         const stateFeatures = topojson.feature(us, us.objects.states).features;
         const coverageByFips = {};
@@ -220,6 +250,7 @@ export function useUnifiedMapData() {
             coverageByFips,
             countriesFeatures,
             manifest,
+            stateSummaryByCode,
             loading: false,
             error: null,
           });
@@ -298,6 +329,7 @@ export function useUnifiedMapData() {
     coverageByFips: base.coverageByFips,
     countriesFeatures: base.countriesFeatures,
     manifest: base.manifest,
+    stateSummaryByCode: base.stateSummaryByCode,
     // Per-state (lazy)
     stateData,
     stateError,
