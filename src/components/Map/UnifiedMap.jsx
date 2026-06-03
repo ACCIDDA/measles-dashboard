@@ -805,9 +805,20 @@ export default function UnifiedMap({
       stateGRef.current.style('opacity', 1);
       if (statePathsRef.current) {
         statePathsRef.current.style('pointer-events', zoomLevel === 'national' ? null : 'none');
+        // Repaint state fills: choropleth tier colors at national zoom, but the
+        // FOCUSED state goes neutral once zoomed in. Its counties tile over it
+        // and are dimmed to 0.3 opacity at county zoom, so a tier-colored state
+        // (e.g. NC's Medium orange) would bleed through and tint every county
+        // (blue ones looked yellow). Neutral grey keeps the county colors true.
+        const focusedFips = (zoomLevel !== 'national' && focusedStateCode)
+          ? normalizeFips(uspsToFips(focusedStateCode)) : null;
+        statePathsRef.current.attr('fill', d => {
+          const fips = normalizeFips(d.id);
+          return fips === focusedFips ? NO_DATA_FILL : stateFill(fips, coverageByFips);
+        });
       }
     }
-  }, [zoomLevel]);
+  }, [zoomLevel, focusedStateCode, coverageByFips]);
 
   // First-paint flag: the very first zoom application (e.g. for deep links
   // straight into /state/nc or /state/nc/wake) should be instant. Animating

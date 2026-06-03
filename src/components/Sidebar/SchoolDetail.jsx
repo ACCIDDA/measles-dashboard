@@ -1,4 +1,5 @@
-import { TIER_COLORS, TIER_LABELS, GRADES, covTier } from '../../config/index.js';
+import { TIER_COLORS, TIER_LABELS, covTier } from '../../config/index.js';
+import GradeBreakdown from '../GradeBreakdown.jsx';
 
 export default function SchoolDetail({ school, onClose }) {
   if (!school) return null;
@@ -69,28 +70,7 @@ export default function SchoolDetail({ school, onClose }) {
           )}
         </div>
 
-        <div className="sd-grades" id="sd-grades" role="list">
-          {GRADES.map((grade, i) => {
-            const val = values[i];
-            const isNull = val == null;
-            const barWidth = isNull ? 0 : Math.max(0, (val - 60) / 40 * 100);
-            const barColor = isNull ? 'transparent' : TIER_COLORS[covTier(val)];
-            return (
-              <div className="sd-grade-row" key={grade} role="listitem">
-                <span className="sd-grade-lbl">{grade}</span>
-                <div className="sd-bar-wrap">
-                  <div
-                    className="sd-bar"
-                    style={{ width: `${barWidth}%`, background: barColor }}
-                  />
-                </div>
-                <span className="sd-grade-val" style={{ color: isNull ? 'var(--muted)' : TIER_COLORS[covTier(val)] }}>
-                  {isNull ? 'N/A' : `${val.toFixed(1)}%`}
-                </span>
-              </div>
-            );
-          })}
-        </div>
+        <GradeBreakdown values={values} id="sd-grades" />
 
         <div className="sd-footer">
           Coverage estimated via the imuGAP model.

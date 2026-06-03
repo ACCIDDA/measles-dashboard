@@ -57,16 +57,19 @@ test.describe('Unified map zoom transitions', () => {
     await page.reload();
     await page.waitForSelector('.county-path', { timeout: 15000 });
 
-    // First Escape — back to state zoom (URL = /state/nc).
+    // First Escape — back to state zoom (URL = /state/nc). The sidebar stays
+    // open here, now showing the state summary instead of a county (#50).
     await page.keyboard.press('Escape');
     await page.waitForURL('**/state/nc', { timeout: 5000 });
-    await expect(page.locator('#sidebar.open')).not.toBeVisible({ timeout: 3000 });
+    await expect(page.locator('#sb-county-label')).toHaveText('North Carolina');
+    await expect(page.locator('#sidebar.open')).toBeVisible({ timeout: 3000 });
 
-    // Second Escape — back to national zoom (URL = root).
+    // Second Escape — back to national zoom (URL = root). Sidebar is gone.
     await page.keyboard.press('Escape');
     await page.waitForFunction(() => /\/$/.test(window.location.pathname) || window.location.pathname.endsWith('/measles-dashboard/'), {}, { timeout: 5000 });
     await page.waitForSelector('path.state-path', { timeout: 15000 });
     await expect(page.locator('header')).toContainText('Click a state to explore');
+    await expect(page.locator('#sidebar.open')).not.toBeVisible({ timeout: 3000 });
   });
 
   test('coming_soon state (TX) shows the no-data toast and stays on national', async ({ page }) => {
