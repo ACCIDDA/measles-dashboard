@@ -18,14 +18,17 @@ export default function Sidebar({
 }) {
   const isCounty = !!county;
 
-  // County stats are computed over the county's schools (unchanged behavior).
-  const avgCoverage = schools.length > 0
-    ? schools.reduce((a, s) => a + s.coverage, 0) / schools.length
-    : 0;
+  // County coverage is the county's CSV row value (the model's node estimate, a
+  // median of the posterior) — the same number the map tooltip and the per-grade
+  // bars use. We deliberately do NOT re-average the schools here: an unweighted
+  // school mean disagrees with the model node value and is exactly the kind of
+  // client-side aggregation Carl flagged on #54 (means, unweighted). The
+  // consumer just displays the producer's number. (#50)
+  const countyCoverage = isCounty && countyData[county] ? countyData[county].mean : null;
   const pctBelow95 = schools.length > 0
     ? (schools.filter(s => s.coverage < 95).length / schools.length) * 100
     : 0;
-  const avgTier = covTier(avgCoverage).toLowerCase();
+  const covTierClass = countyCoverage != null ? covTier(countyCoverage).toLowerCase() : '';
 
   // Per-grade values for the breakdown panel: the county's CSV aggregate when a
   // county is focused, otherwise the state-wide row (#50). Both come straight
@@ -63,8 +66,8 @@ export default function Sidebar({
         {isCounty ? (
           <div className="sb-stats" role="region" aria-label="County statistics">
             <div className="sb-stat">
-              <div className={`sb-stat-val ${avgTier}`} id="sb-cov">
-                {schools.length > 0 ? `${avgCoverage.toFixed(1)}%` : '—'}
+              <div className={`sb-stat-val ${covTierClass}`} id="sb-cov">
+                {countyCoverage != null ? `${countyCoverage.toFixed(1)}%` : '—'}
               </div>
               <div className="sb-stat-lbl">Avg. Coverage</div>
             </div>

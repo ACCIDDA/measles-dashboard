@@ -35,10 +35,12 @@ describe('Sidebar', () => {
     expect(screen.getByText('Wake County')).toBeInTheDocument();
   });
 
-  it('displays avg coverage', () => {
-    render(<Sidebar {...defaultProps} />);
-    // (97 + 88) / 2 = 92.5
-    expect(screen.getByText('92.5%')).toBeInTheDocument();
+  it('displays county coverage from the CSV row, not a school average', () => {
+    // The CSV county value (95.5%) is the model node estimate; the unweighted
+    // mean of mockSchools would be 92.5%. We must show the former (#50).
+    render(<Sidebar {...defaultProps} countyData={{ 'Wake County': { mean: 95.5 } }} />);
+    expect(screen.getByText('95.5%')).toBeInTheDocument();
+    expect(screen.queryByText('92.5%')).not.toBeInTheDocument();
   });
 
   it('displays below 95% percentage', () => {
