@@ -20,12 +20,16 @@ states are added incrementally; the URL scheme is stable.
 | --- | --- |
 | `/data/states.csv` | one row per state (national summary) |
 | `/data/states/{state}.csv` | one row per county in that state |
+| `/data/all-schools.csv` | one row per school, every state (leading `state` column) |
 | `/data/states/{state}/schools.csv` | one row per school in that state |
 | `/data/states/{state}/counties/{county}.csv` | one row per school in that county |
 
-`{state}/schools.csv` and the per-`{county}` files carry the same school rows;
-the per-county files are a convenience split. The dashboard itself loads
-`{state}.csv` + `{state}/schools.csv`.
+`all-schools.csv`, `{state}/schools.csv`, and the per-`{county}` files carry the
+same school rows at decreasing scope; `all-schools.csv` adds a leading `state`
+column so the concatenated rows stay identifiable. The dashboard itself loads
+`{state}.csv` + `{state}/schools.csv`. The in-app download button hands back the
+school CSV for the current zoom (national → `all-schools.csv`, state →
+`{state}/schools.csv`, county → the per-county file).
 
 ## Slug conventions
 
@@ -101,6 +105,12 @@ Preview the first rows without saving:
 curl -s https://accidda.github.io/measles-dashboard/data/states/ca.csv | head
 ```
 
+Fetch every school nationwide in one file:
+
+```sh
+curl -O https://accidda.github.io/measles-dashboard/data/all-schools.csv
+```
+
 Load straight into pandas:
 
 ```python
@@ -108,6 +118,33 @@ import pandas as pd
 
 url = "https://accidda.github.io/measles-dashboard/data/states/ca/schools.csv"
 df = pd.read_csv(url)
+```
+
+The files double as a static data API: any tool that reads a CSV from a URL can
+pull them directly, no download step. With Apache Arrow:
+
+```python
+# Python — pyarrow streams the URL straight into an Arrow table
+import pyarrow.csv as pv
+from fsspec.implementations.http import HTTPFileSystem
+
+fs = HTTPFileSystem()
+with fs.open("https://accidda.github.io/measles-dashboard/data/all-schools.csv") as f:
+    table = pv.read_csv(f)
+```
+
+```r
+# R
+schools <- arrow::read_csv_arrow(
+  "https://accidda.github.io/measles-dashboard/data/all-schools.csv"
+)
+```
+
+```sql
+-- DuckDB
+SELECT county, coverage
+FROM 'https://accidda.github.io/measles-dashboard/data/all-schools.csv'
+WHERE state = 'ca';
 ```
 
 ## Versioning

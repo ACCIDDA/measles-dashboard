@@ -14,8 +14,6 @@ scripts/build-data/out/
 # scripts/derive-county-csvs.mjs / npm prebuild); not committed (#65).
 public/data/states/*/counties/
 
-# Download bundles, built at deploy time (scripts/build-data-zips.mjs); not
-# committed. Staging dir lives outside public/ so Vite never copies it.
-public/data/all-states.zip
-public/data/states/*-counties.zip
-.zip-staging/
+# National all-schools.csv, concatenated at build time from each state's
+# schools.csv (scripts/build-all-schools.mjs / npm prebuild); not committed (#75).
+public/data/all-schools.csv
