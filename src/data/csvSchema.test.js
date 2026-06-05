@@ -1,8 +1,10 @@
 import { describe, it, expect, beforeAll } from 'vitest';
-import { readFileSync, existsSync } from 'node:fs';
+import { readFileSync, existsSync, readdirSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { execFileSync } from 'node:child_process';
+import { csvParse } from 'd3-dsv';
 import { columnNames } from './schema.js';
+import { validateRows } from './validate.js';
 import { renderApiMd } from '../../scripts/gen-api-schema.mjs';
 
 // Contract test for the static dataset (#20 / #75). The loader
@@ -15,7 +17,20 @@ import { renderApiMd } from '../../scripts/gen-api-schema.mjs';
 
 const ROOT = resolve(__dirname, '../..');
 const DATA = resolve(ROOT, 'public', 'data');
-const READY_STATES = ['ca', 'nc'];
+
+// Auto-discover ready states (#82): any directory under public/data/states that
+// carries a schools.csv. Contributing a new state needs no edit here - its CSVs
+// are validated automatically. Mirrors scripts/build-all-schools.mjs.
+function discoverStates() {
+  const dir = resolve(DATA, 'states');
+  if (!existsSync(dir)) return [];
+  return readdirSync(dir, { withFileTypes: true })
+    .filter((d) => d.isDirectory())
+    .map((d) => d.name)
+    .filter((code) => existsSync(resolve(dir, code, 'schools.csv')))
+    .sort();
+}
+const READY_STATES = discoverStates();
 
 // all-schools.csv and the per-county files are generated at build time and not
 // committed (#65/#75), so regenerate them before asserting (mirrors `prebuild`).
@@ -95,5 +110,48 @@ describe('public/data CSV headers match the schema', () => {
         .filter((slug) => !existsSync(resolve(DATA, `states/${code}/counties/${slug}.csv`)));
       expect(missing, `${code}: counties with schools but no per-county file`).toEqual([]);
     }
+  });
+});
+
+describe('public/data CSV values conform to schema constraints (#82)', () => {
+  // Beyond headers, every cell must pass the types + value constraints declared
+  // in schema.js (coverage in [0,1], tier in {H,M,L}, FIPS format, no_data in
+  // {0,1}, ...). This is the gate that makes a federated state-data PR (#78)
+  // safe to ingest: a nonconforming contribution fails CI here. Blanks are
+  // allowed (validate.js treats empty cells as "not available").
+
+  // Concrete files to check, built at run time so the per-county and
+  // all-schools files regenerated in beforeAll are included.
+  const targets = () => {
+    const list = [];
+    const add = (shape, path) => existsSync(path) && list.push({ shape, path });
+    add('data/states.csv', resolve(DATA, 'states.csv'));
+    add('data/all-schools.csv', resolve(DATA, 'all-schools.csv'));
+    for (const code of READY_STATES) {
+      add('data/states/{state}.csv', resolve(DATA, 'states', `${code}.csv`));
+      add('data/states/{state}/schools.csv', resolve(DATA, 'states', code, 'schools.csv'));
+      const cdir = resolve(DATA, 'states', code, 'counties');
+      if (existsSync(cdir)) {
+        for (const f of readdirSync(cdir).filter((name) => name.endsWith('.csv'))) {
+          add('data/states/{state}/counties/{county}.csv', resolve(cdir, f));
+        }
+      }
+    }
+    return list;
+  };
+
+  it('discovers the published states', () => {
+    expect(READY_STATES).toEqual(expect.arrayContaining(['ca', 'nc']));
+  });
+
+  it('every published file passes type + constraint checks', () => {
+    const problems = [];
+    for (const { shape, path } of targets()) {
+      const errs = validateRows(shape, csvParse(readFileSync(path, 'utf8')));
+      if (errs.length) {
+        problems.push(`${path.slice(ROOT.length + 1)}:\n  ${errs.slice(0, 5).join('\n  ')}`);
+      }
+    }
+    expect(problems, `\n${problems.join('\n\n')}`).toEqual([]);
   });
 });
