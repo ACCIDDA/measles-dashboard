@@ -2,84 +2,85 @@ import { describe, it, expect, beforeAll } from 'vitest';
 import { readFileSync, existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { execFileSync } from 'node:child_process';
+import { columnNames } from './schema.js';
+import { renderApiMd } from '../../scripts/gen-api-schema.mjs';
 
-// Contract test for the #20 CSV bundle under public/data. The loader
-// (useUnifiedMapData) reads these by exact column name, so a producer change
+// Contract test for the static dataset (#20 / #75). The loader
+// (useUnifiedMapData) reads these CSVs by exact column name, and external
+// consumers read them against the published schema, so a producer change
 // (build_state.R / build_nc_from_estimates.R) that drops, renames, or reorders
-// a column must fail here rather than silently break the dashboard.
+// a column must fail here. Column expectations come from src/data/schema.js -
+// the single source of truth that also generates schema.json and the API.md
+// tables (#77).
 
-const DATA = resolve(__dirname, '../../public/data');
+const ROOT = resolve(__dirname, '../..');
+const DATA = resolve(ROOT, 'public', 'data');
 const READY_STATES = ['ca', 'nc'];
 
-// The per-county files are generated from schools.csv at build time (#65) and
-// not committed, so derive them before asserting on them (mirrors `prebuild`).
+// all-schools.csv and the per-county files are generated at build time and not
+// committed (#65/#75), so regenerate them before asserting (mirrors `prebuild`).
+// schema.json and API.md ARE committed, so they are checked as-is for drift.
 beforeAll(() => {
-  execFileSync('node', [resolve(__dirname, '../../scripts/derive-county-csvs.mjs')], {
-    stdio: 'ignore',
-  });
+  for (const s of ['derive-county-csvs.mjs', 'build-all-schools.mjs']) {
+    execFileSync('node', [resolve(ROOT, 'scripts', s)], { stdio: 'ignore' });
+  }
 });
-
-// Shared coverage block, in the order the producers emit it.
-const COVERAGE_BLOCK = [
-  'coverage', 'coverage_ci_low', 'coverage_ci_high',
-  'coverage_K', 'coverage_1', 'coverage_2', 'coverage_3', 'coverage_4', 'coverage_5',
-  'coverage_ci_low_K', 'coverage_ci_low_1', 'coverage_ci_low_2', 'coverage_ci_low_3', 'coverage_ci_low_4', 'coverage_ci_low_5',
-  'coverage_ci_high_K', 'coverage_ci_high_1', 'coverage_ci_high_2', 'coverage_ci_high_3', 'coverage_ci_high_4', 'coverage_ci_high_5',
-  'prob_below_95', 'tier',
-];
-
-const STATE_COLS = ['state', 'state_fips', 'state_name', 'n_schools', 'pct_schools_below_95', ...COVERAGE_BLOCK];
-const COUNTY_COLS = ['county', 'county_fips', 'n_schools', 'pct_schools_below_95', ...COVERAGE_BLOCK];
-// School files carry location (lon/lat) and a no_data flag (#60) before the
-// coverage block. The combined schools.csv also has a county column; per-county
-// files drop it (the directory identifies the county).
-const SCHOOLS_COLS = ['school_id', 'school_name', 'county', 'enrollment', 'lon', 'lat', 'no_data', ...COVERAGE_BLOCK];
-const PER_COUNTY_COLS = ['school_id', 'school_name', 'enrollment', 'lon', 'lat', 'no_data', ...COVERAGE_BLOCK];
 
 const header = (path) => readFileSync(path, 'utf8').split('\n', 1)[0].trim().split(',');
 
-describe('public/data CSV schema (#20 contract)', () => {
-  it('states.csv has the state-level columns in order', () => {
-    expect(header(resolve(DATA, 'states.csv'))).toEqual(STATE_COLS);
+describe('schema is the single source of truth (#77)', () => {
+  // schema.json is a generated artifact (gitignored), built from SCHEMA by
+  // build-schema-json.mjs; nothing to assert about a committed copy. The drift
+  // guard that matters is the docs, which ARE committed.
+  it('docs/API.md schema tables are in sync with schema.js (run gen-api-schema)', () => {
+    const md = readFileSync(resolve(ROOT, 'docs', 'API.md'), 'utf8');
+    expect(renderApiMd(md)).toBe(md);
+  });
+});
+
+describe('public/data CSV headers match the schema', () => {
+  it('states.csv', () => {
+    expect(header(resolve(DATA, 'states.csv'))).toEqual(columnNames('data/states.csv'));
+  });
+
+  it('all-schools.csv', () => {
+    expect(header(resolve(DATA, 'all-schools.csv'))).toEqual(columnNames('data/all-schools.csv'));
   });
 
   for (const code of READY_STATES) {
     describe(`state: ${code}`, () => {
-      it('county summary CSV has the county columns in order', () => {
-        expect(header(resolve(DATA, `states/${code}.csv`))).toEqual(COUNTY_COLS);
+      it('county summary CSV', () => {
+        expect(header(resolve(DATA, `states/${code}.csv`)))
+          .toEqual(columnNames('data/states/{state}.csv'));
       });
 
-      it('schools.csv (app loads this) has the school columns in order', () => {
-        expect(header(resolve(DATA, `states/${code}/schools.csv`))).toEqual(SCHOOLS_COLS);
+      it('schools.csv (app loads this)', () => {
+        expect(header(resolve(DATA, `states/${code}/schools.csv`)))
+          .toEqual(columnNames('data/states/{state}/schools.csv'));
       });
 
-      it('a per-county file has the per-county school columns in order', () => {
-        // pick the first county listed in the summary CSV
+      it('a per-county file', () => {
         const summary = readFileSync(resolve(DATA, `states/${code}.csv`), 'utf8').trim().split('\n');
         const firstCounty = summary[1].split(',')[0];
         const slug = firstCounty.toLowerCase().replace(/[^a-z0-9]+/g, '-');
         const file = resolve(DATA, `states/${code}/counties/${slug}.csv`);
         expect(existsSync(file)).toBe(true);
-        expect(header(file)).toEqual(PER_COUNTY_COLS);
+        expect(header(file)).toEqual(columnNames('data/states/{state}/counties/{county}.csv'));
       });
     });
   }
 
-  // Every county that actually has schools (per schools.csv) must have its own
-  // per-county file. A county may appear in the summary with zero schools when
-  // all its schools fell outside the model fit (an upstream coverage gap the
-  // producer warns about) — those legitimately have no per-county file.
+  // Every county that actually has schools must have its own per-county file.
+  // A county may appear in the summary with zero schools when all its schools
+  // fell outside the model fit (an upstream coverage gap), and those
+  // legitimately have no per-county file.
   it('every county with schools has a matching per-county file', () => {
+    const countyIdx = columnNames('data/states/{state}/schools.csv').indexOf('county');
     for (const code of READY_STATES) {
       const schools = readFileSync(resolve(DATA, `states/${code}/schools.csv`), 'utf8').trim().split('\n').slice(1);
-      const cols = SCHOOLS_COLS;
-      const countyIdx = cols.indexOf('county');
-      // school_name may contain commas; the county column is safer read from the
-      // first quoted-aware split is overkill here — names without commas dominate,
-      // and we only need the set of counties that have ≥1 school. Use a parser.
       const counties = new Set();
       for (const line of schools) {
-        // minimal CSV field reader honoring double-quotes
+        // minimal CSV field reader honoring double-quotes (school_name may have commas)
         const fields = []; let cur = '', q = false;
         for (const ch of line) {
           if (ch === '"') q = !q;
@@ -90,8 +91,8 @@ describe('public/data CSV schema (#20 contract)', () => {
         counties.add(fields[countyIdx]);
       }
       const missing = [...counties]
-        .map(name => name.toLowerCase().replace(/[^a-z0-9]+/g, '-'))
-        .filter(slug => !existsSync(resolve(DATA, `states/${code}/counties/${slug}.csv`)));
+        .map((name) => name.toLowerCase().replace(/[^a-z0-9]+/g, '-'))
+        .filter((slug) => !existsSync(resolve(DATA, `states/${code}/counties/${slug}.csv`)));
       expect(missing, `${code}: counties with schools but no per-county file`).toEqual([]);
     }
   });

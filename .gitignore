@@ -17,3 +17,8 @@ public/data/states/*/counties/
 # National all-schools.csv, concatenated at build time from each state's
 # schools.csv (scripts/build-all-schools.mjs / npm prebuild); not committed (#75).
 public/data/all-schools.csv
+
+# schema.json is generated from src/data/schema.js (the source of truth) by
+# scripts/build-schema-json.mjs / npm prebuild; not committed (#77). Review
+# schema.js, not the generated output.
+public/data/schema.json
