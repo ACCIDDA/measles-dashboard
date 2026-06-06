@@ -128,6 +128,65 @@ On failure, the E2E job uploads `playwright-report/` and `test-results/` as arti
 4. If you touched styling or layout, regenerate visual snapshots and commit them.
 5. Describe the change and call out anything CI can't catch (visual diffs, changes that need manual QA in the browser).
 
+## Contributing a state's data
+
+The dashboard is built so other organizations can contribute their own state's
+school-level MMR coverage data (#78). The work is decentralized (each org
+prepares their state) but the **format is centralized**: every state's CSVs must
+conform to one published schema, and a conformance check gates each contribution
+in CI.
+
+### The flow
+
+1. **Open a ["Contribute a state's data" issue](.github/ISSUE_TEMPLATE/contribute-state-data.yml)** — the front door, so we can coordinate on source and license.
+2. **Prepare conforming CSVs** for your state (see files below).
+3. **Open a PR** with those CSVs. CI runs `npm test`, which validates every file against the schema.
+4. **Conformance CI + a light review**, then merge. Once on `main`, the deploy publishes your state automatically.
+
+### The schema is the contract
+
+[`src/data/schema.js`](./src/data/schema.js) is the single source of truth for
+the columns, types, and value constraints of every file. It generates the
+machine-readable [`/data/schema.json`](https://accidda.github.io/measles-dashboard/data/schema.json)
+and the [`docs/API.md`](./docs/API.md) tables. Validate your data against it
+**before** opening the PR — this is the exact check CI runs:
+
+```sh
+npm run validate-data
+```
+
+It reports any header mismatch, out-of-range coverage (must be in `[0, 1]`),
+unknown `tier` (must be `H`/`M`/`L`), malformed FIPS, `no_data` outside `{0, 1}`,
+etc. **Blank cells are allowed** — they mean "not available" (e.g. NC has no
+per-grade or credible-interval values), not zero.
+
+### Files to commit
+
+For a state with code `<code>` (lowercase USPS, e.g. `ny`):
+
+| File | What |
+| --- | --- |
+| `public/data/states/<code>/schools.csv` | one row per school (the core data) |
+| `public/data/states/<code>.csv` | one row per county (summary) |
+| a new row in `public/data/states.csv` | the national-summary row for the state |
+| an entry in `STATES` in [`src/config/states.js`](./src/config/states.js) | display name + data-source attribution link |
+
+Then mark the state visible (this re-validates the data first, then flips
+`public/data/states.json` to `ready`):
+
+```sh
+npm run register-state -- <code>
+```
+
+### Do NOT commit generated artifacts
+
+These are rebuilt at build time (`npm run prebuild`) and are gitignored — leave
+them out of your PR:
+
+- `public/data/all-schools.csv` (national concatenation, #75)
+- `public/data/states/*/counties/` (per-county splits, #65)
+- `public/data/schema.json` (generated from `schema.js`, #77)
+
 ## Questions
 
 Open an issue or drop a comment on your PR.

@@ -1,0 +1,63 @@
+name: Contribute a state's data
+description: Propose adding a new state's school-level MMR coverage data to the dashboard (#78).
+title: "Add state data: <STATE>"
+labels: ["data-contribution"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for wanting to add a state! This is the **front door** for a federated
+        data contribution. Open this issue first so we can coordinate; the data itself
+        arrives as a follow-up pull request whose CSVs are validated against the
+        published schema automatically (see the "Contributing a state's data" section
+        in [CONTRIBUTING.md](../blob/dev/CONTRIBUTING.md)).
+  - type: input
+    id: org
+    attributes:
+      label: Organization / contact
+      description: Who is preparing this data, and how do we reach you?
+      placeholder: e.g. JHU IDD — Jane Doe (jane@example.edu)
+    validations:
+      required: true
+  - type: input
+    id: state
+    attributes:
+      label: State
+      description: Full name and two-letter USPS code.
+      placeholder: e.g. New York (ny)
+    validations:
+      required: true
+  - type: input
+    id: source
+    attributes:
+      label: Data source + license
+      description: Where does the underlying coverage data come from, and under what license / terms can it be republished?
+      placeholder: e.g. NY State DOH school immunization survey 2023-24, public domain
+    validations:
+      required: true
+  - type: dropdown
+    id: format
+    attributes:
+      label: What do you have?
+      description: The pipeline accepts any of these; each funnels to the same conforming CSV.
+      options:
+        - Raw counts (vaccinated / enrolled per school)
+        - Our own coverage estimates
+        - An imuGAP model fit
+        - Not sure yet
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: Anything else
+      description: Grade bands, known gaps (e.g. no per-grade breakdown), geocoding status, etc.
+    validations:
+      required: false
+  - type: checkboxes
+    id: ack
+    attributes:
+      label: Before the data PR
+      options:
+        - label: I understand the CSVs must conform to the published schema, and that `npm run validate-data` must pass before the PR can merge.
+          required: true
