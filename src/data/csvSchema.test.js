@@ -4,7 +4,7 @@ import { resolve } from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { csvParse } from 'd3-dsv';
 import { columnNames } from './schema.js';
-import { validateRows } from './validate.js';
+import { validateRows, checkTierConsistency } from './validate.js';
 import { renderApiMd } from '../../scripts/gen-api-schema.mjs';
 
 // Contract test for the static dataset (#20 / #75). The loader
@@ -153,5 +153,29 @@ describe('public/data CSV values conform to schema constraints (#82)', () => {
       }
     }
     expect(problems, `\n${problems.join('\n\n')}`).toEqual([]);
+  });
+});
+
+describe('tier is consistent with coverage (#82, pearsonca on #83)', () => {
+  // The marker is validated against the numbers, but tolerantly: coverage is
+  // published rounded to 4 decimals while the producer tiers from the unrounded
+  // value, so a value rounding to exactly a 0.90/0.95 boundary may legitimately
+  // carry either adjacent tier. Gross mislabels are still caught.
+  it('allows boundary rounding either way', () => {
+    expect(checkTierConsistency('0.95', 'M')).toBeNull(); // really 0.9499 -> M
+    expect(checkTierConsistency('0.95', 'H')).toBeNull();
+    expect(checkTierConsistency('0.90', 'L')).toBeNull();
+    expect(checkTierConsistency('0.90', 'M')).toBeNull();
+  });
+
+  it('flags a tier that is clearly wrong for the coverage', () => {
+    expect(checkTierConsistency('0.92', 'H')).toMatch(/inconsistent/);
+    expect(checkTierConsistency('0.80', 'M')).toMatch(/inconsistent/);
+    expect(checkTierConsistency('0.99', 'L')).toMatch(/inconsistent/);
+  });
+
+  it('skips rows missing either value', () => {
+    expect(checkTierConsistency('', 'H')).toBeNull();
+    expect(checkTierConsistency('0.5', '')).toBeNull();
   });
 });
