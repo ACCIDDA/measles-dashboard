@@ -16,11 +16,17 @@
 #   STUB=1                    join/format test on real inputs w/ placeholder coverage
 suppressMessages({library(imuGAP); library(data.table)})
 
+# Fit-independent helpers (slugify, title_case, no_data_flag, cov_block, ...) are
+# factored into R/producer-helpers.R so the producer-tests workflow can exercise
+# them with tiny fixtures. See scripts/build-data/R/producer-helpers.R.
+HELPERS <- Sys.getenv("PRODUCER_HELPERS",
+                      unset = "scripts/build-data/R/producer-helpers.R")
+source(HELPERS)
+
 GRADE_AGES <- 5:10
 GRADE_LAB  <- c("K", "1", "2", "3", "4", "5")   # age 5 -> K ... age 10 -> 5th
 THRESHOLD  <- 0.95
 
-slugify <- function(x) gsub("[^a-z0-9]+", "-", tolower(trimws(x)))
 # linkage_key and cleaned_data use DIFFERENT school_id systems, so we bridge
 # them on normalized school-name + county (96% match; ids don't correspond).
 norm_name <- function(x) {
@@ -28,11 +34,10 @@ norm_name <- function(x) {
   x <- gsub("\\b(school|schools)\\b", "", x); gsub("\\s+", " ", trimws(x))
 }
 nm_key <- function(name, county) paste(norm_name(name), norm_name(county), sep = "|")
+# covtier kept local (data.table fifelse) for the vectorized predict path; the
+# base-R variant in producer-helpers.R is behavior-equivalent and used by tests.
 covtier  <- function(v) fifelse(is.na(v), NA_character_,
                                 fifelse(v >= 0.95, "H", fifelse(v >= 0.90, "M", "L")))
-# Title-case county names so they match the us-atlas polygon names the dashboard
-# joins on (linkage_key ships them lowercased, e.g. "los angeles" -> "Los Angeles").
-title_case <- function(x) gsub("\\b([a-z])", "\\U\\1", tolower(x), perl = TRUE)
 
 #' Predict coverage at every location node, per grade and overall
 #'
@@ -144,7 +149,7 @@ assemble <- function(cov, cleaned, linkage, state_meta, county_fips_map = NULL) 
   base_sch <- base[level == "school"]
   fit_ids <- base_sch$loc_id                       # loc_ids the model actually produced
   schools <- base_sch[sch_key, on = "loc_id"]
-  schools[, no_data := !(loc_id %in% fit_ids)]     # in linkage but not in the fit
+  schools[, no_data := no_data_flag(loc_id, fit_ids)]  # in linkage but not in the fit (#56/#60)
 
   # Use reported kindergarten coverage where available, else the model value
   # (#58). Only for fit schools; no_data schools have no model coverage at all.
@@ -202,10 +207,7 @@ assemble <- function(cov, cleaned, linkage, state_meta, county_fips_map = NULL) 
 # --- 3. write the three CSV file types in schema column order ---
 write_csvs <- function(tab, out_dir, state_meta) {
   glab <- tab$grade_lab
-  cov_block <- c("coverage", "coverage_ci_low", "coverage_ci_high",
-                 paste0("coverage_", glab),
-                 paste0("coverage_ci_low_", glab), paste0("coverage_ci_high_", glab),
-                 "prob_below_95", "tier")
+  cov_block <- cov_block(glab)
   rnd <- function(d) { for (c in names(d)) if (is.numeric(d[[c]])) d[[c]] <- round(d[[c]], 4); d }
   slug <- state_meta$slug
   dir.create(file.path(out_dir, "states", slug, "counties"), recursive = TRUE, showWarnings = FALSE)

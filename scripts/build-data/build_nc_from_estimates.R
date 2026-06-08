@@ -15,30 +15,23 @@
 #   - county coverage taken directly from the geojson county polygons (not aggregated up)
 suppressMessages({library(data.table); library(jsonlite)})
 
+# Fit-independent helpers (slugify, covtier, point_in_ring, assign_county,
+# build_counties, cov_block, ...) are factored into R/producer-helpers.R so the
+# producer-tests workflow can exercise the point-in-polygon county assignment
+# with tiny synthetic polygons instead of the full NC geojson.
+HELPERS <- Sys.getenv("PRODUCER_HELPERS",
+                      unset = "scripts/build-data/R/producer-helpers.R")
+source(HELPERS)
+
 IN  <- Sys.getenv("NC_IN",  unset = "scripts/build-data/inputs/nc")
 OUT <- Sys.getenv("OUT_DIR", unset = "scripts/build-data/out")
 GRADE_AGES <- c("5_6","6_7","7_8","8_9","9_10","10_11")
 GRADE_LAB  <- c("K","1","2","3","4","5")
 names(GRADE_LAB) <- GRADE_AGES
 THRESHOLD <- 0.95
-slugify <- function(x) gsub("[^a-z0-9]+","-", tolower(trimws(x)))
-covtier <- function(v) ifelse(is.na(v),NA_character_, ifelse(v>=0.95,"H",ifelse(v>=0.90,"M","L")))
 # null-safe property accessor: geojson props may be JSON null -> R NULL, which
 # would silently drop a data.table column. Coerce missing to NA.
 nz <- function(v) if (is.null(v) || length(v) == 0) NA else v
-
-# ---- ray-casting point-in-polygon (works in the native planar CRS) ----
-# poly: list of rings, each an Nx2 matrix of [x,y]; point: c(x,y). Outer ring only.
-point_in_ring <- function(x, y, ring) {
-  n <- nrow(ring); inside <- FALSE; j <- n
-  for (i in seq_len(n)) {
-    xi <- ring[i,1]; yi <- ring[i,2]; xj <- ring[j,1]; yj <- ring[j,2]
-    if (((yi > y) != (yj > y)) &&
-        (x < (xj - xi) * (y - yi) / (yj - yi) + xi)) inside <- !inside
-    j <- i
-  }
-  inside
-}
 
 # ---- load + split geojson ----
 g <- fromJSON(file.path(IN, "locations.geojson"), simplifyVector = FALSE)
@@ -49,21 +42,7 @@ county_geo  <- feats[is_poly]
 message(sprintf("geojson: %d school points, %d county polygons", length(schools_geo), length(county_geo)))
 
 # county polygons -> bbox + outer ring (for PIP) and the coverage props
-counties <- lapply(county_geo, function(f) {
-  ring <- do.call(rbind, lapply(f$geometry$coordinates[[1]], function(p) c(p[[1]], p[[2]])))
-  list(name = f$properties$NAME, ring = ring,
-       xr = range(ring[,1]), yr = range(ring[,2]),
-       coverage = nz(f$properties$coverage), cov_low = nz(f$properties$cov_low),
-       cov_high = nz(f$properties$cov_high), herd = nz(f$properties$herd_immune_fraction))
-})
-
-assign_county <- function(x, y) {
-  for (c in counties) {
-    if (x < c$xr[1] || x > c$xr[2] || y < c$yr[1] || y > c$yr[2]) next
-    if (point_in_ring(x, y, c$ring)) return(c$name)
-  }
-  NA_character_
-}
+counties <- build_counties(county_geo, nz)
 
 # school points -> id, name, overall coverage, county (via PIP)
 sch <- rbindlist(lapply(schools_geo, function(f) {
@@ -72,7 +51,7 @@ sch <- rbindlist(lapply(schools_geo, function(f) {
              coverage = nz(f$properties$coverage), ci_low = nz(f$properties$cov_low),
              ci_high = nz(f$properties$cov_high), x = xy[[1]], y = xy[[2]])
 }))
-sch[, county_name := mapply(assign_county, x, y)]
+sch[, county_name := mapply(function(x, y) assign_county(x, y, counties), x, y)]
 message(sprintf("schools assigned to a county: %d/%d", sum(!is.na(sch$county_name)), nrow(sch)))
 
 # ---- per-grade wide from estimates.csv ----
@@ -125,10 +104,7 @@ for (g in GRADE_LAB) {
 state_dt[, prob_below_95 := NA_real_][, tier := covtier(coverage)]
 
 # ---- write #20 schema (shared column order with build_state.R) ----
-cov_block <- c("coverage","coverage_ci_low","coverage_ci_high",
-  paste0("coverage_",GRADE_LAB), paste0("coverage_ci_low_",GRADE_LAB),
-  paste0("coverage_ci_high_",GRADE_LAB),
-  "prob_below_95","tier")
+cov_block <- cov_block(unname(GRADE_LAB))
 rnd <- function(d){for(c in names(d)) if(is.numeric(d[[c]])) d[[c]]<-round(d[[c]],4); d}
 slug <- "nc"
 dir.create(file.path(OUT,"states",slug,"counties"), recursive=TRUE, showWarnings=FALSE)
