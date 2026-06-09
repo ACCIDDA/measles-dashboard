@@ -76,8 +76,10 @@ Adding a state is meant to be **data + config, not code**:
   labels, legend copy, marker shapes).
 
 A `public/data/states.json` manifest marks which states are `ready` vs.
-`coming_soon`; `public/data/national.json` carries the per-state coverage that
-shades the national map. The loader refuses to fetch a state that isn't `ready`.
+`coming_soon`; the per-state coverage that shades the national map is derived
+from `public/data/states.csv` (one row per state, keyed by FIPS) — the CSVs are
+the single tabular source (#68). The loader refuses to fetch a state that isn't
+`ready`.
 
 ## Data loading (`src/hooks/`)
 

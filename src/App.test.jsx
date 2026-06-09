@@ -98,7 +98,6 @@ function buildFetchMock() {
   return vi.fn((url) => {
     if (url.includes('counties-10m.json')) return Promise.resolve({ ok: true, json: () => Promise.resolve(mockUsAtlas()) });
     if (url.includes('countries-110m.json')) return Promise.resolve({ ok: true, json: () => Promise.resolve({ type: 'Topology', arcs: [], transform: { scale: [1, 1], translate: [0, 0] }, objects: { countries: { type: 'GeometryCollection', geometries: [] } } }) });
-    if (url.endsWith('data/national.json')) return Promise.resolve({ ok: true, json: () => Promise.resolve({ states: { '37': { coverage: 0.951, status: 'ready' } } }) });
     if (url.endsWith('data/states.json')) return Promise.resolve({ ok: true, json: () => Promise.resolve(mockManifest()) });
     if (url.endsWith('dashboard.json')) return Promise.resolve({ ok: true, json: () => Promise.resolve(mockDashboard()) });
     if (url.endsWith('school_coords.json')) return Promise.resolve({ ok: true, json: () => Promise.resolve({}) });
