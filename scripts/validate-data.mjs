@@ -14,7 +14,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { csvParse } from 'd3-dsv';
 import { columnNames } from '../src/data/schema.js';
-import { validateRows } from '../src/data/validate.js';
+import { validateRows, checkAggregateConsistency } from '../src/data/validate.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const DATA = join(ROOT, 'public', 'data');
@@ -97,6 +97,32 @@ function main() {
     process.exit(1);
   }
   console.log(`validate-data: all ${files.length} file(s) conform to the schema.`);
+
+  // Aggregate-consistency WARNINGS (#85): advisory only - they never change the
+  // exit code. A county's coverage should sit within its schools' range, and a
+  // state's within its counties', but pre-aggregated states (NC) legitimately
+  // violate this, so we surface the discrepancy for the human reviewer rather
+  // than gate on it. The conformance check above stays the only hard gate.
+  const statesRows = existsSync(join(DATA, 'states.csv'))
+    ? csvParse(readFileSync(join(DATA, 'states.csv'), 'utf8'))
+    : [];
+  const stateRowByCode = new Map(statesRows.map((r) => [r.state, r]));
+
+  const warnings = [];
+  for (const code of discoverStates()) {
+    const countyPath = join(STATES_DIR, `${code}.csv`);
+    const schoolsPath = join(STATES_DIR, code, 'schools.csv');
+    if (!existsSync(countyPath) || !existsSync(schoolsPath)) continue;
+    const counties = csvParse(readFileSync(countyPath, 'utf8'));
+    const schools = csvParse(readFileSync(schoolsPath, 'utf8'));
+    warnings.push(...checkAggregateConsistency(code, stateRowByCode.get(code), counties, schools));
+  }
+
+  if (warnings.length) {
+    console.log('');
+    console.log(`validate-data: ${warnings.length} aggregate-consistency warning(s) (advisory; not a failure):`);
+    for (const w of warnings) console.log(`WARN  ${w}`);
+  }
 }
 
 main();
