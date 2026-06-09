@@ -10,11 +10,6 @@ import { getStateConfig, normalizeFips } from '../config/states.js';
 const US_ATLAS_URL = 'https://cdn.jsdelivr.net/npm/us-atlas@3/counties-10m.json';
 const WORLD_ATLAS_URL = 'https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json';
 
-// The us-atlas state choropleth stub mapped by 2-digit FIPS. While the
-// USImmunityProfiles output is still pending (issue #14), this drives shading
-// on the national zoom; states missing from the stub render greyed.
-const NATIONAL_STUB_PATH = 'data/national.json';
-
 // Grade columns in the #20 CSV schema, K→5 order. The in-memory model the map +
 // sidebar consume expects 6 per-grade values per school.
 const GRADE_KEYS = ['K', '1', '2', '3', '4', '5'];
@@ -95,6 +90,23 @@ function buildStateSummaries(text) {
       nSchools: r.n_schools != null && r.n_schools !== '' ? Number(r.n_schools) : null,
       grades: GRADE_KEYS.map(g => toPct(r['coverage_' + g])),
     };
+  });
+  return out;
+}
+
+// National-zoom choropleth shading, derived from states.csv (one row per state)
+// keyed by 2-digit FIPS. Coverage stays a proportion in [0,1]; the national view
+// multiplies by 100. States absent from states.csv render greyed. This replaces
+// the former national.json stub so the CSVs are the single tabular source (#68);
+// if a broader all-states national dataset ever lands (#14) it would be its own
+// national.csv, read the same way.
+function buildCoverageByFips(text) {
+  const out = {};
+  if (!text) return out;
+  csvParse(text).forEach(r => {
+    const fips = normalizeFips(r.state_fips);
+    if (!fips || r.coverage == null || r.coverage === '') return;
+    out[fips] = { coverage: Number(r.coverage), status: 'ready' };
   });
   return out;
 }
@@ -194,10 +206,9 @@ export function useUnifiedMapData() {
 
     async function load() {
       try {
-        const [usRes, worldRes, natRes, manifestRes, statesCsvRes] = await Promise.all([
+        const [usRes, worldRes, manifestRes, statesCsvRes] = await Promise.all([
           fetch(US_ATLAS_URL),
           fetch(WORLD_ATLAS_URL),
-          fetch(withBase(NATIONAL_STUB_PATH)),
           fetch(withBase('data/states.json')),
           fetch(withBase('data/states.csv')),
         ]);
@@ -205,20 +216,16 @@ export function useUnifiedMapData() {
         if (!usRes.ok) throw new Error('Failed to load US map data');
 
         const us = await usRes.json();
-        // world-atlas + national stub + manifest + state summaries are optional;
-        // degrade rather than fail the whole app if any are missing.
+        // world-atlas + manifest + state summaries are optional; degrade rather
+        // than fail the whole app if any are missing.
         const world = worldRes.ok ? await worldRes.json() : null;
-        const national = natRes.ok ? await natRes.json() : { states: {} };
         const manifest = manifestRes.ok ? await manifestRes.json() : {};
-        const stateSummaryByCode = statesCsvRes.ok
-          ? buildStateSummaries(await statesCsvRes.text()) : {};
+        const statesCsvText = statesCsvRes.ok ? await statesCsvRes.text() : '';
+        const stateSummaryByCode = buildStateSummaries(statesCsvText);
 
         const stateFeatures = topojson.feature(us, us.objects.states).features;
-        const coverageByFips = {};
-        const rawCov = (national && national.states) || {};
-        Object.keys(rawCov).forEach(k => {
-          coverageByFips[normalizeFips(k)] = rawCov[k];
-        });
+        // National choropleth shading comes straight from states.csv now (#68).
+        const coverageByFips = buildCoverageByFips(statesCsvText);
 
         // world-atlas exposes `countries` (and `land`); we need countries so
         // we can filter the US out and leave Canada/Mexico/Caribbean as

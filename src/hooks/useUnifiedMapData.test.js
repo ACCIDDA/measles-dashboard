@@ -113,12 +113,6 @@ function buildFetchMock(captured, { dashboardOk = true } = {}) {
     if (url.includes('countries-110m.json')) {
       return Promise.resolve({ ok: true, json: () => Promise.resolve(mockWorldAtlas()) });
     }
-    if (url.endsWith('data/national.json')) {
-      return Promise.resolve({
-        ok: true,
-        json: () => Promise.resolve({ states: { '37': { coverage: 0.951, status: 'ready' } } }),
-      });
-    }
     if (url.endsWith('data/states.json')) {
       return Promise.resolve({ ok: true, json: () => Promise.resolve(mockManifest()) });
     }
@@ -158,12 +152,15 @@ describe('useUnifiedMapData', () => {
     expect(result.current.error).toBeNull();
     expect(captured.some(u => u.includes('counties-10m.json'))).toBe(true);
     expect(captured.some(u => u.includes('countries-110m.json'))).toBe(true);
-    expect(captured.some(u => u.endsWith('data/national.json'))).toBe(true);
+    expect(captured.some(u => u.endsWith('data/states.csv'))).toBe(true);
     expect(captured.some(u => u.endsWith('data/states.json'))).toBe(true);
+    // national.json is gone (#68): national shading derives from states.csv.
+    expect(captured.some(u => u.endsWith('data/national.json'))).toBe(false);
 
     expect(Array.isArray(result.current.stateFeatures)).toBe(true);
     expect(result.current.stateFeatures).toHaveLength(2);
-    expect(result.current.coverageByFips['37']).toEqual({ coverage: 0.951, status: 'ready' });
+    // coverageByFips now comes from states.csv (coverage 0.94 for NC/37).
+    expect(result.current.coverageByFips['37']).toEqual({ coverage: 0.94, status: 'ready' });
     expect(result.current.manifest.nc).toBeDefined();
   });
 
