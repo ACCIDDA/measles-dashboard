@@ -39,9 +39,9 @@ header{flex-shrink:0;height:var(--header-h);background:var(--surface);border-bot
 #hd-search-expanded{display:none;position:absolute;top:calc(var(--header-h)+4px);left:8px;right:8px;background:var(--surface);border:1px solid var(--border2);border-radius:10px;box-shadow:0 8px 28px rgba(0,0,0,.14);overflow:hidden;z-index:200}
 #hd-search-expanded.show{display:block}
 .hse-inner{padding:10px}
-#county-search-mobile{width:100%;padding:8px 10px 8px 32px;font-family:var(--sans);font-size:16px;background:var(--faint);border:1px solid var(--border2);border-radius:7px;color:var(--text);outline:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2378716c' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:9px center;background-size:14px;-webkit-appearance:none}
-#county-search-mobile:focus{border-color:var(--focus);box-shadow:0 0 0 3px #005fcc22}
-#county-search-mobile::placeholder{color:#a8a29e}
+#county-search-mobile,#state-search-mobile{width:100%;padding:8px 10px 8px 32px;font-family:var(--sans);font-size:16px;background:var(--faint);border:1px solid var(--border2);border-radius:7px;color:var(--text);outline:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2378716c' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:9px center;background-size:14px;-webkit-appearance:none}
+#county-search-mobile:focus,#state-search-mobile:focus{border-color:var(--focus);box-shadow:0 0 0 3px #005fcc22}
+#county-search-mobile::placeholder,#state-search-mobile::placeholder{color:#a8a29e}
 
 /* Shared dropdown items */
 .county-dd-list{max-height:220px;overflow-y:auto;border-top:1px solid var(--border)}
@@ -141,8 +141,10 @@ header{flex-shrink:0;height:var(--header-h);background:var(--surface);border-bot
 /* ── Sidebar / Bottom Sheet ── */
 #sidebar{width:300px;background:var(--surface);border-left:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;transform:translateX(100%);transition:transform .4s cubic-bezier(.32,.72,0,1);position:absolute;right:0;top:0;bottom:0;z-index:5}
 #sidebar.open{transform:translateX(0)}
-#sb-drag-handle{display:none;justify-content:center;padding:10px 0 6px;flex-shrink:0;cursor:grab;background:var(--surface);border-radius:14px 14px 0 0}
-#sb-drag-handle div{width:36px;height:4px;background:var(--border2);border-radius:2px}
+#sb-drag-handle{display:none;justify-content:center;align-items:center;padding:12px 0 8px;flex-shrink:0;cursor:grab;background:var(--surface);border-radius:14px 14px 0 0;touch-action:none;-webkit-user-select:none;user-select:none}
+#sb-drag-handle:active{cursor:grabbing}
+#sb-drag-handle:focus-visible{outline:2px solid var(--focus);outline-offset:-3px}
+#sb-drag-handle div{width:40px;height:5px;background:var(--border2);border-radius:3px}
 
 #sb-county{padding:12px 14px 10px;border-bottom:1px solid var(--border);flex-shrink:0}
 #sb-county-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
@@ -228,8 +230,9 @@ label[for="sb-search"]{display:block;font-size:10px;text-transform:uppercase;let
   #hd-search-btn{display:flex}
   .acc-logo-img{height:24px}
 
-  #sidebar{width:100%;position:fixed;bottom:0;left:0;right:0;top:auto;border-left:none;border-top:none;border-radius:16px 16px 0 0;box-shadow:0 -4px 32px rgba(0,0,0,.18);transform:translateY(100%);max-height:68vh;z-index:25;transition:transform .4s cubic-bezier(.32,.72,0,1)}
+  #sidebar{width:100%;position:fixed;bottom:0;left:0;right:0;top:auto;border-left:none;border-top:none;border-radius:16px 16px 0 0;box-shadow:0 -4px 32px rgba(0,0,0,.18);transform:translateY(100%);height:50vh;max-height:90vh;z-index:25;transition:transform .4s cubic-bezier(.32,.72,0,1),height .32s cubic-bezier(.32,.72,0,1)}
   #sidebar.open{transform:translateY(0)}
+  #sidebar.dragging{transition:none}
   #sb-drag-handle{display:flex}
   #sb-county{padding:8px 14px 10px}
   #sb-county-label{font-size:16px}

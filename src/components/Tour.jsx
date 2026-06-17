@@ -102,13 +102,23 @@ export default function Tour() {
   const tipH = 140;
   let tipStyle = {};
   if (cur.position === 'center') {
-    // Center over the target area
-    const cx = rect.left + rect.width / 2;
-    const cy = rect.top + rect.height / 2;
-    tipStyle = {
-      top: Math.min(cy - tipH / 2, window.innerHeight - tipH - 12) + 'px',
-      left: Math.max(12, cx - tipW / 2) + 'px',
-    };
+    if (isMobile()) {
+      // The bottom sheet covers the lower half of the screen on phones, so the
+      // geometric center of the map sits behind it. Park the tip in the strip
+      // of map still visible just below the floating controls instead.
+      tipStyle = {
+        top: rect.top + 64 + 'px',
+        left: Math.max(12, (window.innerWidth - tipW) / 2) + 'px',
+      };
+    } else {
+      // Center over the target area
+      const cx = rect.left + rect.width / 2;
+      const cy = rect.top + rect.height / 2;
+      tipStyle = {
+        top: Math.min(cy - tipH / 2, window.innerHeight - tipH - 12) + 'px',
+        left: Math.max(12, cx - tipW / 2) + 'px',
+      };
+    }
   } else {
     // Below the target, but clamp to viewport
     const top = rect.bottom + pad;

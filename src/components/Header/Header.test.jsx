@@ -77,12 +77,22 @@ describe('Header', () => {
     render(<Header {...defaultProps} view="national" />);
     expect(screen.queryByPlaceholderText('Search NC counties…')).not.toBeInTheDocument();
     expect(screen.queryByLabelText('Search NC counties')).not.toBeInTheDocument();
-    expect(document.getElementById('hd-search-btn')).toBeNull();
+  });
+
+  it('renders a mobile search trigger for states on the national view', () => {
+    render(<Header {...defaultProps} view="national" />);
+    // The icon button exists so phones can open the state search (the national
+    // map's small states are otherwise untappable).
+    const btn = document.getElementById('hd-search-btn');
+    expect(btn).not.toBeNull();
+    expect(btn).toHaveAttribute('aria-label', 'Search states');
   });
 
   it('renders StateSearch on the national view (not CountySearch)', () => {
     render(<Header {...defaultProps} view="national" />);
-    expect(screen.getByPlaceholderText('Search states…')).toBeInTheDocument();
+    // Two inputs render — a desktop inline field and a mobile panel — with CSS
+    // controlling which is visible at a given width.
+    expect(screen.getAllByPlaceholderText('Search states…').length).toBeGreaterThanOrEqual(1);
     expect(screen.queryByPlaceholderText(/Search NC counties/)).not.toBeInTheDocument();
   });
 

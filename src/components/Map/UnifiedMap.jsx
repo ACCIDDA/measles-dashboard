@@ -95,6 +95,29 @@ const NATIONAL_Y_OFFSET = 0;
 // chosen to match a typical desktop map area to minimize letterboxing.
 const VBW = 1000;
 const VBH = 540;
+// Fraction of the viewport the collapsed phone bottom sheet covers from the
+// bottom (keep in sync with SHEET_COLLAPSED in Sidebar.jsx). Used to frame the
+// focused state/county into the strip of map still visible above the sheet.
+const MOBILE_SHEET_FRACTION = 0.5;
+
+// Vertical translate (in viewBox units) that lands a projected feature center at
+// the vertical middle of the map area still visible above the collapsed bottom
+// sheet. The SVG uses `xMidYMid meet`, which centers the viewBox in the
+// container; on a tall phone that parks a feature framed at viewBox-center
+// behind the sheet. This backs the meet-centering out and re-targets the
+// visible strip, so the math holds across phone sizes instead of relying on a
+// hand-tuned constant. `winH` is the full viewport height (the sheet is fixed to
+// it); `clientH` is the map container height.
+function mobileFeatureTy(scale, projCenterY, clientH, winH, svgScale) {
+  const targetYInContainer = (clientH - MOBILE_SHEET_FRACTION * winH) / 2;
+  const svgOffsetY = (clientH - VBH * svgScale) / 2; // meet vertical centering
+  const desiredVbCenterY = (targetYInContainer - svgOffsetY) / svgScale;
+  return desiredVbCenterY - scale * projCenterY;
+}
+// FIPS codes of the contiguous 48 + DC. Used both to fit the base projection
+// and to compute the bbox the national view zooms into on phones.
+const CONTIG_FIPS = new Set(['01','04','05','06','08','09','10','11','12','13','16','17','18','19','20','21','22','23','24','25','26','27','28','29','30','31','32','33','34','35','36','37','38','39','40','41','42','44','45','46','47','48','49','50','51','53','54','55','56']);
+
 function zoomOutNational(proj, w, h) {
   const [tx, ty] = proj.translate();
   return proj.scale(proj.scale() * NATIONAL_FIT_SCALE)
@@ -331,7 +354,6 @@ export default function UnifiedMap({
     // states + DC fill the viewport prominently; AK/HI/PR/territories
     // project to their real geographic positions (outside the viewport
     // for AK/HI, partly visible for PR).
-    const CONTIG_FIPS = new Set(['01','04','05','06','08','09','10','11','12','13','16','17','18','19','20','21','22','23','24','25','26','27','28','29','30','31','32','33','34','35','36','37','38','39','40','41','42','44','45','46','47','48','49','50','51','53','54','55','56']);
     const fitFC = {
       type: 'FeatureCollection',
       features: stateFeatures.filter(f => CONTIG_FIPS.has(normalizeFips(f.id))),
@@ -861,8 +883,27 @@ export default function UnifiedMap({
     }
 
     if (zoomLevel === 'national') {
-      // Zoom out to identity (national choropleth + world background).
-      applyTransform(d3.zoomIdentity, 700);
+      // On phones the landscape viewBox letterboxes the country down small,
+      // surrounded by ocean and other continents. Zoom the contiguous-48 bbox
+      // to fill the viewport width so states are larger and more tappable. The
+      // AK/HI/PR insets live outside #map-g, so they stay pinned in their
+      // corner. Desktop keeps the identity (full-context) framing.
+      if (isMobile() && stateFeatures) {
+        const contig = {
+          type: 'FeatureCollection',
+          features: stateFeatures.filter(f => CONTIG_FIPS.has(normalizeFips(f.id))),
+        };
+        const [[x0, y0], [x1, y1]] = pathGen.bounds(contig);
+        // Fill the viewport width (the binding dimension on a portrait phone).
+        // The country overflows the nominal viewBox height, which is fine — the
+        // SVG doesn't clip — and centers vertically in the tall map area.
+        const scale = Math.min(2.2, (0.96 * nW) / (x1 - x0));
+        const tx = nW / 2 - scale * (x0 + x1) / 2;
+        const ty = nH / 2 - scale * (y0 + y1) / 2;
+        applyTransform(d3.zoomIdentity.translate(tx, ty).scale(scale), 700);
+      } else {
+        applyTransform(d3.zoomIdentity, 700);
+      }
       return;
     }
 
@@ -876,14 +917,18 @@ export default function UnifiedMap({
       if (!feat) return;
       const sidebarW = isMobile() ? 0 : 0; // sidebar is overlay at state zoom
       const visW = nW - sidebarW;
-      const visH = nH;
+      // On phones the state-summary bottom sheet covers the lower half, so frame
+      // the state into the top portion (matches the county-zoom reservation).
+      const visH = isMobile() ? nH * 0.52 : nH;
       const [[x0, y0], [x1, y1]] = pathGen.bounds(feat);
       // ~0.75 fills the viewport with the focused state while leaving some
       // surrounding context (neighbour states, Canada/Mexico) visible at
       // the edges.
       const scale = Math.min(12, 0.75 / Math.max((x1 - x0) / visW, (y1 - y0) / visH));
       const tx = visW / 2 - scale * (x0 + x1) / 2;
-      const ty = visH / 2 - scale * (y0 + y1) / 2;
+      const ty = isMobile()
+        ? mobileFeatureTy(scale, (y0 + y1) / 2, wrap.clientHeight || nH, window.innerHeight || nH, svgScale)
+        : visH / 2 - scale * (y0 + y1) / 2;
       applyTransform(d3.zoomIdentity.translate(tx, ty).scale(scale), 800);
       return;
     }
@@ -901,7 +946,9 @@ export default function UnifiedMap({
     // easy to click. Cap raised so small/urban counties also zoom hard.
     const scale = Math.min(30, 1.8 / Math.max((x1 - x0) / visW, (y1 - y0) / visH));
     const tx = visW / 2 - scale * (x0 + x1) / 2;
-    const ty = visH / 2 - scale * (y0 + y1) / 2;
+    const ty = isMobile()
+      ? mobileFeatureTy(scale, (y0 + y1) / 2, wrap.clientHeight || nH, window.innerHeight || nH, svgScale)
+      : visH / 2 - scale * (y0 + y1) / 2;
     applyTransform(d3.zoomIdentity.translate(tx, ty).scale(scale), 800);
   }, [zoomLevel, focusedStateCode, focusedCounty, stateData, stateFeatures]);
 
