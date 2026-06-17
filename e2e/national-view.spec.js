@@ -9,11 +9,15 @@ test.describe('National view (root path)', () => {
     expect(count).toBeGreaterThanOrEqual(51);
   });
 
-  test('county search input is not visible on the national view', async ({ page }) => {
+  test('national view searches states, not counties', async ({ page }) => {
     await page.goto('/');
     await page.waitForSelector('path.state-path', { timeout: 15000 });
+    // The county search is state-scoped and absent at national zoom.
     await expect(page.locator('#county-search-main')).toHaveCount(0);
-    await expect(page.locator('#hd-search-btn')).toHaveCount(0);
+    // A state search is offered instead: an inline field plus a mobile
+    // icon→panel so phones can reach the map's small, untappable states.
+    await expect(page.locator('#state-search-main')).toHaveCount(1);
+    await expect(page.locator('#hd-search-btn')).toHaveAttribute('aria-label', 'Search states');
   });
 
   test('header shows national landing copy', async ({ page }) => {
