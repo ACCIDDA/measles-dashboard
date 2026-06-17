@@ -915,10 +915,12 @@ export default function UnifiedMap({
       if (!fips || !stateFeatures) return;
       const feat = stateFeatures.find(f => normalizeFips(f.id) === fips);
       if (!feat) return;
-      const sidebarW = isMobile() ? 0 : 0; // sidebar is overlay at state zoom
+      // The state-summary panel overlays the right 300px at desktop state zoom,
+      // so reserve that width (as the county branch does) — otherwise the
+      // eastern edge of states like NC sits under the panel. On phones the
+      // panel is a bottom sheet, accounted for via visH instead.
+      const sidebarW = isMobile() ? 0 : 300 / svgScale;
       const visW = nW - sidebarW;
-      // On phones the state-summary bottom sheet covers the lower half, so frame
-      // the state into the top portion (matches the county-zoom reservation).
       const visH = isMobile() ? nH * 0.52 : nH;
       const [[x0, y0], [x1, y1]] = pathGen.bounds(feat);
       // ~0.75 fills the viewport with the focused state while leaving some
