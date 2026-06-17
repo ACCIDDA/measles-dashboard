@@ -1,7 +1,30 @@
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { covTier } from '../../config/index.js';
 import SchoolList from './SchoolList.jsx';
 import SchoolDetail from './SchoolDetail.jsx';
 import GradeBreakdown from '../GradeBreakdown.jsx';
+
+// Phone bottom-sheet snap points, as a fraction of the viewport height. The map
+// frames the focused state/county into the top ~52% (see UnifiedMap visH), so
+// COLLAPSED keeps the sheet below that band and the map stays visible. EXPANDED
+// hands the screen to the school list when the user drags up.
+const SHEET_COLLAPSED = 0.5;
+const SHEET_EXPANDED = 0.9;
+// Matches the CSS `@media (max-width:640px)` breakpoint and the isMobile checks
+// in UnifiedMap / Tour, so the draggable sheet and the map framing agree on what
+// counts as a phone.
+const MOBILE_MAX_WIDTH = 640;
+function isPhone() {
+  return typeof window !== 'undefined' && window.innerWidth <= MOBILE_MAX_WIDTH;
+}
+
+// Pointer events carry clientY directly; fall back to the touch point so the
+// handle still drags if a browser dispatches a touch event instead.
+function pointerY(e) {
+  if (e.clientY != null) return e.clientY;
+  const t = e.touches?.[0] || e.changedTouches?.[0];
+  return t ? t.clientY : 0;
+}
 
 export default function Sidebar({
   county,
@@ -17,6 +40,69 @@ export default function Sidebar({
   stateName = '',
 }) {
   const isCounty = !!county;
+
+  // ── Phone bottom-sheet drag ──
+  // On phones the sheet snaps between COLLAPSED (map visible) and EXPANDED
+  // (list-focused). Desktop is untouched: the sheet is a fixed-width side panel
+  // and `sheetStyle` stays empty. The handle is draggable; a tap toggles snaps.
+  const [isMobile, setIsMobile] = useState(isPhone);
+  const [snap, setSnap] = useState(SHEET_COLLAPSED);
+  const [dragVh, setDragVh] = useState(null); // live height while dragging
+  const dragRef = useRef(null);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return undefined;
+    const onResize = () => setIsMobile(isPhone());
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
+
+  // Re-collapse whenever the sheet's subject changes (new county / school
+  // cleared) so a fresh selection always reveals the map first.
+  useEffect(() => { setSnap(SHEET_COLLAPSED); }, [county]);
+
+  const onHandleDown = useCallback((e) => {
+    if (!isMobile) return;
+    const startVh = snap * window.innerHeight;
+    dragRef.current = { startY: pointerY(e), startVh, moved: false };
+    setDragVh(startVh);
+    e.currentTarget.setPointerCapture?.(e.pointerId);
+  }, [isMobile, snap]);
+
+  const onHandleMove = useCallback((e) => {
+    const d = dragRef.current;
+    if (!d) return;
+    const dy = pointerY(e) - d.startY; // up is negative
+    if (Math.abs(dy) > 4) d.moved = true;
+    const h = Math.max(
+      SHEET_COLLAPSED * 0.6 * window.innerHeight,
+      Math.min(SHEET_EXPANDED * window.innerHeight, d.startVh - dy),
+    );
+    setDragVh(h);
+  }, []);
+
+  const endDrag = useCallback((e) => {
+    const d = dragRef.current;
+    if (!d) return;
+    dragRef.current = null;
+    let target;
+    if (!d.moved) {
+      // Tap → toggle between the two snaps.
+      target = snap === SHEET_COLLAPSED ? SHEET_EXPANDED : SHEET_COLLAPSED;
+    } else {
+      const frac = (dragVh ?? d.startVh) / window.innerHeight;
+      const mid = (SHEET_COLLAPSED + SHEET_EXPANDED) / 2;
+      target = frac >= mid ? SHEET_EXPANDED : SHEET_COLLAPSED;
+    }
+    setSnap(target);
+    setDragVh(null);
+    e?.currentTarget?.releasePointerCapture?.(e.pointerId);
+  }, [snap, dragVh]);
+
+  const heightVh = dragVh != null ? `${dragVh}px` : `${snap * 100}vh`;
+  const sheetStyle = isMobile
+    ? { height: heightVh, maxHeight: `${SHEET_EXPANDED * 100}vh` }
+    : undefined;
 
   // County coverage is the county's CSV row value (the model's node estimate, a
   // median of the posterior) — the same number the map tooltip and the per-grade
@@ -46,11 +132,27 @@ export default function Sidebar({
   return (
     <div
       id="sidebar"
-      className={isOpen ? 'open' : ''}
+      className={`${isOpen ? 'open' : ''}${dragVh != null ? ' dragging' : ''}`}
       role="complementary"
       aria-label={isCounty ? 'County details' : 'State details'}
+      style={sheetStyle}
     >
-      <div id="sb-drag-handle" aria-hidden="true"><div></div></div>
+      <div
+        id="sb-drag-handle"
+        role="button"
+        tabIndex={isMobile ? 0 : -1}
+        aria-label={snap === SHEET_COLLAPSED ? 'Expand panel' : 'Collapse panel'}
+        onPointerDown={onHandleDown}
+        onPointerMove={onHandleMove}
+        onPointerUp={endDrag}
+        onPointerCancel={endDrag}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            setSnap(s => (s === SHEET_COLLAPSED ? SHEET_EXPANDED : SHEET_COLLAPSED));
+          }
+        }}
+      ><div></div></div>
 
       <div id="sb-county">
         <div id="sb-county-row">
