@@ -22,3 +22,7 @@ public/data/all-schools.csv
 # scripts/build-schema-json.mjs / npm prebuild; not committed (#77). Review
 # schema.js, not the generated output.
 public/data/schema.json
+
+# api.html is rendered from docs/API.md by scripts/gen-api-page.mjs /
+# npm prebuild; not committed (#93). Edit docs/API.md, not the generated page.
+public/api.html
