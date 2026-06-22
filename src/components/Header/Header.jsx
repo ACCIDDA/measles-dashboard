@@ -15,6 +15,7 @@ export default function Header({
   zoomLevel = 'national',
   stateCode = null,
   countySlug = null,
+  countyName = null,
   // 'national' shows the state search and national landing copy.
   // 'state' (default) keeps the existing county search + "Click a county to
   // explore" copy. The view toggle is national-irrelevant (no undervax
@@ -140,7 +141,7 @@ export default function Header({
         </div>
       )}
 
-      <DownloadButton zoomLevel={zoomLevel} stateCode={stateCode} countySlug={countySlug} />
+      <DownloadButton zoomLevel={zoomLevel} stateCode={stateCode} countySlug={countySlug} countyName={countyName} />
     </header>
   );
 }

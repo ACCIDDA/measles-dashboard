@@ -25,6 +25,25 @@ describe('DownloadButton (#21)', () => {
     expect(dl()).toBe('ca-los-angeles-schools.csv');
   });
 
+  it('county view labels the download with the canonical county name (#92)', () => {
+    render(
+      <DownloadButton
+        zoomLevel="county"
+        stateCode="ca"
+        countySlug="los-angeles"
+        countyName="Los Angeles County"
+      />
+    );
+    const label = screen.getByRole('link').getAttribute('title');
+    expect(label).toBe('Download Los Angeles County schools (CSV)');
+    expect(screen.getByRole('link').getAttribute('aria-label')).toBe(label);
+  });
+
+  it('county view falls back to the de-slugged name before the canonical name resolves (#92)', () => {
+    render(<DownloadButton zoomLevel="county" stateCode="ca" countySlug="los-angeles" />);
+    expect(screen.getByRole('link').getAttribute('title')).toBe('Download los angeles schools (CSV)');
+  });
+
   it('renders nothing when the resolution lacks the data it needs', () => {
     // state view with no state code, county view missing the county slug
     const { container: c1 } = render(<DownloadButton zoomLevel="state" />);
