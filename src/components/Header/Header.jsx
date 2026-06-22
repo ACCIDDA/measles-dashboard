@@ -142,6 +142,26 @@ export default function Header({
       )}
 
       <DownloadButton zoomLevel={zoomLevel} stateCode={stateCode} countySlug={countySlug} countyName={countyName} />
+
+      {/* Link to the rendered data-API reference (#93). The CSV URL scheme is
+          the API; this surfaces docs/API.md from the dashboard itself rather
+          than burying it in the repo README. */}
+      <a
+        id="api-docs"
+        className="hd-download"
+        href={`${import.meta.env.BASE_URL}api.html`}
+        target="_blank"
+        rel="noopener"
+        title="Data API reference — fetch the dataset as static CSVs"
+        aria-label="Data API reference (opens in a new tab)"
+      >
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+          <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+        </svg>
+        <span className="hd-download-label">API</span>
+      </a>
     </header>
   );
 }
