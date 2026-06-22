@@ -249,6 +249,7 @@ export default function App() {
         zoomLevel={route.zoomLevel}
         stateCode={route.stateCode || null}
         countySlug={route.countySlug || null}
+        countyName={focusedCounty}
       />
       <div id="body-row">
         <UnifiedMap

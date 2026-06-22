@@ -13,7 +13,7 @@ function withBase(path) {
   return `${base}${path}`;
 }
 
-export default function DownloadButton({ zoomLevel, stateCode, countySlug }) {
+export default function DownloadButton({ zoomLevel, stateCode, countySlug, countyName = null }) {
   let href = null;
   let filename = null;
   let label = null;
@@ -29,7 +29,9 @@ export default function DownloadButton({ zoomLevel, stateCode, countySlug }) {
   } else if (zoomLevel === 'county' && stateCode && countySlug) {
     href = withBase(`data/states/${stateCode}/counties/${countySlug}.csv`);
     filename = `${stateCode}-${countySlug}-schools.csv`;
-    label = `Download ${countySlug.replace(/-/g, ' ')} schools (CSV)`;
+    // Prefer the canonical display name ("Wake County"); fall back to the
+    // de-slugified slug until stateData lands and the name resolves.
+    label = `Download ${countyName || countySlug.replace(/-/g, ' ')} schools (CSV)`;
   }
 
   if (!href) return null;
