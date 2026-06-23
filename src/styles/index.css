@@ -218,6 +218,9 @@ label[for="sb-search"]{display:block;font-size:10px;text-transform:uppercase;let
 .tour-next:hover{background:var(--acc2)}
 #tour-help-btn{position:fixed;bottom:44px;right:12px;z-index:50;width:32px;height:32px;border-radius:50%;border:1px solid var(--border2);background:var(--surface);color:var(--muted);font-family:var(--sans);font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,.1);transition:all .15s}
 #tour-help-btn:hover{background:var(--faint);color:var(--text)}
+/* Hide the floating help button while a school's grade breakdown is open so it
+   doesn't cover the per-grade coverage values in the bottom-right (#96). */
+#app:has(#sb-school-detail.open) #tour-help-btn{display:none}
 
 /* ═══════════════ MOBILE ═══════════════ */
 @media (max-width:640px){
