@@ -25,6 +25,11 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build
+      # SPA deep-link fallback: GitHub Pages is a static host, so a direct hit on
+      # a client-side route (e.g. /state/nc) 404s with no matching file. Serving
+      # a copy of the built index.html as 404.html lets the app boot and its
+      # router (parseRoute) resolve the path. base is absolute, so assets load.
+      - run: cp dist/index.html dist/404.html
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
