@@ -19,7 +19,9 @@ function withBase(path) {
   return `${base}${path}`;
 }
 
-// TODO: Notes
+// Fetches state registry.json, which maps lowercase state code → base URL for 
+// that state's measles-XX data API. The registry is a single source of truth 
+// for the per-state data locations, so the app doesn't hardcode any state URLs.
 const registryResponse = await fetch(withBase(`data/stateRegistry.json`));
 const stateRegistry = await registryResponse.json();
 
