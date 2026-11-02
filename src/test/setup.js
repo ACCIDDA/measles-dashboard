@@ -1,5 +1,10 @@
 import '@testing-library/jest-dom';
 
+// jsdom does not implement the browser's object URL helpers. Provide the API
+// surface so download tests can spy on it and verify the generated download.
+if (!URL.createObjectURL) URL.createObjectURL = () => 'blob:jsdom';
+if (!URL.revokeObjectURL) URL.revokeObjectURL = () => {};
+
 // Configuration is fetched at module initialization in the browser. Vitest's
 // jsdom fetch cannot resolve the app's root-relative URLs, so provide the
 // same small registry/config contract used by the UI tests.
