@@ -45,10 +45,12 @@ describe('DownloadButton', () => {
   });
 
   it('renders nothing when the resolution lacks the data it needs', () => {
-    // state view with no state code, county view missing the county slug
-    const { container: c1 } = render(<DownloadButton zoomLevel="state" />);
-    expect(c1.firstChild).toBeNull();
-    const { container: c2 } = render(<DownloadButton zoomLevel="county" stateCode="ca" />);
-    expect(c2.firstChild).toBeNull();
+    const { container: stateContainer } = render(<DownloadButton zoomLevel="state" />);
+    expect(stateContainer.firstChild).toBeNull();
+
+    const { container: countyContainer } = render(
+      <DownloadButton zoomLevel="county" stateCode="ca" />
+    );
+    expect(countyContainer.firstChild).toBeNull();
   });
 });
