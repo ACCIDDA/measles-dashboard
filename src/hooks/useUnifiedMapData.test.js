@@ -116,15 +116,15 @@ function buildFetchMock(captured, { dashboardOk = true } = {}) {
     if (url.endsWith('data/states.json')) {
       return Promise.resolve({ ok: true, json: () => Promise.resolve(mockManifest()) });
     }
-    if (url.endsWith('data/states.csv')) {
+    if (url === 'https://cgbryan1.github.io/measles-NC/data/state.csv') {
       return Promise.resolve({ ok: true, text: () => Promise.resolve(mockStatesCsv()) });
     }
     // #20 per-state CSV bundle: county summary + combined schools file.
-    if (url.endsWith('data/states/nc.csv')) {
+    if (url.endsWith('data/counties.csv')) {
       if (!dashboardOk) return Promise.resolve({ ok: false, text: () => Promise.resolve('') });
       return Promise.resolve({ ok: true, text: () => Promise.resolve(mockCountyCsv()) });
     }
-    if (url.endsWith('data/states/nc/schools.csv')) {
+    if (url.endsWith('data/schools.csv')) {
       return Promise.resolve({ ok: true, text: () => Promise.resolve(mockSchoolCsv()) });
     }
     return Promise.resolve({ ok: false, text: () => Promise.resolve('') });
@@ -152,7 +152,7 @@ describe('useUnifiedMapData', () => {
     expect(result.current.error).toBeNull();
     expect(captured.some(u => u.includes('counties-10m.json'))).toBe(true);
     expect(captured.some(u => u.includes('countries-110m.json'))).toBe(true);
-    expect(captured.some(u => u.endsWith('data/states.csv'))).toBe(true);
+    expect(captured).toContain('https://cgbryan1.github.io/measles-NC/data/state.csv');
     expect(captured.some(u => u.endsWith('data/states.json'))).toBe(true);
     // national.json is gone (#68): national shading derives from states.csv.
     expect(captured.some(u => u.endsWith('data/national.json'))).toBe(false);
@@ -168,7 +168,7 @@ describe('useUnifiedMapData', () => {
     const { result } = renderHook(() => useUnifiedMapData());
     await waitFor(() => expect(result.current.loading).toBe(false));
 
-    expect(captured.some(u => u.endsWith('data/states.csv'))).toBe(true);
+    expect(captured).toContain('https://cgbryan1.github.io/measles-NC/data/state.csv');
     const nc = result.current.stateSummaryByCode.nc;
     expect(nc).toBeDefined();
     expect(nc.name).toBe('North Carolina');
@@ -191,12 +191,12 @@ describe('useUnifiedMapData', () => {
     await waitFor(() => expect(result.current.loading).toBe(false));
 
     // No per-state fetch yet.
-    expect(captured.some(u => u.endsWith('data/states/nc.csv'))).toBe(false);
+    expect(captured.some(u => u.endsWith('data/counties.csv'))).toBe(false);
 
     await act(async () => { await result.current.focusState('nc'); });
 
-    expect(captured.some(u => u.endsWith('data/states/nc.csv'))).toBe(true);
-    expect(captured.some(u => u.endsWith('data/states/nc/schools.csv'))).toBe(true);
+    expect(captured.some(u => u.endsWith('data/counties.csv'))).toBe(true);
+    expect(captured.some(u => u.endsWith('data/schools.csv'))).toBe(true);
 
     const nc = result.current.stateData.nc;
     expect(nc).toBeDefined();
@@ -270,11 +270,11 @@ describe('useUnifiedMapData', () => {
     await waitFor(() => expect(result.current.loading).toBe(false));
 
     await act(async () => { await result.current.focusState('nc'); });
-    const fetchesAfterFirst = captured.filter(u => u.endsWith('data/states/nc.csv')).length;
+    const fetchesAfterFirst = captured.filter(u => u.endsWith('data/counties.csv')).length;
     expect(fetchesAfterFirst).toBe(1);
 
     await act(async () => { await result.current.focusState('nc'); });
-    const fetchesAfterSecond = captured.filter(u => u.endsWith('data/states/nc.csv')).length;
+    const fetchesAfterSecond = captured.filter(u => u.endsWith('data/counties.csv')).length;
     expect(fetchesAfterSecond).toBe(1);
   });
 
@@ -319,7 +319,7 @@ describe('useUnifiedMapData', () => {
       const b = result.current.focusState('nc');
       await Promise.all([a, b]);
     });
-    const fetches = captured.filter(u => u.endsWith('data/states/nc.csv')).length;
+    const fetches = captured.filter(u => u.endsWith('data/counties.csv')).length;
     expect(fetches).toBe(1);
   });
 });
