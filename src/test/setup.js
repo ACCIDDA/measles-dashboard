@@ -18,7 +18,7 @@ const stateConfigs = {
 globalThis.fetch = async (input) => {
   const url = String(input);
   if (url.endsWith('data/stateRegistry.json')) {
-    return { ok: true, json: async () => ({ nc: 'https://cgbryan1.github.io/measles-NC/' }) };
+    return { ok: true, json: async () => ({ nc: 'https://nc.test/' }) };
   }
   if (url.endsWith('data/meta.json')) {
     return { ok: true, json: async () => stateConfigs.nc };
