@@ -46,10 +46,6 @@ site on GitHub Pages under the `/measles-dashboard/` base path.
 How it all fits together is documented in
 [`docs/ARCHITECTURE.md`](./docs/ARCHITECTURE.md).
 
-State repositories are registered centrally through GitHub Actions. See
-[`docs/REGISTRATION.md`](docs/REGISTRATION.md) for the submission format,
-public repository requirement, and administrator review process.
-
 ## Quick start
 
 Built and tested against **Node 20** (pinned in [`.nvmrc`](./.nvmrc); what CI
