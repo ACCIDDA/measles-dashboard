@@ -18,8 +18,8 @@ export function isStateCode(value) {
 }
 
 const DATASET_FILES = [
-  ['states.csv', 'states/{state}.csv', 'states/{state}/schools.csv'],
-  ['data/states.csv', 'data/states/{state}.csv', 'data/states/{state}/schools.csv'],
+  ['state.csv', 'counties.csv', 'schools.csv'],
+  ['data/state.csv', 'data/counties.csv', 'data/schools.csv'],
 ];
 
 export function parseRepositoryUrl(value) {
@@ -53,16 +53,15 @@ export function discoverDataset(treePaths, stateCode) {
     const files = candidate.map((path) => expand(path, stateCode));
     if (files.every((path) => normalized.has(path))) {
       return {
-        root: files[0].endsWith('states.csv') ? files[0].slice(0, -'states.csv'.length) : '',
+        root: files[0].slice(0, -'state.csv'.length),
         files,
-        shapes: ['data/states.csv', 'data/states/{state}.csv', 'data/states/{state}/schools.csv']
-          .map((shape) => shape.replace(/^data\//, '')),
+        shapes: ['data/states.csv', 'data/states/{state}.csv', 'data/states/{state}/schools.csv'],
       };
     }
   }
   throw new Error(
-    `could not find the required dataset files. Expected states.csv, states/${stateCode}.csv, `
-      + `and states/${stateCode}/schools.csv (optionally under data/).`,
+    `could not find the required dataset files. Expected state.csv, counties.csv, `
+      + `and schools.csv (optionally under data/).`,
   );
 }
 
