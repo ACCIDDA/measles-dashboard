@@ -229,7 +229,7 @@ export function useUnifiedMapData() {
               const prefix = dataPath(entry, 'data/');
               const response = await fetch(typeof entry === 'string'
                 ? `${apiBase}data/state.csv`
-                : `${apiBase}${prefix}states.csv`);
+                : `${apiBase}${prefix}state.csv`);
               if (!response.ok) return [];
               return csvParse(await response.text()).map(row => ({ ...row, state: row.state || code }));
             } catch {
@@ -333,10 +333,10 @@ export function useUnifiedMapData() {
         const [countyRes, schoolRes] = await Promise.all([
           fetch(typeof stateRegistry[code] === 'string'
             ? `${apiBase}data/counties.csv`
-            : `${apiBase}${prefix}states/${code}.csv`),
+            : `${apiBase}${prefix}counties.csv`),
           fetch(typeof stateRegistry[code] === 'string'
             ? `${apiBase}data/schools.csv`
-            : `${apiBase}${prefix}states/${code}/schools.csv`),
+            : `${apiBase}${prefix}schools.csv`),
         ]);
         if (!countyRes.ok) throw new Error(`Failed to load ${code.toUpperCase()} data`);
         const countyRows = csvParse(await countyRes.text());

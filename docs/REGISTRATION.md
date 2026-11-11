@@ -16,16 +16,17 @@ The repository must contain the prepared `measles-AA` bundle, either at the
 repository root or under `data/`:
 
 ```text
-states.csv
-states/<state-code>.csv
-states/<state-code>/schools.csv
+state.csv
+counties.csv
+schools.csv
 ```
 
 The three CSV headers must match the pinned dashboard schema exactly. The state
-row must contain the requested state code, matching state FIPS, state name, and
-at least one coverage measurement. County and school identity values must link
-correctly, and all values must pass the same constraints used by the dashboard
-CI. See [`measles-AA` validation guidance](https://github.com/ACCIDDA/measles-AA/blob/main/docs/VALIDATION.md).
+repository's `state.csv` must contain the requested state code, matching state
+FIPS, state name, and at least one coverage measurement. County and school
+identity values must link correctly, and all values must pass the same
+constraints used by the dashboard CI. See [`measles-AA` validation
+guidance](https://github.com/ACCIDDA/measles-AA/blob/main/docs/VALIDATION.md).
 
 The workflow reads repository metadata and raw Git blobs at the default branch.
 It rejects private repositories, records the immutable repository ID and source

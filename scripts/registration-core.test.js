@@ -28,20 +28,20 @@ describe('registration core', () => {
     expect(() => parseRepositoryUrl('https://github.com/a/b/../../secret')).toThrow(/exactly one/);
   });
   it('discovers the template dataset under data/', () => {
-    expect(discoverDataset(['data/states.csv', 'data/states/nc.csv', 'data/states/nc/schools.csv'], 'nc').root).toBe('data/');
-    expect(() => discoverDataset(['data/states.csv'], 'nc')).toThrow(/required dataset files/);
+    expect(discoverDataset(['data/state.csv', 'data/counties.csv', 'data/schools.csv'], 'nc').root).toBe('data/');
+    expect(() => discoverDataset(['data/state.csv'], 'nc')).toThrow(/required dataset files/);
   });
   it('validates a complete public/private-compatible bundle', () => {
     expect(validateDataset({
       stateCode: 'nc',
-      files: ['data/states.csv', 'data/states/nc.csv', 'data/states/nc/schools.csv'],
+      files: ['data/state.csv', 'data/counties.csv', 'data/schools.csv'],
       contents: valid,
     })).toMatchObject({ stateName: 'North Carolina' });
   });
   it('rejects a wrong state and duplicate registrations', () => {
     expect(() => validateDataset({
       stateCode: 'va',
-      files: ['states.csv', 'states/va.csv', 'states/va/schools.csv'],
+      files: ['state.csv', 'counties.csv', 'schools.csv'],
       contents: valid,
     })).toThrow(/state must be va/);
     expect(() => checkRegistryConflicts({
@@ -56,7 +56,7 @@ describe('registration core', () => {
     invalid[2] = invalid[2].replace(',0.95,', ',1.5,');
     expect(() => validateDataset({
       stateCode: 'nc',
-      files: ['states.csv', 'states/nc.csv', 'states/nc/schools.csv'],
+      files: ['state.csv', 'counties.csv', 'schools.csv'],
       contents: invalid,
     })).toThrow(/above maximum|in range/);
   });
