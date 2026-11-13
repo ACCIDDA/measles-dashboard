@@ -19,6 +19,12 @@ function withBase(path) {
   return `${base}${path}`;
 }
 
+// Fetches state registry.json, which maps lowercase state code → base URL for
+// that state's measles-XX data API. The registry is a single source of truth
+// for the per-state data locations, so the app doesn't hardcode any state URLs.
+const registryResponse = await fetch(withBase(`data/stateRegistry.json`));
+const stateRegistry = await registryResponse.json();
+
 // Coverage in the CSVs is a proportion in [0,1]; the existing UI works in
 // percent (covTier(95), `coverage < 95`, `.toFixed(1)+'%'`). Convert on load.
 function toPct(v) {
@@ -79,7 +85,7 @@ function buildTopology({ stateCode, us }) {
 function buildStateSummaries(text) {
   const out = {};
   if (!text) return out;
-  csvParse(text).forEach(r => {
+  (typeof text === 'string' ? csvParse(text) : text).forEach(r => {
     const code = String(r.state || '').toLowerCase();
     if (!code) return;
     out[code] = {
@@ -103,7 +109,7 @@ function buildStateSummaries(text) {
 function buildCoverageByFips(text) {
   const out = {};
   if (!text) return out;
-  csvParse(text).forEach(r => {
+  (typeof text === 'string' ? csvParse(text) : text).forEach(r => {
     const fips = normalizeFips(r.state_fips);
     if (!fips || r.coverage == null || r.coverage === '') return;
     out[fips] = { coverage: Number(r.coverage), status: 'ready' };
@@ -206,11 +212,19 @@ export function useUnifiedMapData() {
 
     async function load() {
       try {
-        const [usRes, worldRes, manifestRes, statesCsvRes] = await Promise.all([
+        const [usRes, worldRes, manifestRes, stateApiResults] = await Promise.all([
           fetch(US_ATLAS_URL),
           fetch(WORLD_ATLAS_URL),
           fetch(withBase('data/states.json')),
-          fetch(withBase('data/states.csv')),
+          Promise.all(Object.entries(stateRegistry).map(async ([code, apiBase]) => {
+            try {
+              const response = await fetch(`${apiBase}data/state.csv`);
+              if (!response.ok) return [];
+              return csvParse(await response.text()).map(row => ({ ...row, state: row.state || code }));
+            } catch {
+              return [];
+            }
+          })),
         ]);
 
         if (!usRes.ok) throw new Error('Failed to load US map data');
@@ -220,12 +234,12 @@ export function useUnifiedMapData() {
         // than fail the whole app if any are missing.
         const world = worldRes.ok ? await worldRes.json() : null;
         const manifest = manifestRes.ok ? await manifestRes.json() : {};
-        const statesCsvText = statesCsvRes.ok ? await statesCsvRes.text() : '';
-        const stateSummaryByCode = buildStateSummaries(statesCsvText);
+        const stateRows = stateApiResults.flat();
+        const stateSummaryByCode = buildStateSummaries(stateRows);
 
         const stateFeatures = topojson.feature(us, us.objects.states).features;
-        // National choropleth shading comes straight from states.csv now (#68).
-        const coverageByFips = buildCoverageByFips(statesCsvText);
+        // National choropleth shading comes from each registered state API.
+        const coverageByFips = buildCoverageByFips(stateRows);
 
         // world-atlas exposes `countries` (and `land`); we need countries so
         // we can filter the US out and leave Canada/Mexico/Caribbean as
@@ -303,8 +317,8 @@ export function useUnifiedMapData() {
         // file. (Per-county files under counties/ are the canonical download/API
         // unit (#21/#22); the app reads schools.csv to avoid an N+1 fan-out.)
         const [countyRes, schoolRes] = await Promise.all([
-          fetch(withBase(`data/states/${code}.csv`)),
-          fetch(withBase(`data/states/${code}/schools.csv`)),
+          fetch(`${stateRegistry[code]}data/counties.csv`),
+          fetch(`${stateRegistry[code]}data/schools.csv`),
         ]);
         if (!countyRes.ok) throw new Error(`Failed to load ${code.toUpperCase()} data`);
         const countyRows = csvParse(await countyRes.text());
