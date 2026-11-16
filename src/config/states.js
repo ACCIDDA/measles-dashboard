@@ -15,9 +15,17 @@ const base =
 const registryResponse = await fetch(`${base}data/stateRegistry.json`);
 const stateRegistry = await registryResponse.json();
 
+export function registryBaseUrl(entry) {
+  return typeof entry === 'string' ? entry : entry?.base_url;
+}
+
 export const STATES = Object.fromEntries(
   await Promise.all(
-    Object.entries(stateRegistry).map(async ([stateCode, baseUrl]) => {
+    Object.entries(stateRegistry).map(async ([stateCode, entry]) => {
+      const baseUrl = registryBaseUrl(entry);
+      if (!baseUrl) {
+        throw new Error(`State registry entry for ${stateCode} has no base_url.`);
+      }
       const response = await fetch(`${baseUrl}data/meta.json`);
       if (!response.ok) {
         throw new Error(
