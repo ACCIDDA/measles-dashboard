@@ -1,0 +1,156 @@
+name: Register State Repository
+
+on:
+  workflow_dispatch:
+    inputs:
+      state_code:
+        description: Official two-letter USPS state code (for example, NC)
+        required: true
+        type: choice
+        options:
+          - AL
+          - AK
+          - AZ
+          - AR
+          - CA
+          - CO
+          - CT
+          - DE
+          - DC
+          - FL
+          - GA
+          - HI
+          - ID
+          - IL
+          - IN
+          - IA
+          - KS
+          - KY
+          - LA
+          - ME
+          - MD
+          - MA
+          - MI
+          - MN
+          - MS
+          - MO
+          - MT
+          - NE
+          - NV
+          - NH
+          - NJ
+          - NM
+          - NY
+          - NC
+          - ND
+          - OH
+          - OK
+          - OR
+          - PA
+          - RI
+          - SC
+          - SD
+          - TN
+          - TX
+          - UT
+          - VT
+          - VA
+          - WA
+          - WV
+          - WI
+          - WY
+          - PR
+      base_url:
+        description: Public HTTPS deployment of the template containing data/state.csv, data/counties.csv, and data/schools.csv
+        required: false
+        type: string
+      repository_url:
+        description: HTTPS GitHub repository URL following the state data template
+        required: false
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: register-state-${{ inputs.state_code }}
+  cancel-in-progress: false
+
+jobs:
+  register:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - name: Validate source and prepare registration
+        id: validate
+        env:
+          STATE_CODE: ${{ inputs.state_code }}
+          BASE_URL: ${{ inputs.base_url }}
+          REPOSITORY_URL: ${{ inputs.repository_url }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node scripts/register-state-repository.mjs > registration.json
+      - name: Create registration branch and commit
+        id: commit
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          STATE_CODE: ${{ inputs.state_code }}
+          BASE_URL: ${{ inputs.base_url }}
+          REPOSITORY_URL: ${{ inputs.repository_url }}
+        run: |
+          set -euo pipefail
+          branch="register-${STATE_CODE,,}-${GITHUB_RUN_ID}"
+          git switch -c "$branch"
+          node -e "const fs=require('fs'); const r=JSON.parse(fs.readFileSync('registration.json')); fs.writeFileSync(r.registryPath, r.registry)"
+          node -e "const fs=require('fs'); const r=JSON.parse(fs.readFileSync('registration.json')); fs.writeFileSync(r.manifestPath, r.manifest)"
+          git config user.name "ACCIDDA registration bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/data/stateRegistry.json public/data/states.json
+          git commit -m "Register ${STATE_CODE^^} state repository"
+          git push --set-upstream origin "$branch"
+          echo "branch=$branch" >> "$GITHUB_OUTPUT"
+      - name: Open registration pull request
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          STATE_CODE: ${{ inputs.state_code }}
+          REPOSITORY_URL: ${{ inputs.repository_url }}
+        run: |
+          set -euo pipefail
+          node <<'NODE'
+          const fs = require('fs');
+          const r = JSON.parse(fs.readFileSync('registration.json'));
+          const state = process.env.STATE_CODE.toUpperCase();
+          const result = r.result;
+          const body = [
+            `## ${state} repository registration`,
+            '',
+            `- **Base URL:** ${r.baseUrl}`,
+            `- **State:** ${state}`,
+            `- **Rows:** ${result.rowCounts.states} state, ${result.rowCounts.counties} county, ${result.rowCounts.schools} school`,
+            '',
+            '### Automated validation',
+            '- Base URL is an absolute HTTPS endpoint.',
+            '- All required CSV files were fetched successfully.',
+            '- Schema, value, state identity, county linkage, and coverage checks passed.',
+            '',
+            '### Source repository',
+            r.repository
+              ? `- **Repository:** ${r.repository.html_url || r.repository_url}`
+              : r.repository_url
+                ? `- **Repository:** ${r.repository_url} (metadata unavailable)`
+                : '- Repository metadata was unavailable.',
+            r.sourceCommitSha ? `- **Source commit SHA:** \`${r.sourceCommitSha}\`` : '',
+            '',
+            '> An administrator must review and merge this PR. It is not automatically merged.',
+          ].join('\n');
+          const { execFileSync } = require('child_process');
+          execFileSync('gh', ['pr', 'create', '--base', 'dev', '--head', `register-${process.env.STATE_CODE.toLowerCase()}-${process.env.GITHUB_RUN_ID}`, '--title', `Register ${state} state repository`, '--body', body], { stdio: 'inherit' });
+          NODE
