@@ -12,7 +12,10 @@ describe('DownloadButton', () => {
   it('fetches every registered API for a national download', async () => {
     const user = userEvent.setup();
     vi.stubGlobal('fetch', vi.fn()
-      .mockResolvedValueOnce({ ok: true, json: async () => ({ nc: 'https://example.test/nc/', ca: 'https://example.test/ca/' }) })
+      .mockResolvedValueOnce({ ok: true, json: async () => ({
+        nc: { base_url: 'https://example.test/nc/' },
+        ca: { base_url: 'https://example.test/ca/' },
+      }) })
       .mockResolvedValue({ ok: true, text: async () => 'school_id,county\n1,Wake County\n' }));
     vi.spyOn(URL, 'createObjectURL').mockReturnValue('blob:test');
     vi.spyOn(URL, 'revokeObjectURL').mockImplementation(() => {});
@@ -28,7 +31,9 @@ describe('DownloadButton', () => {
   it('fetches the selected state API for a state download', async () => {
     const user = userEvent.setup();
     vi.stubGlobal('fetch', vi.fn()
-      .mockResolvedValueOnce({ ok: true, json: async () => ({ ca: 'https://example.test/ca/' }) })
+      .mockResolvedValueOnce({ ok: true, json: async () => ({
+        ca: { base_url: 'https://example.test/ca/' },
+      }) })
       .mockResolvedValueOnce({ ok: true, text: async () => 'school_id,county\n1,Los Angeles County\n' }));
     vi.spyOn(URL, 'createObjectURL').mockReturnValue('blob:test');
     vi.spyOn(URL, 'revokeObjectURL').mockImplementation(() => {});

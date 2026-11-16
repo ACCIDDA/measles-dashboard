@@ -38,7 +38,8 @@ async function createDownload({ zoomLevel, stateCode, countySlug, filename }) {
   // Fetch state files concurrently. Each result keeps its code alongside the
   // parsed rows so national output can identify each school's state.
   const stateRows = await Promise.all(codes.map(async (code) => {
-    const apiBase = registry[code];
+    const entry = registry[code];
+    const apiBase = typeof entry === 'string' ? entry : entry?.base_url;
     if (!apiBase) throw new Error(`No data API is registered for ${code}.`);
     const rows = await fetchCsv(new URL('data/schools.csv', apiBase));
     return { code, rows };
