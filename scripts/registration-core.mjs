@@ -22,6 +22,22 @@ const DATASET_FILES = [
   ['data/state.csv', 'data/counties.csv', 'data/schools.csv'],
 ];
 
+export function normalizeBaseUrl(value) {
+  let url;
+  try {
+    url = new URL(String(value).trim());
+  } catch {
+    throw new Error('base_url must be an absolute HTTPS URL.');
+  }
+  if (url.protocol !== 'https:' || url.username || url.password) {
+    throw new Error('base_url must be an absolute HTTPS URL without credentials.');
+  }
+  url.hash = '';
+  url.search = '';
+  if (!url.pathname.endsWith('/')) url.pathname += '/';
+  return url.href;
+}
+
 export function parseRepositoryUrl(value) {
   let url;
   try {
@@ -113,16 +129,35 @@ export function validateDataset({ stateCode, files, contents }) {
   };
 }
 
+export async function validateEndpoint({ stateCode, baseUrl, fetchImpl = fetch }) {
+  const normalizedBaseUrl = normalizeBaseUrl(baseUrl);
+  const paths = ['data/state.csv', 'data/counties.csv', 'data/schools.csv'];
+  const responses = await Promise.all(paths.map(async (path) => {
+    const url = new URL(path, normalizedBaseUrl).href;
+    let response;
+    try {
+      response = await fetchImpl(url);
+    } catch (error) {
+      throw new Error(`Unable to fetch ${url}: ${error.message || error}`);
+    }
+    if (!response.ok) {
+      throw new Error(`Unable to fetch ${url} (${response.status || 'unknown status'}).`);
+    }
+    return { path, text: await response.text() };
+  }));
+  const result = validateDataset({
+    stateCode,
+    files: paths,
+    contents: responses.map(({ text }) => text),
+  });
+  return { ...result, baseUrl: normalizedBaseUrl };
+}
+
 export function checkRegistryConflicts(registry, stateCode, repositoryId, repositoryUrl) {
   for (const [code, value] of Object.entries(registry)) {
     const entry = typeof value === 'string' ? { base_url: value } : value || {};
-    if (code === stateCode) {
-      if (String(entry.repository_id) === String(repositoryId)) {
-        throw new Error(`${stateCode.toUpperCase()} is already registered for this repository.`);
-      }
-      throw new Error(`${stateCode.toUpperCase()} is already registered for ${entry.repository_url || 'another repository'}.`);
-    }
-    if (String(entry.repository_id) === String(repositoryId)) {
+    if (code === stateCode) continue;
+    if (repositoryId && String(entry.repository_id) === String(repositoryId)) {
       throw new Error(`repository ${repositoryUrl} is already registered for state ${code.toUpperCase()}.`);
     }
   }
@@ -132,7 +167,7 @@ export function buildRegistryEntry({ stateCode, repositoryUrl, repositoryId, dat
   return {
     base_url: baseUrl,
     repository_url: repositoryUrl,
-    repository_id: String(repositoryId),
+    repository_id: repositoryId == null ? null : String(repositoryId),
     dataset_path: datasetPath,
     source_commit_sha: sourceCommitSha,
     dataset_version: sourceCommitSha,
