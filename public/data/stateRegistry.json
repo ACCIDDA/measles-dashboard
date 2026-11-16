@@ -1,3 +1,14 @@
 {
-
+  "nc": {
+    "base_url": "https://cgbryan1.github.io/measles-nc-f/",
+    "repository_url": "https://github.com/cgbryan1/measles-nc-f",
+    "repository_id": "1459281276",
+    "dataset_path": "data/",
+    "source_commit_sha": "83f54c977cf8e6dd5995f36d7dc210b7f912ec61",
+    "dataset_version": "83f54c977cf8e6dd5995f36d7dc210b7f912ec61",
+    "reporting_period": null,
+    "fips": "37",
+    "state_name": "North Carolina",
+    "status": "ready"
+  }
 }
