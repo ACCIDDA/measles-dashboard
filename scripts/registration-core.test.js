@@ -4,7 +4,9 @@ import { describe, expect, it } from 'vitest';
 import {
   checkRegistryConflicts,
   discoverDataset,
+  normalizeBaseUrl,
   parseRepositoryUrl,
+  validateEndpoint,
   validateDataset,
 } from './registration-core.mjs';
 
@@ -27,6 +29,11 @@ describe('registration core', () => {
     expect(() => parseRepositoryUrl('https://example.com/data')).toThrow(/github.com/);
     expect(() => parseRepositoryUrl('https://github.com/a/b/../../secret')).toThrow(/exactly one/);
   });
+  it('normalizes and validates public endpoint URLs', () => {
+    expect(normalizeBaseUrl('https://example.org/measles/nc')).toBe('https://example.org/measles/nc/');
+    expect(() => normalizeBaseUrl('http://example.org/data')).toThrow(/HTTPS/);
+    expect(() => normalizeBaseUrl('https://user:pass@example.org/data')).toThrow(/credentials/);
+  });
   it('discovers the template dataset under data/', () => {
     expect(discoverDataset(['data/state.csv', 'data/counties.csv', 'data/schools.csv'], 'nc').root).toBe('data/');
     expect(() => discoverDataset(['data/state.csv'], 'nc')).toThrow(/required dataset files/);
@@ -38,7 +45,41 @@ describe('registration core', () => {
       contents: valid,
     })).toMatchObject({ stateName: 'North Carolina' });
   });
-  it('rejects a wrong state and duplicate registrations', () => {
+  it('validates datasets fetched from an endpoint without repository metadata', async () => {
+    const calls = [];
+    const files = {
+      'data/state.csv': valid[0].split('\n').slice(0, -1).join('\n'),
+      'data/counties.csv': valid[1].split('\n').slice(0, -1).join('\n'),
+      'data/schools.csv': valid[2].split('\n').slice(0, -1).join('\n'),
+    };
+    const result = await validateEndpoint({
+      stateCode: 'nc',
+      baseUrl: 'https://example.org/measles/nc',
+      fetchImpl: async (url) => {
+        calls.push(url);
+        const path = new URL(url).pathname.replace('/measles/nc/', '');
+        return { ok: true, text: async () => files[path] };
+      },
+    });
+    expect(result).toMatchObject({ stateName: 'North Carolina', baseUrl: 'https://example.org/measles/nc/' });
+    expect(calls).toEqual([
+      'https://example.org/measles/nc/data/state.csv',
+      'https://example.org/measles/nc/data/counties.csv',
+      'https://example.org/measles/nc/data/schools.csv',
+    ]);
+  });
+  it('reports an unavailable endpoint file', async () => {
+    await expect(validateEndpoint({
+      stateCode: 'nc',
+      baseUrl: 'https://example.org/measles/nc/',
+      fetchImpl: async (url) => ({
+        ok: !url.endsWith('schools.csv'),
+        status: 404,
+        text: async () => '',
+      }),
+    })).rejects.toThrow(/schools\.csv/);
+  });
+  it('rejects a wrong state and duplicate registrations across states', () => {
     expect(() => validateDataset({
       stateCode: 'va',
       files: ['state.csv', 'counties.csv', 'schools.csv'],
@@ -46,10 +87,10 @@ describe('registration core', () => {
     })).toThrow(/state must be va/);
     expect(() => checkRegistryConflicts({
       nc: { repository_id: '123', repository_url: 'https://github.com/a/nc' },
-    }, 'nc', '456', 'https://github.com/a/other')).toThrow(/already registered/);
+    }, 'va', '123', 'https://github.com/a/nc')).toThrow(/already registered/);
     expect(() => checkRegistryConflicts({
       nc: { repository_id: '123', repository_url: 'https://github.com/a/nc' },
-    }, 'va', '123', 'https://github.com/a/nc')).toThrow(/already registered/);
+    }, 'nc', '456', 'https://github.com/a/other')).not.toThrow();
   });
   it('rejects invalid dataset values', () => {
     const invalid = [...valid];

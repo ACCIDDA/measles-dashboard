@@ -1,41 +1,60 @@
 # Registering a state repository
 
-ACCIDA state repositories are registered from the central dashboard repository.
-State repositories must be public. State teams do not need to add a workflow,
-secret, app credential, or private key to their repository.
+State repositories are registered from the ACCIDDA central dashboard
+repository. Providers must supply both a source repository and a publicly
+accessible HTTPS endpoint, or a source repository whose public GitHub Pages
+endpoint can be derived. The source repository may be public or private. A
+private repository must include a public endpoint.
+
+The template repository is there to help produce the expected files and
+host them. Providers must follow the template's repository structure, file
+names, schema, and deployment layout.
 
 ## State-team submission
 
-1. Open the central ACCIDA measles dashboard and select **Actions**.
-2. Select **Register State Repository**, then **Run workflow**.
-3. Enter the official two-letter USPS code (for example, `NC`) and the
-   repository's HTTPS URL.
-4. Wait for the workflow to validate the repository and open a pull request.
+1. Open the central ACCIDDA measles dashboard and select **Actions**.
+2. Select **Register State Data Endpoint**, then **Run workflow**.
+3. Select the official two-letter USPS state code.
+4. Enter the public HTTPS base URL for the template deployment, if one is
+   available.
+5. Enter the GitHub repository URL containing the template-based source data,
+   if one is available. At least one of the endpoint URL or repository URL is
+   required.
+6. Wait for the workflow to validate the endpoint and open a pull request.
 
-The repository must contain the prepared `measles-AA` bundle, either at the
-repository root or under `data/`:
+For a base URL of `https://example.org/measles/nc/`, the endpoint must expose:
 
 ```text
-state.csv
-counties.csv
-schools.csv
+https://example.org/measles/nc/data/state.csv
+https://example.org/measles/nc/data/counties.csv
+https://example.org/measles/nc/data/schools.csv
 ```
 
-The three CSV headers must match the pinned dashboard schema exactly. The state
-repository's `state.csv` must contain the requested state code, matching state
-FIPS, state name, and at least one coverage measurement. County and school
-identity values must link correctly, and all values must pass the same
-constraints used by the dashboard CI. See [`measles-AA` validation
+The three CSV headers must match the pinned dashboard schema exactly. The
+`state.csv` file must contain the requested state code, matching state FIPS,
+state name, and at least one coverage measurement. County and school identity
+values must link correctly, and all values must pass the same constraints used
+by the dashboard CI. See [`measles-AA` validation
 guidance](https://github.com/ACCIDDA/measles-AA/blob/main/docs/VALIDATION.md).
 
-The workflow reads repository metadata and raw Git blobs at the default branch.
-It rejects private repositories, records the immutable repository ID and source
-commit SHA, and never copies the dataset into the dashboard repository.
+You can check the endpoint before submitting it in a browser, or with:
 
-Registration validation does not execute code from a source repository. It only
-reads public repository metadata, the Git tree, and the three expected CSV
-blobs. If the repository is private or inaccessible, make it public and rerun
-the workflow.
+```bash
+curl -fL https://example.org/measles/nc/data/state.csv
+curl -fL https://example.org/measles/nc/data/counties.csv
+curl -fL https://example.org/measles/nc/data/schools.csv
+```
+
+The workflow fetches those three URLs and validates that the deployment follows
+the template's schema, values, state identity, county linkage, school linkage,
+and coverage requirements. It does not execute code from the provider's source.
+The repository, when supplied, must follow the template, but it does not need
+to be public. A public repository can be submitted without `base_url`; the
+workflow will validate its conventional GitHub Pages URL. A private repository
+must be submitted with a public `base_url`, because its endpoint cannot be
+derived or inspected through GitHub.
+Because the dashboard fetches the endpoint from a browser, the endpoint must
+also allow cross-origin requests from the dashboard site.
 
 ## Administrator review
 

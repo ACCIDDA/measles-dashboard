@@ -6,10 +6,67 @@ on:
       state_code:
         description: Official two-letter USPS state code (for example, NC)
         required: true
+        type: choice
+        options:
+          - AL
+          - AK
+          - AZ
+          - AR
+          - CA
+          - CO
+          - CT
+          - DE
+          - DC
+          - FL
+          - GA
+          - HI
+          - ID
+          - IL
+          - IN
+          - IA
+          - KS
+          - KY
+          - LA
+          - ME
+          - MD
+          - MA
+          - MI
+          - MN
+          - MS
+          - MO
+          - MT
+          - NE
+          - NV
+          - NH
+          - NJ
+          - NM
+          - NY
+          - NC
+          - ND
+          - OH
+          - OK
+          - OR
+          - PA
+          - RI
+          - SC
+          - SD
+          - TN
+          - TX
+          - UT
+          - VT
+          - VA
+          - WA
+          - WV
+          - WI
+          - WY
+          - PR
+      base_url:
+        description: Public HTTPS deployment of the template containing data/state.csv, data/counties.csv, and data/schools.csv
+        required: false
         type: string
       repository_url:
-        description: HTTPS URL of the state GitHub repository
-        required: true
+        description: HTTPS GitHub repository URL following the state data template
+        required: false
         type: string
 
 permissions:
@@ -37,6 +94,7 @@ jobs:
         id: validate
         env:
           STATE_CODE: ${{ inputs.state_code }}
+          BASE_URL: ${{ inputs.base_url }}
           REPOSITORY_URL: ${{ inputs.repository_url }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: node scripts/register-state-repository.mjs > registration.json
@@ -45,6 +103,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           STATE_CODE: ${{ inputs.state_code }}
+          BASE_URL: ${{ inputs.base_url }}
           REPOSITORY_URL: ${{ inputs.repository_url }}
         run: |
           set -euo pipefail
@@ -52,7 +111,7 @@ jobs:
           git switch -c "$branch"
           node -e "const fs=require('fs'); const r=JSON.parse(fs.readFileSync('registration.json')); fs.writeFileSync(r.registryPath, r.registry)"
           node -e "const fs=require('fs'); const r=JSON.parse(fs.readFileSync('registration.json')); fs.writeFileSync(r.manifestPath, r.manifest)"
-          git config user.name "ACCIDA registration bot"
+          git config user.name "ACCIDDA registration bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add public/data/stateRegistry.json public/data/states.json
           git commit -m "Register ${STATE_CODE^^} state repository"
@@ -73,20 +132,23 @@ jobs:
           const body = [
             `## ${state} repository registration`,
             '',
-            `- **Repository:** ${r.repository.html_url}`,
-            `- **State:** ${state}`,
-            `- **GitHub repository ID:** ${r.repository.id}`,
-            `- **Dataset location:** \`${r.dataset.root || '.'}\``,
-            `- **Source commit SHA:** \`${r.sourceCommitSha}\``,
-            `- **Rows:** ${result.rowCounts.states} state, ${result.rowCounts.counties} county, ${result.rowCounts.schools} school`,
             `- **Base URL:** ${r.baseUrl}`,
+            `- **State:** ${state}`,
+            `- **Rows:** ${result.rowCounts.states} state, ${result.rowCounts.counties} county, ${result.rowCounts.schools} school`,
             '',
             '### Automated validation',
-            '- Repository URL is a canonical HTTPS GitHub URL.',
-            '- Repository metadata and immutable repository ID were retrieved.',
-            '- All required ACCIDA CSV files and headers were found.',
+            '- Base URL is an absolute HTTPS endpoint.',
+            '- All required CSV files were fetched successfully.',
             '- Schema, value, state identity, county linkage, and coverage checks passed.',
             '- SHA-256 fingerprints recorded for all three CSVs; live endpoint CI must match these reviewed contents.',
+            '',
+            '### Source repository',
+            r.repository
+              ? `- **Repository:** ${r.repository.html_url || r.repository_url}`
+              : r.repository_url
+                ? `- **Repository:** ${r.repository_url} (metadata unavailable)`
+                : '- Repository metadata was unavailable.',
+            r.sourceCommitSha ? `- **Source commit SHA:** \`${r.sourceCommitSha}\`` : '',
             '',
             '> An administrator must review and merge this PR. It is not automatically merged.',
           ].join('\n');

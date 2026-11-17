@@ -17,6 +17,10 @@ const base =
 const registryResponse = await fetch(`${base}data/stateRegistry.json`);
 const stateRegistry = await registryResponse.json();
 
+export function registryBaseUrl(entry) {
+  return typeof entry === 'string' ? entry : entry?.base_url;
+}
+
 export const STATES = Object.fromEntries(
   await Promise.all(
     Object.entries(stateRegistry).map(async ([stateCode, baseUrl]) => {

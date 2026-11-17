@@ -22,6 +22,22 @@ const DATASET_FILES = [
   ['data/state.csv', 'data/counties.csv', 'data/schools.csv'],
 ];
 
+export function normalizeBaseUrl(value) {
+  let url;
+  try {
+    url = new URL(String(value).trim());
+  } catch {
+    throw new Error('base_url must be an absolute HTTPS URL.');
+  }
+  if (url.protocol !== 'https:' || url.username || url.password) {
+    throw new Error('base_url must be an absolute HTTPS URL without credentials.');
+  }
+  url.hash = '';
+  url.search = '';
+  if (!url.pathname.endsWith('/')) url.pathname += '/';
+  return url.href;
+}
+
 export function parseRepositoryUrl(value) {
   let url;
   try {
@@ -189,7 +205,7 @@ export function buildRegistryEntry({ stateCode, repositoryUrl, repositoryId, dat
   return {
     base_url: baseUrl,
     repository_url: repositoryUrl,
-    repository_id: String(repositoryId),
+    repository_id: repositoryId == null ? null : String(repositoryId),
     dataset_path: datasetPath,
     source_commit_sha: sourceCommitSha,
     dataset_version: sourceCommitSha,

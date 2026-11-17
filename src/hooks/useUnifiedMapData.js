@@ -3,7 +3,7 @@ import * as topojson from 'topojson-client';
 import { csvParse } from 'd3-dsv';
 import { dataUrl } from '../data/registry.js';
 import { covTier } from '../config/index.js';
-import { getStateConfig, normalizeFips } from '../config/states.js';
+import { getStateConfig, normalizeFips, registryBaseUrl } from '../config/states.js';
 
 // CDN URLs for shared topology data. us-atlas drives the US states + counties;
 // world-atlas provides surrounding countries (Canada, Mexico, Caribbean) to
@@ -217,7 +217,7 @@ export function useUnifiedMapData() {
           fetch(US_ATLAS_URL),
           fetch(WORLD_ATLAS_URL),
           fetch(withBase('data/states.json')),
-          Promise.all(Object.entries(stateRegistry).map(async ([code, apiBase]) => {
+          Promise.all(Object.entries(stateRegistry).map(async ([code, entry]) => {
             try {
               const response = await fetch(dataUrl(apiBase, 'state.csv'));
               if (!response.ok) return [];
@@ -317,6 +317,8 @@ export function useUnifiedMapData() {
         // #20 CSV bundle: the county summary + the combined per-state schools
         // file. (Per-county files under counties/ are the canonical download/API
         // unit (#21/#22); the app reads schools.csv to avoid an N+1 fan-out.)
+        const apiBase = registryBaseUrl(stateRegistry[code]);
+        if (!apiBase) throw new Error(`State registry entry for ${code} has no base_url.`);
         const [countyRes, schoolRes] = await Promise.all([
           fetch(dataUrl(stateRegistry[code], 'counties.csv')),
           fetch(dataUrl(stateRegistry[code], 'schools.csv')),
