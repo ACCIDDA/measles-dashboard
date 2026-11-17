@@ -20,21 +20,19 @@ Bayesian model; school and county geography come from public sources.
 
 ## Data
 
-All coverage data is published as static CSV files at predictable URLs, so the
-files that drive the dashboard double as a downloadable, no-auth API:
+Each state’s data lives in its own public `measles-AA` repository (where AA is the corresponding 
+state code). A state repository supplies `state.csv`, `counties.csv`, and `schools.csv` at its root
+or under `data/`; these files must match the dashboard’s validated schema.
+The dashboard reads data from the registered state repository’s public data
+endpoint when that state is selected.
 
-```
-/data/states.csv                               one row per state
-/data/states/<state>.csv                       one row per county
-/data/states/<state>/counties/<county>.csv     one row per school
-```
-
-Each file carries the same coverage columns at every level: overall coverage
-with 95% credible intervals, a per-grade (K–5) breakdown, and a coverage tier.
-
-The CSVs are generated from model output by the scripts in `scripts/build-data/`
-and regenerated when the model updates, not on every deploy. The full URL scheme
-and column reference, with `curl` examples, are in [`docs/API.md`](docs/API.md).
+To add a state, a contributor runs the **Register State Repository** GitHub
+Action with the state code and repository URL. The workflow validates the
+repository and opens a pull request to update the central registry and mark the
+state ready. An administrator then reviews and merges that pull request; the data
+itself stays in the state repository. See
+[`docs/REGISTRATION.md`](docs/REGISTRATION.md) for the submission requirements
+and review steps.
 
 ## Tech
 
