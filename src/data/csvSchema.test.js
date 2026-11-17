@@ -71,7 +71,11 @@ function renderApiMd(text) {
 // schema.json and API.md ARE committed, so they are checked as-is for drift.
 beforeAll(() => {
   for (const s of ['derive-county-csvs.mjs', 'build-all-schools.mjs']) {
-    execFileSync('node', [resolve(ROOT, 'scripts', s)], { stdio: 'ignore' });
+    const script = resolve(ROOT, 'scripts', s);
+    // These derived-data builders are optional in source-only checkouts.
+    // Validate generated files when the build tooling is present, while still
+    // running the schema contract checks in a checkout without those scripts.
+    if (existsSync(script)) execFileSync('node', [script], { stdio: 'ignore' });
   }
 });
 
