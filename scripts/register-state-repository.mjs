@@ -3,16 +3,16 @@ import { readFileSync } from 'node:fs';
 import {
   buildRegistryEntry,
   checkRegistryConflicts,
-  discoverDataset,
   isStateCode,
   parseRepositoryUrl,
   registryJson,
-  validateDataset,
+  validateEndpoint,
 } from './registration-core.mjs';
 
 const token = process.env.GITHUB_TOKEN;
 const centralRepository = process.env.GITHUB_REPOSITORY;
 const stateCode = (process.env.STATE_CODE || '').trim().toLowerCase();
+const baseUrlInput = (process.env.BASE_URL || '').trim();
 const repositoryInput = (process.env.REPOSITORY_URL || '').trim();
 
 function fail(message) {
@@ -21,8 +21,8 @@ function fail(message) {
 }
 
 if (!isStateCode(stateCode)) fail('state_code must be a recognized two-letter USPS code.');
-if (!token) fail('no GitHub token is available.');
 if (!centralRepository?.includes('/')) fail('GITHUB_REPOSITORY is not set.');
+if (!baseUrlInput && !repositoryInput) fail('at least one of base_url or repository_url is required.');
 
 const source = (() => {
   try {
@@ -31,6 +31,7 @@ const source = (() => {
     fail(error.message);
   }
 })();
+if (source && !token) fail('no GitHub token is available for repository provenance.');
 const api = 'https://api.github.com';
 const headers = {
   Accept: 'application/vnd.github+json',
@@ -51,39 +52,41 @@ async function request(path, options = {}) {
 }
 
 async function main() {
-  const repository = await request(`/repos/${encodeURIComponent(source.owner)}/${encodeURIComponent(source.repo)}`);
-  if (repository.private) {
-    throw new Error('the source repository must be public; private repositories are not supported.');
+  let repository = null;
+  let sourceCommitSha = null;
+  let baseUrl = baseUrlInput;
+  if (source) {
+    try {
+      repository = await request(`/repos/${encodeURIComponent(source.owner)}/${encodeURIComponent(source.repo)}`);
+      if (repository.private && !baseUrl) {
+        throw new Error('a public base_url is required when the source repository is private.');
+      }
+      const branch = await request(`/repos/${source.owner}/${source.repo}/branches/${encodeURIComponent(repository.default_branch)}`);
+      sourceCommitSha = branch.commit.sha;
+      if (!baseUrl) {
+        baseUrl = `https://${source.owner}.github.io/${source.repo}/`;
+      }
+    } catch (error) {
+      if (!baseUrl) throw error;
+      console.warn(`register-state-repository: repository metadata unavailable; endpoint validation will continue: ${error.message}`);
+    }
   }
-  const branch = await request(`/repos/${source.owner}/${source.repo}/branches/${encodeURIComponent(repository.default_branch)}`);
-  const sourceCommitSha = branch.commit.sha;
-  const tree = await request(`/repos/${source.owner}/${source.repo}/git/trees/${sourceCommitSha}?recursive=1`);
-  if (tree.truncated) throw new Error('repository tree is too large to inspect safely; contact an administrator.');
-  const dataset = discoverDataset(
-    tree.tree.filter((item) => item.type === 'blob').map((item) => item.path),
-    stateCode,
-  );
-  const blobs = await Promise.all(dataset.files.map(async (path) => {
-    const item = tree.tree.find((entry) => entry.path === path);
-    const blob = await request(`/repos/${source.owner}/${source.repo}/git/blobs/${item.sha}`);
-    return Buffer.from(blob.content, 'base64').toString('utf8');
-  }));
-  const result = validateDataset({ stateCode, files: dataset.files, contents: blobs });
+  if (!baseUrl) fail('a public base_url is required when no repository endpoint can be derived.');
+  const result = await validateEndpoint({ stateCode, baseUrl });
   const centralRegistryPath = 'public/data/stateRegistry.json';
   const registry = JSON.parse(readFileSync(centralRegistryPath, 'utf8'));
   const manifestPath = 'public/data/states.json';
   const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
-  checkRegistryConflicts(registry, stateCode, repository.id, source.canonicalUrl);
-  const homepage = `https://${source.owner}.github.io/${source.repo}/`;
+  checkRegistryConflicts(registry, stateCode, repository?.id, source?.canonicalUrl);
   registry[stateCode] = buildRegistryEntry({
     stateCode,
-    repositoryUrl: source.canonicalUrl,
-    repositoryId: repository.id,
-    datasetPath: dataset.root || '.',
+    repositoryUrl: source?.canonicalUrl || null,
+    repositoryId: repository?.id || null,
+    datasetPath: null,
     sourceCommitSha,
     stateName: result.stateName,
     reportingPeriod: result.reportingPeriod,
-    baseUrl: homepage,
+    baseUrl: result.baseUrl,
   });
   manifest[stateCode] = {
     ...(manifest[stateCode] || {}),
@@ -93,14 +96,14 @@ async function main() {
   };
   process.stdout.write(JSON.stringify({
     repository,
+    repository_url: source?.canonicalUrl || null,
     sourceCommitSha,
-    dataset,
     result,
     registry: registryJson(registry),
     registryPath: centralRegistryPath,
     manifest: `${JSON.stringify(manifest, null, 2)}\n`,
     manifestPath,
-    baseUrl: homepage,
+    baseUrl: result.baseUrl,
   }));
 }
 
