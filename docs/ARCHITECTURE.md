@@ -67,35 +67,25 @@ the topology at load time.
 
 ## Configuration (`src/config/`)
 
-Adding a state is meant to be **data + config, not code**:
+Adding a state is meant to be creating and registering a state-specific repository, **not contributing code to this repository**:
 
-- `src/config/states.js`: per-state metadata (display name, `dataDir`, FIPS,
-  data-source attribution) plus the FIPS <-> USPS lookups the national view uses
-  to route a clicked state to `/state/<code>`.
+- `src/config/states.js`: requests the per-state metadata from registered state repository 
+  (display name, `dataDir`, FIPS, data-source attribution) plus the FIPS <-> USPS lookups the 
+  national view uses to route a clicked state to `/state/<code>`.
 - `src/config/index.js`: the visual contract (tier thresholds/colors, grade
   labels, legend copy, marker shapes).
 
-A `public/data/states.json` manifest marks which states are `ready` vs.
-`coming_soon`; the per-state coverage that shades the national map is derived
-from `public/data/states.csv` (one row per state, keyed by FIPS) — the CSVs are
-the single tabular source (#68). The loader refuses to fetch a state that isn't
-`ready`.
+A `public/data/states.json` manifest marks which states are `ready` vs. `coming_soon`; all state 
+data comes from it's registered `measles-XX` API (one state per repository, registered using the 
+Register state repository action) (#100). The loader refuses to fetch a state that isn't `ready`.
 
 ## Data loading (`src/hooks/`)
 
 `useUnifiedMapData.js` is the single data orchestrator. At mount it loads the
-shared topology + manifests once, then **lazy-loads a state's data on demand**
-via `focusState(code)`, caching per state so re-focusing is free. It returns the
+shared topology + manifests once, then **lazy-loads a state's data on demand from that state's repository** via `focusState(code)`, caching per state so re-focusing is free. It returns the
 shared base data plus a `stateData` map the map/sidebar render from. Supporting
 hooks: `useStateManifest` (the ready/coming-soon manifest), `useGeolocation` /
 `useStateGeolocation` (locate the visitor).
-
-> **In flux:** the per-state data source is being migrated from authored
-> `dashboard.json` files to a static CSV bundle generated from the imuGAP model
-> output. See [#20](https://github.com/ACCIDDA/measles-dashboard/issues/20) for
-> the CSV schema, the producer scripts, and the loader rewrite. This document
-> will absorb the producer/CSV details once that lands; until then #20 is the
-> source of truth for the data pipeline.
 
 ## Styling
 
