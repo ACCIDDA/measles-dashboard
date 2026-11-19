@@ -66,4 +66,4 @@ Full command list and the contributor workflow are in
 
 See [`CONTRIBUTING.md`](./CONTRIBUTING.md). In short: `nvm use` (Node 20),
 `npm install`, and the pre-commit hook runs lint + tests. Adding a new state
-needs data and a config entry, not code changes.
+needs a data API and registration, not code changes.

@@ -24,7 +24,7 @@ describe("DownloadButton", () => {
         })
         .mockResolvedValue({
           ok: true,
-          text: async () => "school_id,county\n1,Wake County\n",
+          text: async () => "school_id,school_name,county\n1,School,Wake County\n",
         }),
     );
     vi.spyOn(URL, "createObjectURL").mockReturnValue("blob:test");
@@ -58,10 +58,12 @@ describe("DownloadButton", () => {
         })
         .mockResolvedValueOnce({
           ok: true,
-          text: async () => "school_id,county\n1,Los Angeles County\n",
+          text: async () => "school_id,school_name,county,enrollment\n1,=1+1,Los Angeles County,-3\n",
         }),
     );
-    vi.spyOn(URL, "createObjectURL").mockReturnValue("blob:test");
+    const createObjectURL = vi
+      .spyOn(URL, "createObjectURL")
+      .mockReturnValue("blob:test");
     vi.spyOn(URL, "revokeObjectURL").mockImplementation(() => {});
     vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => {});
 
@@ -72,21 +74,102 @@ describe("DownloadButton", () => {
     expect(fetch).toHaveBeenCalledWith(
       new URL("data/schools.csv", "https://example.test/ca/"),
     );
+    const exportedCsv = await createObjectURL.mock.calls[0][0].text();
+    expect(exportedCsv).toContain("'=1+1");
+    expect(exportedCsv).toContain(",-3");
   });
 
-  it("supports county downloads and labels them with the county name", () => {
+  it("accepts CSV without a text MIME type when its schema is valid", async () => {
+    const user = userEvent.setup();
+    vi.stubGlobal(
+      "fetch",
+      vi
+        .fn()
+        .mockResolvedValueOnce({
+          ok: true,
+          json: async () => ({ ca: { base_url: "https://example.test/ca/" } }),
+        })
+        .mockResolvedValueOnce({
+          ok: true,
+          headers: { get: () => "application/octet-stream" },
+          text: async () => "school_id,school_name,county\n1,School,County\n",
+        }),
+    );
+    vi.spyOn(URL, "createObjectURL").mockReturnValue("blob:test");
+    vi.spyOn(URL, "revokeObjectURL").mockImplementation(() => {});
+    vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => {});
+
+    render(<DownloadButton zoomLevel="state" stateCode="ca" />);
+    await user.click(screen.getByRole("button", { name: "Download CA schools (CSV)" }));
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+  });
+
+  it("shows and announces an error when the response is not a schools CSV", async () => {
+    const user = userEvent.setup();
+    vi.stubGlobal(
+      "fetch",
+      vi
+        .fn()
+        .mockResolvedValueOnce({
+          ok: true,
+          json: async () => ({ ca: { base_url: "https://example.test/ca/" } }),
+        })
+        .mockResolvedValueOnce({
+          ok: true,
+          headers: { get: () => "text/html" },
+          text: async () => "<html><body>Unavailable</body></html>",
+        }),
+    );
+
+    render(<DownloadButton zoomLevel="state" stateCode="ca" />);
+    await user.click(screen.getByRole("button", { name: "Download CA schools (CSV)" }));
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "The state API did not return a schools CSV.",
+    );
+  });
+
+  it("exports only the selected county's schools without the county column", async () => {
+    const user = userEvent.setup();
+    vi.stubGlobal(
+      "fetch",
+      vi
+        .fn()
+        .mockResolvedValueOnce({
+          ok: true,
+          json: async () => ({ ca: { base_url: "https://example.test/ca/" } }),
+        })
+        .mockResolvedValueOnce({
+          ok: true,
+          text: async () =>
+            "school_id,school_name,county,enrollment\n1,LA School,Los Angeles County,100\n2,Other School,Orange County,200\n",
+        }),
+    );
+    const createObjectURL = vi
+      .spyOn(URL, "createObjectURL")
+      .mockReturnValue("blob:test");
+    vi.spyOn(URL, "revokeObjectURL").mockImplementation(() => {});
+    vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => {});
+
     render(
       <DownloadButton
         zoomLevel="county"
         stateCode="ca"
         countySlug="los-angeles"
+        countyName="Los Angeles County"
       />,
     );
     expect(
       screen.getByRole("button", {
-        name: "Download los angeles schools (CSV)",
+        name: "Download Los Angeles County schools (CSV)",
       }),
     ).toBeInTheDocument();
+    await user.click(
+      screen.getByRole("button", {
+        name: "Download Los Angeles County schools (CSV)",
+      }),
+    );
+    const exportedCsv = await createObjectURL.mock.calls[0][0].text();
+    expect(exportedCsv).toBe("school_id,school_name,enrollment\n1,LA School,100\n");
   });
 
   it("renders nothing when the resolution lacks the data it needs", () => {

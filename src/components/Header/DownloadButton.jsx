@@ -21,18 +21,31 @@ const countyKey = (name) =>
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-|-$/g, "");
 
+// Prefixing formula-like string cells with an
+// apostrophe; signed numeric values remain unchanged.
+const spreadsheetSafeValue = (value) => {
+  if (typeof value !== "string") return value;
+  const numeric = /^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?$/i.test(value);
+  return !numeric && /^[\t\r\n ]*[=+@-]/.test(value) ? `'${value}` : value;
+};
+
 async function fetchCsv(url) {
-  // Fetch one state's school table and reject failed or non-text responses
-  // before parsing the body as CSV.
+  // Fetch one state's school table and validate its parsed schema. APIs may
+  // serve CSV with non-text or missing content types, so the headers are not
+  // a reliable way to identify the response format.
   const response = await fetch(url);
   if (!response.ok)
     throw new Error(`Could not download data (${response.status})`);
-  const contentType = response.headers.get("content-type") || "";
-  if (!contentType.toLowerCase().startsWith("text/")) {
-    throw new Error("The state API did not return text data.");
-  }
   const text = await response.text();
-  return csvParse(text);
+  const rows = csvParse(text);
+  if (
+    !["school_id", "school_name", "county"].every((column) =>
+      rows.columns.includes(column),
+    )
+  ) {
+    throw new Error("The state API did not return a schools CSV.");
+  }
+  return rows;
 }
 
 async function createDownload({ zoomLevel, stateCode, countySlug, filename }) {
@@ -86,7 +99,19 @@ async function createDownload({ zoomLevel, stateCode, countySlug, filename }) {
   // Format the result in memory as a temporary object URL and click a hidden
   // browser link to start the download.
   const blobUrl = URL.createObjectURL(
-    new Blob([csvFormat(rows, columns) + "\n"], {
+    new Blob([
+      csvFormat(
+        rows.map((row) =>
+          Object.fromEntries(
+            Object.entries(row).map(([key, value]) => [
+              key,
+              spreadsheetSafeValue(value),
+            ]),
+          ),
+        ),
+        columns,
+      ) + "\n",
+    ], {
       type: "text/csv;charset=utf-8",
     }),
   );
@@ -105,8 +130,8 @@ export default function DownloadButton({
   countySlug,
   countyName = null,
 }) {
-  // downloading prevents duplicate requests; error supplies a useful tooltip
-  // if the registry or a state API cannot be reached.
+  // downloading prevents duplicate requests; error is shown and announced if
+  // the registry or a state API cannot be reached.
   const [downloading, setDownloading] = useState(false);
   const [error, setError] = useState("");
 
@@ -143,34 +168,41 @@ export default function DownloadButton({
   };
 
   return (
-    <button
-      id="download-data"
-      className="hd-download"
-      type="button"
-      onClick={handleDownload}
-      disabled={downloading}
-      title={error || label}
-      aria-label={label}
-      aria-busy={downloading}
-    >
-      <svg
-        width="15"
-        height="15"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        aria-hidden="true"
+    <>
+      <button
+        id="download-data"
+        className="hd-download"
+        type="button"
+        onClick={handleDownload}
+        disabled={downloading}
+        title={label}
+        aria-label={label}
+        aria-busy={downloading}
       >
-        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-        <polyline points="7 10 12 15 17 10" />
-        <line x1="12" y1="15" x2="12" y2="3" />
-      </svg>
-      <span className="hd-download-label">
-        {downloading ? "Preparing…" : "Data"}
-      </span>
-    </button>
+        <svg
+          width="15"
+          height="15"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-hidden="true"
+        >
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+          <polyline points="7 10 12 15 17 10" />
+          <line x1="12" y1="15" x2="12" y2="3" />
+        </svg>
+        <span className="hd-download-label">
+          {downloading ? "Preparing…" : "Data"}
+        </span>
+      </button>
+      {error && (
+        <p className="hd-download-error" role="alert">
+          {error}
+        </p>
+      )}
+    </>
   );
 }

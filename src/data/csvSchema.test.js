@@ -1,7 +1,6 @@
-import { describe, it, expect, beforeAll } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { readFileSync, existsSync, readdirSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { execFileSync } from 'node:child_process';
 import { csvParse } from 'd3-dsv';
 import { columnNames, FILES, COVERAGE_BLOCK } from './schema.js';
 import { validateRows, checkTierConsistency } from './validate.js';
@@ -19,7 +18,7 @@ const DATA = resolve(ROOT, 'public', 'data');
 
 // Auto-discover ready states (#82): any directory under public/data/states that
 // carries a schools.csv. Contributing a new state needs no edit here - its CSVs
-// are validated automatically. Mirrors scripts/build-all-schools.mjs.
+// are validated automatically.
 function discoverStates() {
   const dir = resolve(DATA, 'states');
   if (!existsSync(dir)) return [];
@@ -66,19 +65,6 @@ function renderApiMd(text) {
   return replaceBlock(replaceBlock(text, 'identity', identityTable), 'coverage', coverageTable);
 }
 
-// all-schools.csv and the per-county files are generated at build time and not
-// committed (#65/#75), so regenerate them before asserting (mirrors `prebuild`).
-// schema.json and API.md ARE committed, so they are checked as-is for drift.
-beforeAll(() => {
-  for (const s of ['derive-county-csvs.mjs', 'build-all-schools.mjs']) {
-    const script = resolve(ROOT, 'scripts', s);
-    // These derived-data builders are optional in source-only checkouts.
-    // Validate generated files when the build tooling is present, while still
-    // running the schema contract checks in a checkout without those scripts.
-    if (existsSync(script)) execFileSync('node', [script], { stdio: 'ignore' });
-  }
-});
-
 const header = (path) => readFileSync(path, 'utf8').split('\n', 1)[0].trim().split(',');
 
 describe('schema is the single source of truth (#77)', () => {
@@ -112,43 +98,8 @@ describe('public/data CSV headers match the schema', () => {
           .toEqual(columnNames('data/states/{state}/schools.csv'));
       });
 
-      it('a per-county file', () => {
-        const summary = readFileSync(resolve(DATA, `states/${code}.csv`), 'utf8').trim().split('\n');
-        const firstCounty = summary[1].split(',')[0];
-        const slug = firstCounty.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-        const file = resolve(DATA, `states/${code}/counties/${slug}.csv`);
-        expect(existsSync(file)).toBe(true);
-        expect(header(file)).toEqual(columnNames('data/states/{state}/counties/{county}.csv'));
-      });
     });
   }
-
-  // Every county that actually has schools must have its own per-county file.
-  // A county may appear in the summary with zero schools when all its schools
-  // fell outside the model fit (an upstream coverage gap), and those
-  // legitimately have no per-county file.
-  it('every county with schools has a matching per-county file', () => {
-    const countyIdx = columnNames('data/states/{state}/schools.csv').indexOf('county');
-    for (const code of READY_STATES) {
-      const schools = readFileSync(resolve(DATA, `states/${code}/schools.csv`), 'utf8').trim().split('\n').slice(1);
-      const counties = new Set();
-      for (const line of schools) {
-        // minimal CSV field reader honoring double-quotes (school_name may have commas)
-        const fields = []; let cur = '', q = false;
-        for (const ch of line) {
-          if (ch === '"') q = !q;
-          else if (ch === ',' && !q) { fields.push(cur); cur = ''; }
-          else cur += ch;
-        }
-        fields.push(cur);
-        counties.add(fields[countyIdx]);
-      }
-      const missing = [...counties]
-        .map((name) => name.toLowerCase().replace(/[^a-z0-9]+/g, '-'))
-        .filter((slug) => !existsSync(resolve(DATA, `states/${code}/counties/${slug}.csv`)));
-      expect(missing, `${code}: counties with schools but no per-county file`).toEqual([]);
-    }
-  });
 });
 
 describe('public/data CSV values conform to schema constraints (#82)', () => {
@@ -158,8 +109,7 @@ describe('public/data CSV values conform to schema constraints (#82)', () => {
   // safe to ingest: a nonconforming contribution fails CI here. Blanks are
   // allowed (validate.js treats empty cells as "not available").
 
-  // Concrete files to check, built at run time so the per-county and
-  // all-schools files regenerated in beforeAll are included.
+  // Validate the published source files that are present in this checkout.
   const targets = () => {
     const list = [];
     const add = (shape, path) => existsSync(path) && list.push({ shape, path });
@@ -168,12 +118,6 @@ describe('public/data CSV values conform to schema constraints (#82)', () => {
     for (const code of READY_STATES) {
       add('data/states/{state}.csv', resolve(DATA, 'states', `${code}.csv`));
       add('data/states/{state}/schools.csv', resolve(DATA, 'states', code, 'schools.csv'));
-      const cdir = resolve(DATA, 'states', code, 'counties');
-      if (existsSync(cdir)) {
-        for (const f of readdirSync(cdir).filter((name) => name.endsWith('.csv'))) {
-          add('data/states/{state}/counties/{county}.csv', resolve(cdir, f));
-        }
-      }
     }
     return list;
   };
