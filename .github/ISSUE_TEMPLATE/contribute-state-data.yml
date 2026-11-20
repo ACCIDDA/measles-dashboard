@@ -8,7 +8,7 @@ body:
       value: |
         Thanks for wanting to add a state! This is the **front door** for a federated
         data contribution. Open this issue first so we can coordinate. The dashboard reads data from a
-        state-specific public data endpoint; once prepared, the endpoint is registered with the dashboard 
+        state-specific public data endpoint; once prepared, the endpoint is registered with the dashboard
         and the data stays with the provider. (see the "Contributing a state's data" section
         in [CONTRIBUTING.md](../blob/dev/CONTRIBUTING.md)).
   - type: input

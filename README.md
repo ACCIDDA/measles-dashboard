@@ -20,19 +20,17 @@ Bayesian model; school and county geography come from public sources.
 
 ## Data
 
-Each state’s data lives in its own public `measles-AA` repository (where AA is the corresponding 
-state code). A state repository supplies `state.csv`, `counties.csv`, and `schools.csv` at its root
-or under `data/`; these files must match the dashboard’s validated schema.
-The dashboard reads data from the registered state repository’s public data
-endpoint when that state is selected.
+Each state's coverage data lives at its registered public HTTPS API. A template
+endpoint supplies `data/state.csv`, `data/counties.csv`, `data/schools.csv`, and
+`data/meta.json`. The dashboard fetches those resources directly and creates
+CSV downloads in the browser; it stores no dataset CSVs in this repository.
 
-To add a state, a contributor runs the **Register State Repository** GitHub
-Action with the state code and repository URL. The workflow validates the
-repository and opens a pull request to update the central registry and mark the
-state ready. An administrator then reviews and merges that pull request; the data
-itself stays in the state repository. See
-[`docs/REGISTRATION.md`](docs/REGISTRATION.md) for the submission requirements
-and review steps.
+To add or update a state, run the **Register State Repository** GitHub Action
+with the state code and public endpoint or repository URL. It validates the
+CSV responses, records their SHA-256 hashes, and opens a registry pull request
+for administrator review. See [`docs/REGISTRATION.md`](docs/REGISTRATION.md)
+for submission requirements and [`docs/API.md`](docs/API.md) for endpoint and
+column details.
 
 ## Tech
 
@@ -46,7 +44,9 @@ How it all fits together is documented in
 
 State repositories are registered centrally through GitHub Actions. See
 [`docs/REGISTRATION.md`](docs/REGISTRATION.md) for the submission format,
-public repository requirement, and administrator review process.
+public endpoint requirements and administrator review process.
+[Data validation](docs/DATA_VALIDATION.md) describes recurring API checks,
+registered SHA-256 fingerprints, and automated issues for failing states.
 
 ## Quick start
 
@@ -65,5 +65,5 @@ Full command list and the contributor workflow are in
 ## Contributing
 
 See [`CONTRIBUTING.md`](./CONTRIBUTING.md). In short: `nvm use` (Node 20),
-`npm install`, and the pre-commit hook runs lint + tests. Adding a new state
+`npm install`, and the pre-commit hook lints staged source files. Adding a new state
 needs a data API and registration, not code changes.

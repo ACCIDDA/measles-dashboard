@@ -18,7 +18,7 @@
 
 This process has changed! (#100)
 
-See **[Contributing a state's data](../blob/dev/CONTRIBUTING.md#contributing-a-states-data)** and **[REGISTRATION.md](../docs/REGISTRATION.md)** for the submission requirements
+See **[Contributing a state's data](../blob/dev/CONTRIBUTING.md#contributing-a-states-data)** and **[REGISTRATION.md](../blob/dev/docs/REGISTRATION.md)** for the submission requirements
 and review steps.
 
 <!-- ▲▲▲ end state-data block ▲▲▲ -->

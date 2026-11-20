@@ -67,25 +67,47 @@ the topology at load time.
 
 ## Configuration (`src/config/`)
 
-Adding a state is meant to be creating and registering a state-specific repository, **not contributing code to this repository**:
+Adding a state means preparing a public state API and registering its endpoint.
 
-- `src/config/states.js`: requests the per-state metadata from registered state repository 
-  (display name, `dataDir`, FIPS, data-source attribution) plus the FIPS <-> USPS lookups the 
-  national view uses to route a clicked state to `/state/<code>`.
-- `src/config/index.js`: the visual contract (tier thresholds/colors, grade
-  labels, legend copy, marker shapes).
+- `src/config/states.js` loads `meta.json` from registered endpoints for display
+  names, FIPS, and attribution. It also defines the FIPS/USPS lookups.
+- `src/config/index.js` defines tier thresholds, colors, labels, and markers.
 
-A `public/data/states.json` manifest marks which states are `ready` vs. `coming_soon`; all state 
-data comes from it's registered `measles-XX` API (one state per repository, registered using the 
-Register state repository action) (#100). The loader refuses to fetch a state that isn't `ready`.
+`public/data/states.json` records readiness. `public/data/stateRegistry.json`
+records API locations. National shading comes from each API's `state.csv`;
+county and school data are loaded when a ready state is focused.
 
 ## Data loading (`src/hooks/`)
 
 `useUnifiedMapData.js` is the single data orchestrator. At mount it loads the
-shared topology + manifests once, then **lazy-loads a state's data on demand from that state's repository** via `focusState(code)`, caching per state so re-focusing is free. It returns the
+shared topology, manifests, and state summaries once. It lazy-loads county and
+school data from the state API via `focusState(code)`, caching per state. It returns the
 shared base data plus a `stateData` map the map/sidebar render from. Supporting
 hooks: `useStateManifest` (the ready/coming-soon manifest), `useGeolocation` /
 `useStateGeolocation` (locate the visitor).
+
+State APIs are selected through `public/data/stateRegistry.json`. Legacy string
+entries point to a deployment base URL; registration creates object entries
+with repository identity, dataset path, source commit, and CSV SHA-256 hashes.
+The browser and live-data monitor share URL resolution in `src/data/registry.js`.
+The app fetches `meta.json`, state summaries, and county/school CSVs from the
+registered deployments.
+
+Registration validates and hashes public CSV responses before opening a
+registry PR. The
+separate **Check State Data** workflow checks the deployed endpoints, schema,
+county geography joins, CORS, metadata, and registered hashes. Scheduled failures
+open deduplicated issues in state repositories with reverification instructions.
+See [Data validation](DATA_VALIDATION.md) for setup and limits.
+
+## Builds and downloads
+
+The dashboard build contains no CSV datasets. `predev` and `prebuild` reject
+CSV files under `public/` before Vite can serve or copy them. Only the registry,
+readiness manifest, and generated schema/API reference are published here.
+The Data button fetches registered APIs and creates national, state, or county
+CSV downloads in browser memory. R scripts under `scripts/build-data/` are
+separate producer utilities; dashboard builds do not run them.
 
 ## Styling
 

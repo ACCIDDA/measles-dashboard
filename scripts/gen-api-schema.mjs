@@ -26,7 +26,7 @@ function identityTable() {
     const ids = def.columns.filter((c) => !COVERAGE_NAMES.has(c.name)).map((c) => `\`${c.name}\``).join(', ');
     return `| \`${display(key)}\` | ${ids} |`;
   });
-  return ['| File | Leading columns (then the shared coverage block) |', '| --- | --- |', ...rows].join('\n');
+  return ['| Schema key (without data/) | Leading columns (then the shared coverage block) |', '| --- | --- |', ...rows].join('\n');
 }
 
 function coverageTable() {

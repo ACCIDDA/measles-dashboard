@@ -4,12 +4,12 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "predev": "node scripts/build-schema-json.mjs && node scripts/gen-api-page.mjs",
+    "predev": "node scripts/check-public-data.mjs && node scripts/build-schema-json.mjs && node scripts/gen-api-page.mjs",
     "dev": "vite",
     "build-schema-json": "node scripts/build-schema-json.mjs",
     "gen-api-schema": "node scripts/gen-api-schema.mjs",
     "gen-api-page": "node scripts/gen-api-page.mjs",
-    "prebuild": "node scripts/build-schema-json.mjs && node scripts/gen-api-page.mjs",
+    "prebuild": "node scripts/check-public-data.mjs && node scripts/build-schema-json.mjs && node scripts/gen-api-page.mjs",
     "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint src/",
@@ -18,7 +18,8 @@
     "test:coverage": "vitest run --coverage",
     "test:e2e": "playwright test",
     "test:e2e:update": "playwright test --update-snapshots",
-    "prepare": "husky"
+    "prepare": "husky",
+    "check-state-data": "node scripts/check-state-data.mjs"
   },
   "lint-staged": {
     "src/**/*.{js,jsx}": [
