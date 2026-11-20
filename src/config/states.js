@@ -1,3 +1,5 @@
+import { dataUrl } from '../data/registry.js';
+
 // State metadata used to drive the state-parameterized view.
 //
 // The dashboard renders one US state at a time. The choice of state is
@@ -21,12 +23,8 @@ export function registryBaseUrl(entry) {
 
 export const STATES = Object.fromEntries(
   await Promise.all(
-    Object.entries(stateRegistry).map(async ([stateCode, entry]) => {
-      const baseUrl = registryBaseUrl(entry);
-      if (!baseUrl) {
-        throw new Error(`State registry entry for ${stateCode} has no base_url.`);
-      }
-      const response = await fetch(`${baseUrl}data/meta.json`);
+    Object.entries(stateRegistry).map(async ([stateCode, baseUrl]) => {
+      const response = await fetch(dataUrl(baseUrl, 'meta.json'));
       if (!response.ok) {
         throw new Error(
           `Unable to load metadata for ${stateCode} (${response.status})`,

@@ -1,11 +1,8 @@
 // Row-level conformance validation for the published CSVs (#78/#82).
 //
-// The header/column-set contract is enforced by csvSchema.test.js against
-// columnNames(); this adds VALUE checks (types + the `constraints` declared in
-// schema.js) so a contributed state's data cannot merge with out-of-range
-// coverage, an unknown tier, malformed FIPS, etc. The same logic backs both the
-// CI gate (csvSchema.test.js) and the contributor CLI (scripts/validate-data.mjs),
-// so "passes locally" and "passes CI" mean the same thing.
+// Registration checks exact headers and cross-file relationships. This module
+// checks cell values and tier consistency against schema.js for both
+// registration and live endpoint monitoring. Unit tests use synthetic rows.
 //
 // Blanks are always allowed: the data uses empty cells for "not available"
 // (NC's per-grade and CI columns, county_fips, and lon/lat/coverage/tier for

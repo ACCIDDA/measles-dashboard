@@ -140,6 +140,7 @@ jobs:
             '- Base URL is an absolute HTTPS endpoint.',
             '- All required CSV files were fetched successfully.',
             '- Schema, value, state identity, county linkage, and coverage checks passed.',
+            '- SHA-256 fingerprints recorded for all three CSVs; live endpoint CI must match these reviewed contents.',
             '',
             '### Source repository',
             r.repository

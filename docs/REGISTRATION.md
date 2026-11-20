@@ -1,10 +1,9 @@
 # Registering a state repository
 
 State repositories are registered from the ACCIDDA central dashboard
-repository. Providers must supply both a source repository and a publicly
-accessible HTTPS endpoint, or a source repository whose public GitHub Pages
-endpoint can be derived. The source repository may be public or private. A
-private repository must include a public endpoint.
+repository. Providers supply a public HTTPS base URL, a public repository whose
+GitHub Pages endpoint can be derived, or both. A source repository is optional
+and may be private when a public endpoint is supplied.
 
 The template repository is there to help produce the expected files and
 host them. Providers must follow the template's repository structure, file
@@ -13,7 +12,7 @@ names, schema, and deployment layout.
 ## State-team submission
 
 1. Open the central ACCIDDA measles dashboard and select **Actions**.
-2. Select **Register State Data Endpoint**, then **Run workflow**.
+2. Select **Register State Repository**, then **Run workflow**.
 3. Select the official two-letter USPS state code.
 4. Enter the public HTTPS base URL for the template deployment, if one is
    available.
@@ -60,12 +59,11 @@ also allow cross-origin requests from the dashboard site.
 
 The workflow creates a branch and a pull request that changes
 `public/data/stateRegistry.json` and marks the state ready in
-`public/data/states.json`. Review the repository URL, base URL, row counts, and
-automated validation results. Confirm that the base URL is an HTTPS endpoint
-and that its three required files are publicly accessible. If only a public
-repository was supplied, confirm that the derived GitHub Pages endpoint is the
-intended deployment. A private source repository requires an explicit public
-endpoint. Existing CI checks must pass. The workflow never merges its own PR.
+`public/data/states.json`. Review the repository URL, repository ID, dataset
+path, source commit SHA, SHA-256 fingerprints, row counts, and automated validation results.
+Existing CI checks must pass. Merge the PR only after confirming that the
+repository's public data endpoint (`base_url`) is correct. The workflow never
+merges its own PR.
 
 The registry remains the dashboard's single source of truth. Existing string
 entries are still supported; new entries include the repository ID, dataset
@@ -74,6 +72,19 @@ base URL.
 
 ## Future data updates
 
-Running the workflow again for an existing state updates that state's registry
-entry; an existing state is not treated as a conflict. The immutable repository
-ID still prevents the same repository from being registered to multiple states.
+The **Check State Data** workflow checks published endpoints every six hours,
+including schema, map compatibility, browser access, and SHA-256 fingerprints
+against the registered CSV contents. A failure opens one issue in the affected
+state repository when the central reporting credential is configured.
+
+After an intentional data update, rerun **Register State Repository** with the
+same state code and repository URL. It validates the published endpoint
+bundle and opens a PR with refreshed fingerprints. An administrator must review
+and merge that PR. Existing states can be updated, including changing their
+endpoint or repository, through administrator review; a repository ID cannot
+be registered for multiple states. Legacy entries can be re-registered to add
+fingerprints and available repository identity.
+
+The public API must serve the registered CSV contents and a valid `meta.json`
+from the registered dataset path. See [Data validation](DATA_VALIDATION.md) for
+the full checks, central credential setup, legacy migration, and issue recovery.

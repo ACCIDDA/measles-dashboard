@@ -23,6 +23,7 @@ npm install
 | `npm run dev`            | Vite dev server at http://localhost:5173 with HMR.                                              |
 | `npm run build`          | Production build into `dist/`. Required before running e2e tests outside of `npm run test:e2e`. |
 | `npm run preview`        | Serves the built `dist/` on port 4173 — the URL Playwright's `webServer` expects.               |
+| `npm run check-state-data` | Read-only live state API validation; writes a JSON report and fails on invalid data. |
 | `npm run lint`           | ESLint over `src/`.                                                                             |
 | `npm test`               | Vitest unit/component tests in jsdom, single run.                                               |
 | `npm run test:watch`     | Vitest in watch mode.                                                                           |
@@ -118,6 +119,10 @@ The pre-commit hook runs ESLint with `--max-warnings=0`, so **warnings block com
 | Build      | `npm run build`                               | Uploads `dist/` as an artifact for the E2E job.              |
 | E2E Tests  | `npx playwright test --ignore-snapshots`      | Downloads the `dist/` artifact. Visual regressions are intentionally not checked here — verify them locally on macOS. |
 
+The separate **Check State Data** workflow validates published state APIs on
+relevant PRs/pushes and every six hours. See [Data validation](docs/DATA_VALIDATION.md)
+for hash baselines, issue reporting, and central credential setup.
+
 On failure, the E2E job uploads `playwright-report/` and `test-results/` as artifacts (7-day retention) — grab them from the Actions run if you need to debug.
 
 ## Before opening a PR
@@ -131,17 +136,17 @@ On failure, the E2E job uploads `playwright-report/` and `test-results/` as arti
 ## Contributing a state's data
 
 The dashboard is built so other organizations can contribute their own state's
-school-level MMR coverage data (#78). The work is decentralized (each org
-prepares their state) but the **format is centralized**: every state's CSVs must
-conform to one published schema, and a conformance check gates each contribution
-in CI.
+school-level MMR coverage data (#100). The work is decentralized (each org
+prepares its state in its own repository), with one shared schema enforced
+by registration and the live API checks.
 
 ### The flow
 
-1. **Open a ["Contribute a state's data" issue](.github/ISSUE_TEMPLATE/contribute-state-data.yml)** — the front door, so we can coordinate on source and license.
-2. **Prepare conforming CSVs** for your state (see files below).
-3. **Open a PR** with those CSVs. CI runs `npm test`, which validates every file against the schema.
-4. **Conformance CI + a light review**, then merge. Once on `main`, the deploy publishes your state automatically.
+1. **Open a ["Contribute a state's data"](.github/ISSUE_TEMPLATE/contribute-state-data.yml) issue** — the front door, so we can coordinate on source and license.
+2. **Prepare the data repository** for your state using the [template](https://github.com/ACCIDDA/measles-AA)
+3. **Prepare conforming CSVs** and **Validate data** according to the template repository instructions.
+4. **Run `Register State Repository` Action** with your data repository information.
+5. **Conformance CI + a light review** by administrators, then merge. Once on `main`, the dashboard uses the registered endpoint.
 
 ### The schema is the contract
 
@@ -149,43 +154,24 @@ in CI.
 the columns, types, and value constraints of every file. It generates the
 machine-readable [`/data/schema.json`](https://accidda.github.io/measles-dashboard/data/schema.json)
 and the [`docs/API.md`](./docs/API.md) tables. Validate your data against it
-**before** opening the PR — this is the exact check CI runs:
+**before** running the Action. Registration stores a SHA-256 baseline for each
+validated CSV; subsequent changes need a reviewed registration update. Use
+`npm run check-state-data` to check the endpoints already in the registry.
+See [Data validation](docs/DATA_VALIDATION.md) for the checks and notification setup.
 
-```sh
-npm run validate-data
-```
+### Repository contents
 
-It reports any header mismatch, out-of-range coverage (must be in `[0, 1]`),
-unknown `tier` (must be `H`/`M`/`L`), malformed FIPS, `no_data` outside `{0, 1}`,
-etc. **Blank cells are allowed** — they mean "not available" (e.g. NC has no
-per-grade or credible-interval values), not zero.
+State dataset CSVs belong in the provider's repository and deployment. This
+repository stores `public/data/stateRegistry.json` and `public/data/states.json`;
+`schema.json` and `api.html` are generated during development/builds. The Data
+button creates downloads in memory from the registered APIs.
 
-### Files to commit
-
-For a state with code `<code>` (lowercase USPS, e.g. `ny`):
-
-| File | What |
-| --- | --- |
-| `public/data/states/<code>/schools.csv` | one row per school (the core data) |
-| `public/data/states/<code>.csv` | one row per county (summary) |
-| a new row in `public/data/states.csv` | the national-summary row for the state |
-| an entry in `STATES` in [`src/config/states.js`](./src/config/states.js) | display name + data-source attribution link |
-
-Then mark the state visible (this re-validates the data first, then flips
-`public/data/states.json` to `ready`):
-
-```sh
-npm run register-state -- <code>
-```
-
-### Do NOT commit generated artifacts
-
-These are rebuilt at build time (`npm run prebuild`) and are gitignored — leave
-them out of your PR:
-
-- `public/data/all-schools.csv` (national concatenation, #75)
-- `public/data/states/*/counties/` (per-county splits, #65)
-- `public/data/schema.json` (generated from `schema.js`, #77)
+The dev server, build, and unit tests reject CSV files under `public/`. If an
+older checkout left `all-schools.csv` or `states/*/counties/*.csv` there, remove
+those files before running the app. Do not copy new datasets into `public/`.
+Unit schema tests use fixtures; live data checks use the registered endpoints.
+The R helpers in `scripts/build-data/` remain producer utilities and are not
+part of the dashboard build.
 
 ## Questions
 

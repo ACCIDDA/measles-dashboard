@@ -10,13 +10,9 @@ scripts/build-data/out/
 *.rds
 *.parquet
 
-# Per-county CSVs are generated at build time from schools.csv (see
-# scripts/derive-county-csvs.mjs / npm prebuild); not committed (#65).
-public/data/states/*/counties/
-
-# National all-schools.csv, concatenated at build time from each state's
-# schools.csv (scripts/build-all-schools.mjs / npm prebuild); not committed (#75).
-public/data/all-schools.csv
+# Datasets live in registered state APIs. Do not stage old local CSV outputs.
+# predev/prebuild also reject these files, since Vite copies ignored assets too.
+/public/**/*.csv
 
 # schema.json is generated from src/data/schema.js (the source of truth) by
 # scripts/build-schema-json.mjs / npm prebuild; not committed (#77). Review
@@ -26,3 +22,6 @@ public/data/schema.json
 # api.html is rendered from docs/API.md by scripts/gen-api-page.mjs /
 # npm prebuild; not committed (#93). Edit docs/API.md, not the generated page.
 public/api.html
+
+# Live endpoint health-check report (uploaded as a CI artifact).
+state-data-report.json

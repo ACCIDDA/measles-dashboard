@@ -13,15 +13,12 @@
 
 ---
 
-<!-- ▼▼▼ DELETE this whole block unless you are contributing a state's data (#78). ▼▼▼ -->
+<!-- ▼▼▼ DELETE this whole block. ▼▼▼ -->
 ## Adding a state's data?
 
-See **[Contributing a state's data](../blob/dev/CONTRIBUTING.md#contributing-a-states-data)**. The CSVs are validated against the published schema in CI, so:
+This process has changed! (#100)
 
-- [ ] `npm run validate-data` passes locally (same check CI runs)
-- [ ] Committed the source files: `public/data/states/<code>/schools.csv`, `public/data/states/<code>.csv`, and the row in `public/data/states.csv`
-- [ ] Registered the state: `npm run register-state -- <code>` (flips `public/data/states.json` to `ready` after validating)
-- [ ] Added the `<code>` attribution entry (source link) to `STATES` in `src/config/states.js`
-- [ ] Did **not** commit generated artifacts (`public/data/all-schools.csv`, `public/data/states/*/counties/`, `public/data/schema.json` — all gitignored)
-- [ ] Source + license noted in the linked "Contribute a state's data" issue
+See **[Contributing a state's data](../blob/dev/CONTRIBUTING.md#contributing-a-states-data)** and **[REGISTRATION.md](../blob/dev/docs/REGISTRATION.md)** for the submission requirements
+and review steps.
+
 <!-- ▲▲▲ end state-data block ▲▲▲ -->

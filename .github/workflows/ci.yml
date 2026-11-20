@@ -55,7 +55,9 @@ jobs:
   e2e:
     name: E2E Tests
     needs: build
-    runs-on: ubuntu-latest
+    # Playwright 1.59.1 does not support the Ubuntu 26.04 image currently
+    # selected by ubuntu-latest. Keep the browser job on a supported LTS image.
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

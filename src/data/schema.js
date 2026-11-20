@@ -1,12 +1,9 @@
 // Single source of truth for the published dataset schema (#77).
 //
-// The CSV contract test (csvSchema.test.js), the generated machine-readable
-// schema (public/data/schema.json), and the API.md column tables all derive
-// from this one definition, so they cannot drift from each other. The R
-// producers (build_state.R / build_nc_from_estimates.R) are the *ultimate*
-// source of truth for what the CSVs contain; the contract test validates the
-// real CSVs against this definition, so a producer change that diverges fails
-// CI until this file is updated to match.
+// Registration and live endpoint monitoring validate CSV responses against
+// this definition. The generated schema.json and API column tables use it too.
+// Shape keys retain the original path-like names for consumer compatibility;
+// they are schema identifiers, not hosted CSV paths on this dashboard.
 //
 // Types are a small language-agnostic vocabulary so the JSON is easy to map
 // into any reader:
@@ -15,7 +12,7 @@
 //   "number"  -> e.g. Arrow float64 (coverage values are proportions in [0, 1])
 //
 // Columns may carry an optional `constraints` object, validated per-row by the
-// conformance check (validate.js / csvSchema.test.js) so a contributed state's
+// conformance check (validate.js / registration-core.mjs) so a contributed state's
 // CSVs (#78/#82) can't merge with out-of-range or malformed values. The
 // vocabulary is deliberately tiny and JSON-serializable so it travels in
 // schema.json for external readers:
