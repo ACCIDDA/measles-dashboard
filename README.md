@@ -20,21 +20,17 @@ Bayesian model; school and county geography come from public sources.
 
 ## Data
 
-All coverage data is published as static CSV files at predictable URLs, so the
-files that drive the dashboard double as a downloadable, no-auth API:
+Each state's coverage data lives at its registered public HTTPS API. A template
+endpoint supplies `data/state.csv`, `data/counties.csv`, `data/schools.csv`, and
+`data/meta.json`. The dashboard fetches those resources directly and creates
+CSV downloads in the browser; it stores no dataset CSVs in this repository.
 
-```
-/data/states.csv                               one row per state
-/data/states/<state>.csv                       one row per county
-/data/states/<state>/counties/<county>.csv     one row per school
-```
-
-Each file carries the same coverage columns at every level: overall coverage
-with 95% credible intervals, a per-grade (K–5) breakdown, and a coverage tier.
-
-The CSVs are generated from model output by the scripts in `scripts/build-data/`
-and regenerated when the model updates, not on every deploy. The full URL scheme
-and column reference, with `curl` examples, are in [`docs/API.md`](docs/API.md).
+To add or update a state, run the **Register State Repository** GitHub Action
+with the state code and public endpoint or repository URL. It validates the
+CSV responses, records their SHA-256 hashes, and opens a registry pull request
+for administrator review. See [`docs/REGISTRATION.md`](docs/REGISTRATION.md)
+for submission requirements and [`docs/API.md`](docs/API.md) for endpoint and
+column details.
 
 ## Tech
 
@@ -48,7 +44,7 @@ How it all fits together is documented in
 
 State repositories are registered centrally through GitHub Actions. See
 [`docs/REGISTRATION.md`](docs/REGISTRATION.md) for the submission format,
-public repository requirement, and administrator review process.
+public endpoint requirements and administrator review process.
 [Data validation](docs/DATA_VALIDATION.md) describes recurring API checks,
 registered SHA-256 fingerprints, and automated issues for failing states.
 
@@ -69,5 +65,5 @@ Full command list and the contributor workflow are in
 ## Contributing
 
 See [`CONTRIBUTING.md`](./CONTRIBUTING.md). In short: `nvm use` (Node 20),
-`npm install`, and the pre-commit hook runs lint + tests. Adding a new state
-needs data and a config entry, not code changes.
+`npm install`, and the pre-commit hook lints staged source files. Adding a new state
+needs a data API and registration, not code changes.

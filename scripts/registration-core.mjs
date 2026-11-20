@@ -1,6 +1,7 @@
 import { csvParse, csvParseRows } from 'd3-dsv';
 import { FILES, columnNames } from '../src/data/schema.js';
 import { validateRows } from '../src/data/validate.js';
+import { datasetHashes } from './data-hashes.mjs';
 
 const STATE_FIPS = {
   al: '01', ak: '02', az: '04', ar: '05', ca: '06', co: '08', ct: '09',
@@ -140,7 +141,9 @@ export function validateDataset({ stateCode, files, contents }) {
   if (!schoolRows.length) errors.push(`${schoolsPath}: must contain at least one school row.`);
   for (const [path, rows, keys] of [
     [countyPath, countyRows, ['county']],
-    [schoolsPath, schoolRows, ['school_id', 'school_name', 'county']],
+    // The producer intentionally retains modeled schools without a label.
+    // school_id and county identify them; the UI supplies a display fallback.
+    [schoolsPath, schoolRows, ['school_id', 'county']],
   ]) {
     const identities = new Set();
     for (const row of rows) {
@@ -179,23 +182,33 @@ export function validateDataset({ stateCode, files, contents }) {
   };
 }
 
-export function checkRegistryConflicts(registry, stateCode, repositoryId, repositoryUrl, { reverify = false } = {}) {
+export async function validateEndpoint({ stateCode, baseUrl, fetchImpl = fetch }) {
+  if (!isStateCode(stateCode)) throw new Error(`Unknown state code: ${stateCode}`);
+  const normalizedBaseUrl = normalizeBaseUrl(baseUrl);
+  const paths = ['data/state.csv', 'data/counties.csv', 'data/schools.csv'];
+  const contents = await Promise.all(paths.map(async (path) => {
+    const url = new URL(path, normalizedBaseUrl).href;
+    try {
+      const response = await fetchImpl(url, { signal: AbortSignal.timeout(15000) });
+      if (!response.ok) throw new Error(`HTTP ${response.status || 'unknown status'}`);
+      return await response.text();
+    } catch (error) {
+      throw new Error(`Unable to fetch ${url}: ${error.message || error}`);
+    }
+  }));
+  const result = validateDataset({ stateCode, files: paths, contents });
+  // Hash the exact responses that passed validation, without a second fetch
+  // that could race a deployment. Repository commits are provenance only.
+  return { ...result, baseUrl: normalizedBaseUrl, dataHashes: datasetHashes(contents) };
+}
+
+export function checkRegistryConflicts(registry, stateCode, repositoryId, repositoryUrl) {
   for (const [code, value] of Object.entries(registry)) {
     const entry = typeof value === 'string' ? { base_url: value } : value || {};
-    if (code === stateCode) {
-      if (reverify && !entry.repository_id) {
-        const source = parseRepositoryUrl(repositoryUrl);
-        const expectedBase = `https://${source.owner}.github.io/${source.repo}`;
-        if (entry.repository_url === source.canonicalUrl
-          || entry.base_url?.replace(/\/$/, '').toLowerCase() === expectedBase.toLowerCase()) continue;
-      }
-      if (String(entry.repository_id) === String(repositoryId)) {
-        if (reverify) continue;
-        throw new Error(`${stateCode.toUpperCase()} is already registered for this repository.`);
-      }
-      throw new Error(`${stateCode.toUpperCase()} is already registered for ${entry.repository_url || 'another repository'}.`);
-    }
-    if (String(entry.repository_id) === String(repositoryId)) {
+    // Match dev: an existing state can be updated through a reviewed registry
+    // PR. The live monitor still checks the identity in the approved registry.
+    if (code === stateCode) continue;
+    if (repositoryId != null && String(entry.repository_id) === String(repositoryId)) {
       throw new Error(`repository ${repositoryUrl} is already registered for state ${code.toUpperCase()}.`);
     }
   }

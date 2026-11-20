@@ -1,6 +1,12 @@
 // @vitest-environment node
 
 import { describe, expect, it } from 'vitest';
+import { createHash } from 'node:crypto';
+import { execFileSync } from 'node:child_process';
+import { mkdtempSync, mkdirSync, writeFileSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import {
   checkRegistryConflicts,
   discoverDataset,
@@ -62,6 +68,7 @@ describe('registration core', () => {
       },
     });
     expect(result).toMatchObject({ stateName: 'North Carolina', baseUrl: 'https://example.org/measles/nc/' });
+    expect(result.dataHashes['schools.csv']).toBe(createHash('sha256').update(files['data/schools.csv']).digest('hex'));
     expect(calls).toEqual([
       'https://example.org/measles/nc/data/state.csv',
       'https://example.org/measles/nc/data/counties.csv',
@@ -78,6 +85,17 @@ describe('registration core', () => {
         text: async () => '',
       }),
     })).rejects.toThrow(/schools\.csv/);
+  });
+  it('accepts unlabeled modeled schools while still requiring stable IDs', () => {
+    const contents = [...valid];
+    contents[2] = contents[2].replace('1,School,Wake', '1,,Wake');
+    expect(() => validateDataset({ stateCode: 'nc', files: ['state.csv', 'counties.csv', 'schools.csv'], contents })).not.toThrow();
+    contents[2] = contents[2].replace('1,,Wake', ',,Wake');
+    expect(() => validateDataset({ stateCode: 'nc', files: ['state.csv', 'counties.csv', 'schools.csv'], contents })).toThrow(/school_id is required/);
+  });
+  it('updates endpoint-only entries without treating missing repository IDs as duplicates', () => {
+    const registry = { nc: { base_url: 'https://example.org/nc/', repository_id: null }, ca: { repository_id: null } };
+    expect(() => checkRegistryConflicts(registry, 'nc', null, null)).not.toThrow();
   });
   it('rejects a wrong state and duplicate registrations across states', () => {
     expect(() => validateDataset({
@@ -105,5 +123,51 @@ describe('registration core', () => {
     const { isStateCode } = await import('./registration-core.mjs');
     expect(isStateCode('zz')).toBe(false);
     expect(isStateCode('nc')).toBe(true);
+  });
+});
+
+describe('registration command', () => {
+  it.each([
+    { withRepository: false, baseUrl: 'https://example.org/nc', expectedBase: 'https://example.org/nc/' },
+    { withRepository: true, baseUrl: 'https://example.org/nc', expectedBase: 'https://example.org/nc/' },
+    { withRepository: true, baseUrl: '', expectedBase: 'https://team.github.io/nc/' },
+  ])('stores validated endpoint hashes for %j', ({ withRepository, baseUrl, expectedBase }) => {
+    const directory = mkdtempSync(join(tmpdir(), 'measles-registration-'));
+    try {
+      mkdirSync(join(directory, 'public/data'), { recursive: true });
+      writeFileSync(join(directory, 'public/data/stateRegistry.json'), '{}');
+      writeFileSync(join(directory, 'public/data/states.json'), '{}');
+      // Exercise the actual command entry point: imports, optional repository
+      // inputs, hash wiring, and JSON output. No requests leave the process.
+      const mock = `
+        const csvs = ${JSON.stringify(valid)};
+        globalThis.fetch = async url => {
+          if (url === 'https://api.github.com/repos/team/nc') return { ok: true, json: async () => ({ id: 123, default_branch: 'main' }) };
+          if (url === 'https://api.github.com/repos/team/nc/branches/main') return { ok: true, json: async () => ({ commit: { sha: 'abc123' } }) };
+          const index = ['state.csv', 'counties.csv', 'schools.csv'].findIndex(file => url === ${JSON.stringify(expectedBase)} + 'data/' + file);
+          if (index < 0) throw new Error('Unexpected request: ' + url);
+          return { ok: true, text: async () => csvs[index] };
+        };
+      `;
+      const output = execFileSync(process.execPath, [
+        '--import', `data:text/javascript,${encodeURIComponent(mock)}`,
+        fileURLToPath(new URL('./register-state-repository.mjs', import.meta.url)),
+      ], {
+        cwd: directory, encoding: 'utf8',
+        env: { ...process.env, STATE_CODE: 'NC', BASE_URL: baseUrl,
+          REPOSITORY_URL: withRepository ? 'https://github.com/team/nc' : '',
+          GITHUB_REPOSITORY: 'test/dashboard', GITHUB_TOKEN: withRepository ? 'test-token' : '' },
+      });
+      const result = JSON.parse(output);
+      const registered = JSON.parse(result.registry).nc;
+      expect(registered.base_url).toBe(expectedBase);
+      expect(registered.dataset_path).toBe('data/');
+      expect(registered.repository_id).toBe(withRepository ? '123' : null);
+      expect(registered.source_commit_sha).toBe(withRepository ? 'abc123' : null);
+      expect(registered.data_sha256['schools.csv']).toBe(createHash('sha256').update(valid[2]).digest('hex'));
+      expect(Object.keys(registered.data_sha256)).toHaveLength(3);
+    } finally {
+      rmSync(directory, { recursive: true, force: true });
+    }
   });
 });

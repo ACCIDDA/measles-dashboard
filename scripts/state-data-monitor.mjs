@@ -66,15 +66,23 @@ export async function checkState(stateCode, entry, { request, readText, origin, 
   try {
     const source = repositorySource(entry);
     if (source) {
-      const repo = await request(`/repos/${source.owner}/${source.repo}`);
-      if (entry.repository_id && String(repo.id) !== String(entry.repository_id)) {
-        throw new Error('Repository ID changed: reverify the registry; refusing to notify a replacement repository.');
+      let repo;
+      try {
+        repo = await request(`/repos/${source.owner}/${source.repo}`);
+      } catch (error) {
+        // dev supports private sources with public data endpoints. Metadata
+        // access affects issue delivery, not whether the public CSVs are usable.
+        result.warnings.push(`Repository metadata unavailable: ${error.message}. Public endpoint validation continues; issue delivery requires a verified repository.`);
       }
-      // Remember the ID for a second check immediately before issue creation.
-      result.repository = { id: String(repo.id), full_name: repo.full_name };
-      if (repo.private) result.errors.push('Registered repository is no longer public.');
-      if (repo.archived) result.errors.push('Registered repository is archived.');
-      if (!repo.has_issues) result.warnings.push('Repository issues are disabled; notification cannot be delivered.');
+      if (repo) {
+        if (entry.repository_id && String(repo.id) !== String(entry.repository_id)) {
+          throw new Error('Repository ID changed: reverify the registry; refusing to notify a replacement repository.');
+        }
+        // Remember the ID for a second check immediately before issue creation.
+        result.repository = { id: String(repo.id), full_name: repo.full_name };
+        if (repo.archived) result.warnings.push('Source repository is archived; automatic issue delivery is unavailable.');
+        if (!repo.has_issues) result.warnings.push('Repository issues are disabled; notification cannot be delivered.');
+      }
     } else {
       result.warnings.push('No repository_url: automatic issue delivery requires re-registration.');
     }

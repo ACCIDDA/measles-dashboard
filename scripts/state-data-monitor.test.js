@@ -132,6 +132,18 @@ describe('published state data', () => {
     expect(result.repository).toBeNull();
   });
 
+  it('validates public endpoints even when private source metadata is inaccessible', async () => {
+    const opts = options();
+    opts.request.mockRejectedValue(new Error('GitHub HTTP 404'));
+    const healthy = await checkState('nc', entry(), opts);
+    expect(healthy.errors).toEqual([]);
+    expect(healthy.warnings.join()).toMatch(/metadata unavailable/);
+    expect(healthy.repository).toBeNull();
+    const changed = options(bundle({ school: { enrollment: '500' } }));
+    changed.request = opts.request;
+    expect((await checkState('nc', entry(), changed)).errors.join()).toMatch(/published SHA-256.*differs/);
+  });
+
   it('keeps legacy URLs working and explicitly reports missing baselines', async () => {
     const result = await checkState('nc', 'https://team.github.io/measles-NC/', options());
     expect(result.errors).toEqual([]);
@@ -216,11 +228,11 @@ describe('state issue delivery', () => {
 });
 
 describe('reverification', () => {
-  it('refreshes the same repository but cannot replace a registered identity', () => {
-    expect(() => checkRegistryConflicts({ nc: entry() }, 'nc', 123, entry().repository_url, { reverify: true })).not.toThrow();
-    expect(() => checkRegistryConflicts({ nc: entry() }, 'nc', 456, 'https://github.com/team/other', { reverify: true })).toThrow(/already registered/);
-    expect(() => checkRegistryConflicts({ nc: 'https://team.github.io/measles-NC/' }, 'nc', 123, entry().repository_url, { reverify: true })).not.toThrow();
-    expect(() => checkRegistryConflicts({ nc: 'https://team.github.io/measles-NC/' }, 'nc', 456, 'https://github.com/team/other', { reverify: true })).toThrow(/already registered/);
+  it('allows reviewed updates for a state but rejects one repository serving two states', () => {
+    expect(() => checkRegistryConflicts({ nc: entry() }, 'nc', 123, entry().repository_url)).not.toThrow();
+    expect(() => checkRegistryConflicts({ nc: entry() }, 'nc', 456, 'https://github.com/team/other')).not.toThrow();
+    expect(() => checkRegistryConflicts({ nc: 'https://team.github.io/measles-NC/' }, 'nc', 123, entry().repository_url)).not.toThrow();
+    expect(() => checkRegistryConflicts({ nc: entry() }, 'ca', 123, entry().repository_url)).toThrow(/already registered/);
   });
   it('persists approved hashes in the registration entry', () => {
     const hashes = datasetHashes(bundle());

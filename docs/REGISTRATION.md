@@ -1,10 +1,9 @@
 # Registering a state repository
 
 State repositories are registered from the ACCIDDA central dashboard
-repository. Providers must supply both a source repository and a publicly
-accessible HTTPS endpoint, or a source repository whose public GitHub Pages
-endpoint can be derived. The source repository may be public or private. A
-private repository must include a public endpoint.
+repository. Providers supply a public HTTPS base URL, a public repository whose
+GitHub Pages endpoint can be derived, or both. A source repository is optional
+and may be private when a public endpoint is supplied.
 
 The template repository is there to help produce the expected files and
 host them. Providers must follow the template's repository structure, file
@@ -13,7 +12,7 @@ names, schema, and deployment layout.
 ## State-team submission
 
 1. Open the central ACCIDDA measles dashboard and select **Actions**.
-2. Select **Register State Data Endpoint**, then **Run workflow**.
+2. Select **Register State Repository**, then **Run workflow**.
 3. Select the official two-letter USPS state code.
 4. Enter the public HTTPS base URL for the template deployment, if one is
    available.
@@ -79,11 +78,12 @@ against the registered CSV contents. A failure opens one issue in the affected
 state repository when the central reporting credential is configured.
 
 After an intentional data update, rerun **Register State Repository** with the
-same state code and repository URL. It validates the latest default-branch
+same state code and repository URL. It validates the published endpoint
 bundle and opens a PR with refreshed fingerprints. An administrator must review
-and merge that PR. A different repository ID cannot replace an existing state
-through this workflow. Legacy Pages entries can also be re-registered to add
-fingerprints and repository identity.
+and merge that PR. Existing states can be updated, including changing their
+endpoint or repository, through administrator review; a repository ID cannot
+be registered for multiple states. Legacy entries can be re-registered to add
+fingerprints and available repository identity.
 
 The public API must serve the registered CSV contents and a valid `meta.json`
 from the registered dataset path. See [Data validation](DATA_VALIDATION.md) for

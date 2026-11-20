@@ -1,60 +1,76 @@
-# Static dataset API
+# State data API
 
 ## Overview
 
-All dashboard data is published as static CSV files at predictable URLs on the
-deployed site. You can fetch them with `curl`, `wget`, a browser, or any HTTP
-client: there is no authentication, no API key, and no rate limit beyond
-whatever GitHub Pages applies to public traffic. The URL scheme *is* the API,
-the same files that drive the dashboard are what you get when you fetch them.
+The dashboard loads coverage data from the public state APIs listed in
+`public/data/stateRegistry.json`. Dataset CSVs stay with their providers; the
+dashboard repository and its deployed site contain no CSV datasets.
 
-The deployment base path is `/measles-dashboard/`, so every dataset path below
-is suffixed onto `https://accidda.github.io/measles-dashboard/`.
+The dashboard publishes its registry, readiness manifest, and generated schema:
 
-States with data published: North Carolina (`nc`) and California (`ca`). More
-states are added incrementally; the URL scheme is stable.
-
-## URL scheme
-
-| Path | Row granularity |
+| Dashboard path | Purpose |
 | --- | --- |
-| `/data/states.csv` | one row per state (national summary) |
-| `/data/states/{state}.csv` | one row per county in that state |
-| `/data/all-schools.csv` | one row per school, every state (leading `state` column) |
-| `/data/states/{state}/schools.csv` | one row per school in that state |
-| `/data/states/{state}/counties/{county}.csv` | one row per school in that county |
+| `/data/stateRegistry.json` | State codes mapped to public API locations and registration metadata |
+| `/data/states.json` | State readiness (`ready` or `coming_soon`) |
+| `/data/schema.json` | Column definitions and value constraints |
 
-`all-schools.csv`, `{state}/schools.csv`, and the per-`{county}` files carry the
-same school rows at decreasing scope; `all-schools.csv` adds a leading `state`
-column so the concatenated rows stay identifiable. The dashboard itself loads
-`{state}.csv` + `{state}/schools.csv`. The in-app download button hands back the
-school CSV for the current zoom (national → `all-schools.csv`, state →
-`{state}/schools.csv`, county → the per-county file).
+These paths are relative to the dashboard deployment, currently
+`https://accidda.github.io/measles-dashboard/`.
 
-## Slug conventions
+## State endpoints
 
-- `{state}`: lowercase two-letter USPS abbreviation (`nc`, `ca`).
-- `{county}`: county name lowercased and kebab-cased (`los-angeles`,
-  `new-hanover`). Spaces and punctuation become single hyphens.
+For a registered `base_url`, new registrations use the template's `data/`
+directory. Existing registry objects may specify `dataset_path: "."` for files
+at the base URL; legacy string entries use `data/`.
+
+| State API resource | Contents | Schema key |
+| --- | --- | --- |
+| `data/state.csv` | Exactly one state summary | `data/states.csv` |
+| `data/counties.csv` | County summaries for that state | `data/states/{state}.csv` |
+| `data/schools.csv` | Schools with county labels | `data/states/{state}/schools.csv` |
+| `data/meta.json` | Display names, state code/FIPS, and source attribution | JSON metadata |
+
+The API endpoints must be publicly accessible over HTTPS and permit browser
+requests from the dashboard's origin. Registration and recurring monitoring
+check the CSVs against the shared schema. The monitor also checks metadata,
+CORS access, and county geography links.
+
+## Downloads
+
+The Data button fetches the current state APIs and formats the requested CSV in
+the browser:
+
+- National: combines registered states' school rows with a leading `state`
+  column and saves `all-schools.csv`.
+- State: saves that state's school rows as `<state>-schools.csv`.
+- County: filters the school's county label, drops the redundant `county`
+  column, and saves `<state>-<county>-schools.csv`.
+
+These filenames are browser downloads, not static dashboard endpoints. String
+cells that could be interpreted as spreadsheet formulas are prefixed with an
+apostrophe in downloads; numeric values are preserved.
 
 ## Columns
 
-Every file shares the same coverage block; the files differ only in their
-leading identity columns. Coverage values are **proportions in [0, 1]** (e.g.
-`0.9469` = 94.69%), rounded to 4 decimals. Grades `K`–`5` correspond to the
-model's age bands; `K` is kindergarten.
+Coverage values are proportions in `[0, 1]`, such as `0.9469` for 94.69%.
+Grades K–5 are kindergarten through fifth grade. Blank optional measurements
+mean unavailable, not zero. State FIPS may have one or two digits; county FIPS,
+when supplied, has five digits. School IDs and county links are required;
+school names may be blank, in which case the dashboard displays the school ID.
 
-> The tables below are generated from `src/data/schema.js` (the single source of
-> truth) by `npm run gen-api-schema`. The same definition produces the
-> machine-readable [`data/schema.json`](#machine-readable-schema). Edit the
-> schema module, not these tables.
+### Identity columns by schema key
 
-### Identity columns (per file)
+The machine-readable schema retains its original keys for compatibility.
+They identify column shapes, **not URLs on the dashboard**. The state endpoint
+mapping is above; `data/all-schools.csv` and
+`data/states/{state}/counties/{county}.csv` describe browser download shapes.
 
-Each file's leading columns; every file then carries the shared coverage block.
+The tables below are generated from `src/data/schema.js` using
+`npm run gen-api-schema`. Every identity block is followed by the shared
+coverage block.
 
 <!-- BEGIN GENERATED: identity -->
-| File | Leading columns (then the shared coverage block) |
+| Schema key (without data/) | Leading columns (then the shared coverage block) |
 | --- | --- |
 | `states.csv` | `state`, `state_fips`, `state_name`, `n_schools`, `pct_schools_below_95` |
 | `states/{state}.csv` | `county`, `county_fips`, `n_schools`, `pct_schools_below_95` |
@@ -93,122 +109,61 @@ Each file's leading columns; every file then carries the shared coverage block.
 | `tier` | string | Coverage tier: H (>=95%), M (90-95%), L (<90%) |
 <!-- END GENERATED: coverage -->
 
-Identity-column meanings: `*_fips` are the 2- and 5-digit FIPS codes;
-`n_schools` is the school count aggregated into that row; `pct_schools_below_95`
-is the share of the level's schools under 95% coverage; `enrollment` is the
-school's student count.
-
-### A note on data completeness
-
-Coverage values come from the imuGAP model. Where a state's data is supplied
-pre-aggregated rather than as a full model fit, the aggregate (state/county)
-rows may have **blank** per-grade and credible-interval columns (only the
-overall `coverage` is populated). North Carolina is currently in this category;
-California, fit directly, has the full block at every level. Treat empty cells
-as "not available," not zero.
-
 ## Machine-readable schema
 
-The full column schema is published as
-[`data/schema.json`](https://accidda.github.io/measles-dashboard/data/schema.json)
-— one entry per file shape, each listing its columns with a `type` (`string`,
-`integer`, or `number`). It is generated from the same source as the tables
-above, so it always matches the data.
-
-Fetch the schema and use it to read a file with guaranteed types (no inference)
-via Apache Arrow:
-
-```python
-import json, urllib.request
-import pyarrow as pa, pyarrow.csv as pv
-
-BASE = "https://accidda.github.io/measles-dashboard/data"
-spec = json.load(urllib.request.urlopen(f"{BASE}/schema.json"))
-
-# Map the schema's type vocabulary to Arrow types.
-ARROW = {"string": pa.string(), "integer": pa.int64(), "number": pa.float64()}
-cols = spec["files"]["data/all-schools.csv"]["columns"]
-types = {c["name"]: ARROW[c["type"]] for c in cols}
-
-import fsspec
-with fsspec.filesystem("https").open(f"{BASE}/all-schools.csv") as f:
-    table = pv.read_csv(f, convert_options=pv.ConvertOptions(column_types=types))
-```
-
-The same `schema.json` drives readers in R (`arrow`), DuckDB, Polars, etc.
+Fetch the dashboard's `/data/schema.json` and select the appropriate `files`
+entry from the mapping above. Each column supplies a name, type (`string`,
+`integer`, or `number`), and optional constraints. Parsing a file with those
+types is separate from validating its ranges, IDs, and cross-file links.
 
 ## Examples
 
-Fetch the national state summary:
-
-```sh
-curl -O https://accidda.github.io/measles-dashboard/data/states.csv
-```
-
-Fetch California's county-level coverage:
-
-```sh
-curl -O https://accidda.github.io/measles-dashboard/data/states/ca.csv
-```
-
-Fetch the school-level breakdown for Los Angeles County:
-
-```sh
-curl -O https://accidda.github.io/measles-dashboard/data/states/ca/counties/los-angeles.csv
-```
-
-Preview the first rows without saving:
-
-```sh
-curl -s https://accidda.github.io/measles-dashboard/data/states/ca.csv | head
-```
-
-Fetch every school nationwide in one file:
-
-```sh
-curl -O https://accidda.github.io/measles-dashboard/data/all-schools.csv
-```
-
-Load straight into pandas:
+Discover a registered state endpoint and fetch its school rows with Python:
 
 ```python
-import pandas as pd
+import csv
+import io
+import json
+from urllib.request import urlopen
+from urllib.parse import urljoin
 
-url = "https://accidda.github.io/measles-dashboard/data/states/ca/schools.csv"
-df = pd.read_csv(url)
+DASHBOARD = "https://accidda.github.io/measles-dashboard/"
+with urlopen(urljoin(DASHBOARD, "data/stateRegistry.json")) as response:
+    registry = json.load(response)
+
+entry = registry["nc"]
+base = entry if isinstance(entry, str) else entry["base_url"]
+path = "data/" if isinstance(entry, str) else (entry.get("dataset_path") or "data/")
+path = "" if path == "." else path.rstrip("/") + "/"
+schools_url = urljoin(base.rstrip("/") + "/", path + "schools.csv")
+with urlopen(schools_url) as response:
+    schools = list(csv.DictReader(io.StringIO(response.read().decode("utf-8"))))
+print(len(schools))
 ```
 
-The files double as a static data API: any tool that reads a CSV from a URL can
-pull them directly, no download step. With Apache Arrow:
+For a template endpoint, substitute its registered deployment URL below:
 
-```python
-# Python — pyarrow streams the URL straight into an Arrow table
-import pyarrow.csv as pv
-from fsspec.implementations.http import HTTPFileSystem
-
-fs = HTTPFileSystem()
-with fs.open("https://accidda.github.io/measles-dashboard/data/all-schools.csv") as f:
-    table = pv.read_csv(f)
+```sh
+BASE="https://example.org/measles/nc"
+curl -fL "$BASE/data/state.csv" -o state.csv
+curl -fL "$BASE/data/counties.csv" -o counties.csv
+curl -fL "$BASE/data/schools.csv" -o schools.csv
 ```
 
-```r
-# R
-schools <- arrow::read_csv_arrow(
-  "https://accidda.github.io/measles-dashboard/data/all-schools.csv"
-)
-```
+Save downloaded datasets outside this dashboard's `public/` directory. Both
+`npm run dev` and `npm run build` reject local CSVs there to prevent stale data
+from being published with the site.
 
-```sql
--- DuckDB
-SELECT county, coverage
-FROM 'https://accidda.github.io/measles-dashboard/data/all-schools.csv'
-WHERE state = 'ca';
-```
+## Versioning and validation
 
-## Versioning
+Live endpoints can change independently of a dashboard deployment. Registration
+stores SHA-256 hashes of the three validated CSV responses in the registry.
+Recurring checks validate the contents and compare them to that approved
+baseline; intentional changes require another reviewed registration PR.
 
-There is no explicit versioning today. The CSVs are regenerated and republished
-when the underlying model output updates, so the data reflects whatever the
-dashboard is currently showing. For a stable snapshot, pin to a specific Git
-commit via `raw.githubusercontent.com` against the `main` branch, or open an
-issue if versioned releases would be useful.
+An optional `source_commit_sha` records source provenance, but does not prove
+that a live deployment corresponds to that commit. Legacy entries without
+hashes still receive schema checks and need re-registration to enable content
+change detection. Hashes establish integrity, not scientific correctness or
+freshness. See the repository's `docs/REGISTRATION.md` and
+`docs/DATA_VALIDATION.md` for the workflow and notification setup.

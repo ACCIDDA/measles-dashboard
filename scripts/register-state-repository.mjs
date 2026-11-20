@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 import { readFileSync } from 'node:fs';
-import { datasetHashes } from './data-hashes.mjs';
 import {
   buildRegistryEntry,
   checkRegistryConflicts,
@@ -26,6 +25,7 @@ if (!centralRepository?.includes('/')) fail('GITHUB_REPOSITORY is not set.');
 if (!baseUrlInput && !repositoryInput) fail('at least one of base_url or repository_url is required.');
 
 const source = (() => {
+  if (!repositoryInput) return null;
   try {
     return parseRepositoryUrl(repositoryInput);
   } catch (error) {
@@ -53,6 +53,8 @@ async function request(path, options = {}) {
 }
 
 async function main() {
+  const centralRegistryPath = 'public/data/stateRegistry.json';
+  const registry = JSON.parse(readFileSync(centralRegistryPath, 'utf8'));
   let repository = null;
   let sourceCommitSha = null;
   let baseUrl = baseUrlInput;
@@ -74,24 +76,19 @@ async function main() {
   }
   if (!baseUrl) fail('a public base_url is required when no repository endpoint can be derived.');
   const result = await validateEndpoint({ stateCode, baseUrl });
-  const centralRegistryPath = 'public/data/stateRegistry.json';
-  const registry = JSON.parse(readFileSync(centralRegistryPath, 'utf8'));
   const manifestPath = 'public/data/states.json';
   const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
-  checkRegistryConflicts(registry, stateCode, repository.id, source.canonicalUrl, { reverify: true });
-  const existing = registry[stateCode];
-  const homepage = (typeof existing === 'string' ? existing : existing?.base_url)
-    || `https://${source.owner}.github.io/${source.repo}/`;
+  checkRegistryConflicts(registry, stateCode, repository?.id, source?.canonicalUrl);
   registry[stateCode] = buildRegistryEntry({
     stateCode,
     repositoryUrl: source?.canonicalUrl || null,
     repositoryId: repository?.id || null,
-    datasetPath: null,
+    datasetPath: 'data/',
     sourceCommitSha,
     stateName: result.stateName,
     reportingPeriod: result.reportingPeriod,
-    baseUrl: homepage,
-    dataHashes: datasetHashes(blobs),
+    baseUrl: result.baseUrl,
+    dataHashes: result.dataHashes,
   });
   manifest[stateCode] = {
     ...(manifest[stateCode] || {}),

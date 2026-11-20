@@ -1,7 +1,7 @@
 # Monitoring registered state data
 
 The dashboard reads each state's published API directly. Registration validates
-Git blobs once; **Check State Data** also checks the live endpoints so a broken
+the public CSV responses once; **Check State Data** checks them again so a broken
 publish, incompatible update, or changed dataset does not go unnoticed.
 
 ## What is checked
@@ -11,7 +11,9 @@ registered state independently. It writes `state-data-report.json` and exits
 nonzero if any state fails. An empty registry explicitly reports that no live
 endpoints were checked.
 
-- Public repository availability and immutable repository ID, when registered.
+- Repository identity against the approved repository ID, when metadata is accessible.
+  Private or inaccessible source metadata produces a warning; public endpoint
+  validation still runs. Issue delivery requires a verified repository.
 - HTTP availability of `state.csv`, `counties.csv`, `schools.csv`, and `meta.json`.
   Requests time out after 15 seconds and are attempted up to three times.
 - CORS access for the dashboard's origin, so a response accessible to CI is also
@@ -21,6 +23,8 @@ endpoints were checked.
 - State identity/FIPS, nonempty files and identities, duplicate county/school
   identities, and school-to-county links. Each CSV must have at least one usable
   overall coverage value; grade/interval values alone cannot shade the map.
+  School names may be blank, as supported by the producer; the dashboard labels
+  those records using their required school IDs.
 - County names and any supplied county FIPS must match the dashboard's us-atlas
   geography. Blank county FIPS and blank optional measurements remain allowed.
 - Metadata fields used by the dashboard, including matching state code and
@@ -35,23 +39,28 @@ or `.` for files at the base URL). `meta.json` must be alongside the CSVs.
 ## Hash policy and reverification
 
 Registration records `data_sha256`, keyed by `state.csv`, `counties.csv`, and
-`schools.csv`, from the validated UTF-8 contents at `source_commit_sha`. The
-monitor hashes the published contents on every run and **always** validates the
-schema, even when hashes match. It never updates the trusted baseline itself.
+`schools.csv`, from the exact UTF-8 endpoint responses that passed validation.
+The optional `source_commit_sha` records repository provenance; it does not
+prove that a deployment matches that commit. The monitor hashes the published
+contents on every run and **always** validates the schema, even when hashes match. It never updates the trusted baseline itself.
 
 A changed hash means **needs reverification**, not necessarily bad estimates.
 An intentional model update, row reordering, or line-ending change also changes
 the hash. Deploy the intended bundle, rerun **Register State Repository** with
-the same state and repository URL, and have an administrator review and merge
-the PR that refreshes the hashes. The workflow permits reverifying the same
-repository ID but refuses to substitute a different repository. It preserves
-an existing deployment base URL.
+the state code and endpoint/repository URL, and have an administrator review
+and merge the PR that refreshes the hashes. As on `dev`, registration can update
+an existing state, including its endpoint or repository, through that review.
+One repository ID cannot be registered to multiple states. Until a registry
+update is approved, the monitor checks the existing identity and hashes.
+Supply the public base URL for custom deployments. When only a public repository
+is supplied, registration derives its conventional GitHub Pages endpoint.
 
 Legacy entries without fingerprints still get availability and schema checks,
 with an explicit warning that drift detection is unavailable. Re-register a
-conventional GitHub Pages repository to migrate it. For a legacy custom domain,
-an administrator must first add its `repository_url`; the monitor does not guess
-which GitHub repository owns a custom domain.
+conventional GitHub Pages repository to migrate it. Endpoint-only registrations
+can refresh their hashes using the same public base URL. An explicit
+`repository_url` is needed to deliver issues for a custom domain; the monitor
+does not guess which GitHub repository owns it.
 
 These checks establish data integrity and compatibility, not scientific
 correctness or a maximum data age. There is no required reporting-date field

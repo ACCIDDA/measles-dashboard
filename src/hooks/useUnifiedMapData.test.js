@@ -324,6 +324,17 @@ describe('useUnifiedMapData', () => {
     expect(fetches).toBe(1);
   });
 
+  it('labels an unnamed school with its stable ID', async () => {
+    const fetchMock = buildFetchMock(captured);
+    globalThis.fetch = url => url.endsWith('data/schools.csv')
+      ? Promise.resolve({ ok: true, text: async () => mockSchoolCsv().replace('Test Elementary', '') })
+      : fetchMock(url);
+    const { result } = renderHook(() => useUnifiedMapData());
+    await waitFor(() => expect(result.current.loading).toBe(false));
+    await act(async () => { await result.current.focusState('nc'); });
+    expect(result.current.stateData.nc.allSchools[0].name).toBe('School 1');
+  });
+
   it('surfaces missing schools without caching an empty successful payload', async () => {
     globalThis.fetch = buildFetchMock(captured, { schoolsOk: false });
     const { result } = renderHook(() => useUnifiedMapData());

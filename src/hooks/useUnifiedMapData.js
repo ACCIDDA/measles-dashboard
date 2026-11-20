@@ -73,16 +73,8 @@ function buildTopology({ stateCode, us }) {
   return { stateFeatures, neighborStates, stateMesh, adjacencyMap, featureByName };
 }
 
-// Build the per-state derived structures from the #20 CSV bundle:
-//   countyRows — parsed rows from states/<code>.csv        (one per county)
-//   schoolRows — parsed rows from states/<code>/schools.csv (one per school,
-//                carrying a `county` column)
-// plus the shared us-atlas topology. Returns the same shape the legacy
-// dashboard.json path produced, so the map + sidebar are unchanged.
-// Parse the national states.csv into a per-state summary keyed by lowercase
-// code (#50). Powers the state-level summary panel: overall coverage, % of
-// schools below 95, school count, and the K-5 per-grade breakdown — all taken
-// straight from the state row (no client-side aggregation).
+// Combine the registered APIs' state.csv rows into state-level summaries.
+// Values come from the published state row, not client-side aggregation.
 function buildStateSummaries(text) {
   const out = {};
   if (!text) return out;
@@ -101,12 +93,8 @@ function buildStateSummaries(text) {
   return out;
 }
 
-// National-zoom choropleth shading, derived from states.csv (one row per state)
-// keyed by 2-digit FIPS. Coverage stays a proportion in [0,1]; the national view
-// multiplies by 100. States absent from states.csv render greyed. This replaces
-// the former national.json stub so the CSVs are the single tabular source (#68);
-// if a broader all-states national dataset ever lands (#14) it would be its own
-// national.csv, read the same way.
+// National shading uses state.csv responses keyed by two-digit FIPS.
+// Coverage remains a proportion here; unavailable states render greyed.
 function buildCoverageByFips(text) {
   const out = {};
   if (!text) return out;
@@ -155,7 +143,7 @@ function buildStatePayloadFromCsv({ stateCode, countyRows, schoolRows, us }) {
       coverage,
       tier: noData ? null : covTier(coverage),
       noData,
-      name: s.school_name,
+      name: s.school_name?.trim() || `School ${s.school_id}`,
       size: s.enrollment != null && s.enrollment !== '' ? Number(s.enrollment) : null,
       grades,
     };
@@ -168,10 +156,9 @@ function buildStatePayloadFromCsv({ stateCode, countyRows, schoolRows, us }) {
  * Unified data orchestrator that backs the zoom-aware map. Replaces the
  * legacy `useNationalData` + `useDashboardData` pair.
  *
- * - Loads the shared us-atlas, world-atlas, national stub, and per-state
- *   manifest exactly once at mount.
- * - Lazy-loads each state's #20 CSV bundle (states/<code>.csv +
- *   states/<code>/schools.csv) on demand via `focusState(code)`. Re-focusing a
+ * - Loads shared geography, manifests, and API state summaries at mount.
+ * - Lazy-loads each state API's counties.csv and schools.csv on demand
+ *   via `focusState(code)`. Re-focusing a
  *   previously loaded state is a cache hit; no extra fetches occur.
  * - Returns a stable `focusState` callback and a `stateData` map keyed by
  *   lowercase state code, so the consumer can render whichever state's
@@ -219,7 +206,7 @@ export function useUnifiedMapData() {
           fetch(withBase('data/states.json')),
           Promise.all(Object.entries(stateRegistry).map(async ([code, entry]) => {
             try {
-              const response = await fetch(dataUrl(apiBase, 'state.csv'));
+              const response = await fetch(dataUrl(entry, 'state.csv'));
               if (!response.ok) return [];
               return csvParse(await response.text()).map(row => ({ ...row, state: row.state || code }));
             } catch {
@@ -314,9 +301,7 @@ export function useUnifiedMapData() {
 
     const promise = (async () => {
       try {
-        // #20 CSV bundle: the county summary + the combined per-state schools
-        // file. (Per-county files under counties/ are the canonical download/API
-        // unit (#21/#22); the app reads schools.csv to avoid an N+1 fan-out.)
+        // Load the registered API's county summaries and school rows.
         const apiBase = registryBaseUrl(stateRegistry[code]);
         if (!apiBase) throw new Error(`State registry entry for ${code} has no base_url.`);
         const [countyRes, schoolRes] = await Promise.all([
