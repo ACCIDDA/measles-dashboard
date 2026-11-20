@@ -1,5 +1,5 @@
 name: Contribute a state's data
-description: Propose adding a new state's school-level MMR coverage data to the dashboard (#78).
+description: Propose adding a new state's school-level MMR coverage data to the dashboard (#78)(#100).
 title: "Add state data: <STATE>"
 labels: ["data-contribution"]
 body:
@@ -7,9 +7,9 @@ body:
     attributes:
       value: |
         Thanks for wanting to add a state! This is the **front door** for a federated
-        data contribution. Open this issue first so we can coordinate; the data itself
-        arrives as a follow-up pull request whose CSVs are validated against the
-        published schema automatically (see the "Contributing a state's data" section
+        data contribution. Open this issue first so we can coordinate. The dashboard reads data from a
+        state-specific public data endpoint; once prepared, the endpoint is registered with the dashboard 
+        and the data stays with the provider. (see the "Contributing a state's data" section
         in [CONTRIBUTING.md](../blob/dev/CONTRIBUTING.md)).
   - type: input
     id: org
@@ -57,7 +57,7 @@ body:
   - type: checkboxes
     id: ack
     attributes:
-      label: Before the data PR
+      label: Before registration
       options:
-        - label: I understand the CSVs must conform to the published schema, and that `npm run validate-data` must pass before the PR can merge.
+        - label: I understand the data must follow the state template and published dashboard schema, and the registration workflow must validate the public endpoint before opening a registry pull request for administrator review.
           required: true

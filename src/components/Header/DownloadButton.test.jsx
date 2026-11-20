@@ -1,7 +1,12 @@
 import { describe, it, expect, vi, afterEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { csvFormat } from "d3-dsv";
+import { columnNames } from "../../data/schema.js";
 import DownloadButton from "./DownloadButton.jsx";
+
+const SCHOOL_COLUMNS = columnNames("data/states/{state}/schools.csv");
+const schoolsCsv = (rows) => csvFormat(rows, SCHOOL_COLUMNS);
 
 afterEach(() => {
   vi.restoreAllMocks();
@@ -24,7 +29,7 @@ describe("DownloadButton", () => {
         })
         .mockResolvedValue({
           ok: true,
-          text: async () => "school_id,school_name,county\n1,School,Wake County\n",
+          text: async () => schoolsCsv([{ school_id: "1", school_name: "School", county: "Wake County" }]),
         }),
     );
     vi.spyOn(URL, "createObjectURL").mockReturnValue("blob:test");
@@ -58,7 +63,12 @@ describe("DownloadButton", () => {
         })
         .mockResolvedValueOnce({
           ok: true,
-          text: async () => "school_id,school_name,county,enrollment\n1,=1+1,Los Angeles County,-3\n",
+          text: async () => schoolsCsv([{
+            school_id: "1",
+            school_name: "=1+1",
+            county: "Los Angeles County",
+            enrollment: "-3",
+          }]),
         }),
     );
     const createObjectURL = vi
@@ -92,7 +102,7 @@ describe("DownloadButton", () => {
         .mockResolvedValueOnce({
           ok: true,
           headers: { get: () => "application/octet-stream" },
-          text: async () => "school_id,school_name,county\n1,School,County\n",
+          text: async () => schoolsCsv([{ school_id: "1", school_name: "School", county: "County" }]),
         }),
     );
     vi.spyOn(URL, "createObjectURL").mockReturnValue("blob:test");
@@ -128,6 +138,31 @@ describe("DownloadButton", () => {
     );
   });
 
+  it.each([
+    ["an extra formula-like header", `${SCHOOL_COLUMNS.join(",")},=1+1\n`],
+    ["a missing coverage column", `${SCHOOL_COLUMNS.slice(0, -1).join(",")}\n`],
+  ])("rejects a schools CSV with %s", async (_reason, csv) => {
+    const user = userEvent.setup();
+    vi.stubGlobal(
+      "fetch",
+      vi
+        .fn()
+        .mockResolvedValueOnce({
+          ok: true,
+          json: async () => ({ ca: { base_url: "https://example.test/ca/" } }),
+        })
+        .mockResolvedValueOnce({ ok: true, text: async () => csv }),
+    );
+    const createObjectURL = vi.spyOn(URL, "createObjectURL");
+
+    render(<DownloadButton zoomLevel="state" stateCode="ca" />);
+    await user.click(screen.getByRole("button", { name: "Download CA schools (CSV)" }));
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "The state API did not return a schools CSV.",
+    );
+    expect(createObjectURL).not.toHaveBeenCalled();
+  });
+
   it("exports only the selected county's schools without the county column", async () => {
     const user = userEvent.setup();
     vi.stubGlobal(
@@ -141,7 +176,10 @@ describe("DownloadButton", () => {
         .mockResolvedValueOnce({
           ok: true,
           text: async () =>
-            "school_id,school_name,county,enrollment\n1,LA School,Los Angeles County,100\n2,Other School,Orange County,200\n",
+            schoolsCsv([
+              { school_id: "1", school_name: "LA School", county: "Los Angeles County", enrollment: "100" },
+              { school_id: "2", school_name: "Other School", county: "Orange County", enrollment: "200" },
+            ]),
         }),
     );
     const createObjectURL = vi

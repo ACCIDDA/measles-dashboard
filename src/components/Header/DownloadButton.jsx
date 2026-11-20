@@ -2,6 +2,9 @@
 // The repository only contains the state registry, never copies of the data.
 import { useState } from "react";
 import { csvFormat, csvParse } from "d3-dsv";
+import { columnNames } from "../../data/schema.js";
+
+const SCHOOL_COLUMNS = columnNames("data/states/{state}/schools.csv");
 
 function withBase(path) {
   const base =
@@ -38,11 +41,8 @@ async function fetchCsv(url) {
     throw new Error(`Could not download data (${response.status})`);
   const text = await response.text();
   const rows = csvParse(text);
-  if (
-    !["school_id", "school_name", "county"].every((column) =>
-      rows.columns.includes(column),
-    )
-  ) {
+  if (rows.columns.length !== SCHOOL_COLUMNS.length ||
+      rows.columns.some((column, index) => column !== SCHOOL_COLUMNS[index])) {
     throw new Error("The state API did not return a schools CSV.");
   }
   return rows;
@@ -199,9 +199,9 @@ export default function DownloadButton({
         </span>
       </button>
       {error && (
-        <p className="hd-download-error" role="alert">
-          {error}
-        </p>
+        <div className="hd-download-error" role="alert">
+          <p>{error}</p>
+        </div>
       )}
     </>
   );
