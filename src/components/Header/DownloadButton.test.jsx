@@ -207,7 +207,13 @@ describe("DownloadButton", () => {
       }),
     );
     const exportedCsv = await createObjectURL.mock.calls[0][0].text();
-    expect(exportedCsv).toBe("school_id,school_name,enrollment\n1,LA School,100\n");
+    const countyColumns = SCHOOL_COLUMNS.filter((column) => column !== "county");
+    expect(exportedCsv).toBe(
+      `${csvFormat(
+        [{ school_id: "1", school_name: "LA School", enrollment: "100" }],
+        countyColumns,
+      )}\n`,
+    );
   });
 
   it("renders nothing when the resolution lacks the data it needs", () => {
